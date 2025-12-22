@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SmartQuizAssessmentSystem.Data;
+using QuizSystemRepository.Data;
 
 #nullable disable
 
-namespace SmartQuizAssessmentSystem.Migrations
+namespace QuizSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251222110803_QuizSystem")]
+    partial class QuizSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,7 +128,7 @@ namespace SmartQuizAssessmentSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SmartQuizAssessmentSystem.Models.QuizSystemRole", b =>
+            modelBuilder.Entity("QuizSystemModel.Models.QuizSystemRole", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +158,7 @@ namespace SmartQuizAssessmentSystem.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("SmartQuizAssessmentSystem.Models.QuizSystemUser", b =>
+            modelBuilder.Entity("QuizSystemModel.Models.QuizSystemUser", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +239,7 @@ namespace SmartQuizAssessmentSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
-                    b.HasOne("SmartQuizAssessmentSystem.Models.QuizSystemRole", null)
+                    b.HasOne("QuizSystemModel.Models.QuizSystemRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -245,7 +248,7 @@ namespace SmartQuizAssessmentSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
-                    b.HasOne("SmartQuizAssessmentSystem.Models.QuizSystemUser", null)
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -254,7 +257,7 @@ namespace SmartQuizAssessmentSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
-                    b.HasOne("SmartQuizAssessmentSystem.Models.QuizSystemUser", null)
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -263,13 +266,13 @@ namespace SmartQuizAssessmentSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
-                    b.HasOne("SmartQuizAssessmentSystem.Models.QuizSystemRole", null)
+                    b.HasOne("QuizSystemModel.Models.QuizSystemRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SmartQuizAssessmentSystem.Models.QuizSystemUser", null)
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -278,7 +281,7 @@ namespace SmartQuizAssessmentSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
-                    b.HasOne("SmartQuizAssessmentSystem.Models.QuizSystemUser", null)
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

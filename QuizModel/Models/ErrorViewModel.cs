@@ -1,4 +1,4 @@
-namespace SmartQuizAssessmentSystem.Models
+namespace QuizSystemModel.Models
 {
     public class ErrorViewModel
     {

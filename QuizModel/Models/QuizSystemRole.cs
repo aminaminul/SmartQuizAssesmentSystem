@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace SmartQuizAssessmentSystem.Models
+namespace QuizSystemModel.Models
 {
     public class QuizSystemRole : IdentityRole<long>
     {

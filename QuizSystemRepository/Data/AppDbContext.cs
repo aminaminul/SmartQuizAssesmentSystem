@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SmartQuizAssessmentSystem.Models;
+using QuizSystemModel.Models;
 
-namespace SmartQuizAssessmentSystem.Data
+namespace QuizSystemRepository.Data
 {
     public class AppDbContext : IdentityDbContext<QuizSystemUser, QuizSystemRole, long>
     {

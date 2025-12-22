@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SmartQuizAssessmentSystem.ViewModels
+namespace QuizSystemModel.ViewModels
 {
     public class LoginViewModel
     {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SmartQuizAssessmentSystem.Migrations
+namespace QuizSystemRepository.Migrations
 {
     /// <inheritdoc />
     public partial class QuizSystem : Migration

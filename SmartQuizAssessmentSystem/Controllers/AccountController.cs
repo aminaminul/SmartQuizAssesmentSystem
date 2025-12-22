@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SmartQuizAssessmentSystem.Models;
-using SmartQuizAssessmentSystem.ViewModels;
-
+using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 namespace SmartQuizAssessmentSystem.Controllers
 {
     public class AccountController : Controller

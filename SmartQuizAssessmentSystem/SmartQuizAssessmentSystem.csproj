@@ -16,4 +16,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QuizModel\QuizSystemModel.csproj" />
+    <ProjectReference Include="..\QuizSystemService\QuizSystemService.csproj" />
+  </ItemGroup>
+
 </Project>

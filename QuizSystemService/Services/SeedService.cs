@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SmartQuizAssessmentSystem.Data;
-using SmartQuizAssessmentSystem.Models;
+using Microsoft.Extensions.DependencyInjection;
+using QuizSystemRepository.Data;
+using QuizSystemModel.Models;
+using Microsoft.Extensions.Logging;
 
-namespace SmartQuizAssessmentSystem.Services
+namespace QuizSystemService.Services
 {
     public class SeedService
     {

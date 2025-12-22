@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartQuizAssessmentSystem.Models;
+using QuizSystemModel.Models;
 
 namespace QuizSystem.Controllers
 {
