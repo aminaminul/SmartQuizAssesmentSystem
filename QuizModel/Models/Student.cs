@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QuizSystemModel.Models
 {
-    public class StudentModel
+    public class Student
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -19,7 +19,7 @@ namespace QuizSystemModel.Models
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
         public QuizSystemUser? User { get; set; }
-        public EducationMediumModel? EducationMedium { get; set; }
-        public ClassModel? Class { get; set; }
+        public EducationMedium? EducationMedium { get; set; }
+        public Class? Class { get; set; }
     }
 }

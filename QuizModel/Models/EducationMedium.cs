@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QuizSystemModel.Models
 {
-    public class ClassModel
+    public class EducationMedium
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -27,6 +27,5 @@ namespace QuizSystemModel.Models
         public DateTime? RejectedAt { get; set; }
 
         public ModelStatus Status { get; set; }
-        public EducationMediumModel? EducationMedium { get; set; }
     }
 }

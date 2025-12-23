@@ -10,15 +10,15 @@ namespace QuizSystemRepository.Data
         {
         }
 
-        public DbSet<EducationMediumModel> EducationMediums { get; set; }
-        public DbSet<ClassModel> Classes { get; set; }
-        public DbSet<QuizModel> Quiz { get; set; }
-        public DbSet<SubjectModel> Subjects { get; set; }
-        public DbSet<QuestionBankModel> QuestionBanks { get; set; }
-        public DbSet<QuizAttemptModel> QuizAttempts { get; set; }
-        public DbSet<AttemptedQuizAnswerModel> AttemptedQuizAnswers { get; set; }
-        public DbSet<StudentModel> Students { get; set; }
-        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<EducationMedium> EducationMedium { get; set; }
+        public DbSet<Class> Class { get; set; }
+        public DbSet<Quiz> Quiz { get; set; }
+        public DbSet<Subject> Subject { get; set; }
+        public DbSet<QuestionBank> QuestionBank { get; set; }
+        public DbSet<QuizAttempt> QuizAttempt { get; set; }
+        public DbSet<AttemptedQuizAnswer> AttemptedQuizAnswer { get; set; }
+        public DbSet<Student> Student { get; set; }
+        public DbSet<Instructor> Instructor { get; set; }
     }
 
 }

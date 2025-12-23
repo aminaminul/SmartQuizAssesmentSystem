@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace QuizSystemModel.Models
 {
-    public class AttemptedQuizAnswerModel
+    public class AttemptedQuizAnswer
     {
         public long Id { get; set; }
-        public QuizAttemptModel? QuizAttempt { get; set; }
-        public QuestionBankModel? QuestionBank { get; set; }
+        public QuizAttempt? QuizAttempt { get; set; }
+        public QuestionBank? QuestionBank { get; set; }
         public string? SelectedOption { get; set; }
         public decimal Score { get; set; }
     }
