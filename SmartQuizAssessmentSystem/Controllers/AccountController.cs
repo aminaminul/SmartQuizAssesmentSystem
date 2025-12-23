@@ -60,25 +60,18 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             var user = new QuizSystemUser
             {
-                FirstName = model.Name,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 UserName = model.Email,
-                NormalizedUserName = model.Email.ToUpper(),
                 Email = model.Email,
-                NormalizedEmail = model.Email.ToUpper()
+                
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                var roleExist = await roleManager.RoleExistsAsync("User");
-
-                if (!roleExist)
-                {
-                    var role = new QuizSystemRole { Name = "User" };
-                    await roleManager.CreateAsync(role);
-                }
-
+          
                 await userManager.AddToRoleAsync(user, "User");
 
                 await signInManager.SignInAsync(user, isPersistent: false);

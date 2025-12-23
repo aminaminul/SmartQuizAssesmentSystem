@@ -4,8 +4,11 @@ namespace QuizSystemModel.ViewModels
 {
     public class RegisterViewModel
     {
-        [Required(ErrorMessage = "Name is required.")]
-        public string Name { get; set; }
+        [Required(ErrorMessage = "First Name is required.")]
+        public string FirstName { get; set; }
+        
+        [Required(ErrorMessage = "First Name is required.")]
+        public string LastName { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress]
@@ -22,7 +25,7 @@ namespace QuizSystemModel.ViewModels
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
         [Required]
-        public string Role { get; set; } = "Student";
+        public string Role { get; set; }
 
         public InstructorDetails InstructorInfo { get; set; } = new();
     }

@@ -31,12 +31,17 @@ namespace QuizSystem.Controllers
             return View();
         }
 
-        [Authorize(Roles = "User")]
-        public IActionResult User()
+        [Authorize(Roles = "Instructor")]
+        public IActionResult Instructor()
         {
             return View();
         }
-
+       
+        [Authorize(Roles = "Student")]
+        public IActionResult Student()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

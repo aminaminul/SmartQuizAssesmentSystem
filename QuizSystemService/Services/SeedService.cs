@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using QuizSystemRepository.Data;
-using QuizSystemModel.Models;
 using Microsoft.Extensions.Logging;
+using QuizSystemModel.Models;
+using QuizSystemRepository.Data;
 
 namespace QuizSystemService.Services
 {
@@ -11,6 +12,7 @@ namespace QuizSystemService.Services
         public static async Task SeedDatabase(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
+
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<QuizSystemRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<QuizSystemUser>>();
@@ -18,61 +20,42 @@ namespace QuizSystemService.Services
 
             try
             {
-                // Ensure the database is ready
-                logger.LogInformation("Ensuring the database is created.");
-                await context.Database.EnsureCreatedAsync();
+                // ✅ Migration (NOT EnsureCreated)
+                await context.Database.MigrateAsync();
 
-                // Add roles
-                logger.LogInformation("Seeding roles.");
-                await AddRoleAsync(roleManager, "Admin");
+                // ✅ Roles
+                string[] roles = { "Admin", "Instructor", "Student" };
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new QuizSystemRole { Name = role });
+                    }
+                }
 
-                // Add admin user
-                logger.LogInformation("Seeding admin user.");
+                // ✅ Admin User
                 var adminEmail = "admin@gmail.com";
                 if (await userManager.FindByEmailAsync(adminEmail) == null)
                 {
-                    var adminUser = new QuizSystemUser
+                    var admin = new QuizSystemUser
                     {
-                        FirstName = "admin",
+                        FirstName = "Admin",
+                        LastName = "User",
                         UserName = adminEmail,
-                        NormalizedUserName = adminEmail.ToUpper(),
                         Email = adminEmail,
-                        NormalizedEmail = adminEmail.ToUpper(),
-                        EmailConfirmed = true,
-                        SecurityStamp = Guid.NewGuid().ToString()
+                        EmailConfirmed = true
                     };
 
-                    var result = await userManager.CreateAsync(adminUser, "Admin@123");
+                    var result = await userManager.CreateAsync(admin, "Admin@123");
                     if (result.Succeeded)
                     {
-                        logger.LogInformation("Assigning Admin role to the admin user.");
-                        await userManager.AddToRoleAsync(adminUser, "Admin");
-                    }
-                    else
-                    {
-                        logger.LogError("Failed to create admin user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                        await userManager.AddToRoleAsync(admin, "Admin");
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while seeding the database.");
-
-            }
-
-        }
-
-        private static async Task AddRoleAsync(RoleManager<QuizSystemRole> roleManager, string roleName)
-        {
-            if (!await roleManager.RoleExistsAsync(roleName))
-            {
-                var result = await roleManager.CreateAsync(new QuizSystemRole 
-                    { Name = roleName
-                    });
-                if (!result.Succeeded)
-                {
-                    throw new Exception($"Failed to create role '{roleName}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
-                }
+                logger.LogError(ex, "Database seeding failed");
             }
         }
     }
