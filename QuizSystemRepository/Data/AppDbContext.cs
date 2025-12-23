@@ -17,6 +17,7 @@ namespace QuizSystemRepository.Data
         public DbSet<QuestionBankModel> QuestionBanks { get; set; }
         public DbSet<QuizAttemptModel> QuizAttempts { get; set; }
         public DbSet<AttemptedQuizAnswerModel> AttemptedQuizAnswers { get; set; }
+        public DbSet<StudentModel> Students { get; set; }
     }
 
 }
