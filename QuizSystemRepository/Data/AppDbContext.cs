@@ -13,6 +13,7 @@ namespace QuizSystemRepository.Data
         public DbSet<EducationMediumModel> EducationMediums { get; set; }
         public DbSet<ClassModel> Classes { get; set; }
         public DbSet<QuizModel> Quiz { get; set; }
+        public DbSet<SubjectModel> Subjects { get; set; }
     }
 
 }
