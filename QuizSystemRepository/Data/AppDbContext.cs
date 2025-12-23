@@ -9,5 +9,8 @@ namespace QuizSystemRepository.Data
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
+
+        public DbSet<EducationMediumModel> EducationMediums { get; set; }
     }
+
 }
