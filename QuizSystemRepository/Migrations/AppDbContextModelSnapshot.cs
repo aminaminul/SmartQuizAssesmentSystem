@@ -125,6 +125,66 @@ namespace QuizSystemRepository.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("QuizSystemModel.Models.ClassModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("ApprovedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("EducationMediumId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("ModifiedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("RejectedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("EducationMediumId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("RejectedById");
+
+                    b.ToTable("Classes");
+                });
+
             modelBuilder.Entity("QuizSystemModel.Models.EducationMediumModel", b =>
                 {
                     b.Property<long>("Id")
@@ -335,6 +395,39 @@ namespace QuizSystemRepository.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("QuizSystemModel.Models.ClassModel", b =>
+                {
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById");
+
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("QuizSystemModel.Models.EducationMediumModel", "EducationMedium")
+                        .WithMany()
+                        .HasForeignKey("EducationMediumId");
+
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "RejectedBy")
+                        .WithMany()
+                        .HasForeignKey("RejectedById");
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("EducationMedium");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("RejectedBy");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.EducationMediumModel", b =>
