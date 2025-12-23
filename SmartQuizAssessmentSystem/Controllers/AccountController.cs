@@ -28,19 +28,42 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await userManager.FindByEmailAsync(model.Email);
+
+            if (user == null)
             {
+                ModelState.AddModelError("", "Invalid login attempt.");
                 return View(model);
             }
 
-            var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var result = await signInManager.PasswordSignInAsync(
+                user,
+                model.Password,
+                model.RememberMe,
+                lockoutOnFailure: false
+            );
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(model);
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid Login Attempt.");
-            return View(model);
+            //CHECK ROLE (SAFE)
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
+            else if (await userManager.IsInRoleAsync(user, "Instructor"))
+            {
+                return RedirectToAction("Dashboard", "Instructor");
+            }
+            else
+            {
+                return RedirectToAction("Dashboard", "Student");
+            }
         }
 
         [HttpGet]
