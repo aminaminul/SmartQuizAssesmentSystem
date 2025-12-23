@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizSystemRepository.Data;
 
@@ -11,9 +12,11 @@ using QuizSystemRepository.Data;
 namespace QuizSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251223105147_QuestionBank")]
+    partial class QuestionBank
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,32 +313,6 @@ namespace QuizSystemRepository.Migrations
                     b.HasIndex("QuizId");
 
                     b.ToTable("QuestionBanks");
-                });
-
-            modelBuilder.Entity("QuizSystemModel.Models.QuizAttemptModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("QuizId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("SubmittedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("SubmittedById")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuizId");
-
-                    b.HasIndex("SubmittedById");
-
-                    b.ToTable("QuizAttempts");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.QuizModel", b =>
@@ -710,23 +687,6 @@ namespace QuizSystemRepository.Migrations
                     b.Navigation("ModifiedBy");
 
                     b.Navigation("Quiz");
-                });
-
-            modelBuilder.Entity("QuizSystemModel.Models.QuizAttemptModel", b =>
-                {
-                    b.HasOne("QuizSystemModel.Models.QuizModel", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "SubmittedBy")
-                        .WithMany()
-                        .HasForeignKey("SubmittedById");
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("SubmittedBy");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.QuizModel", b =>
