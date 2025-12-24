@@ -4,13 +4,13 @@ using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
 using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
+using QuizSystemService;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC
 builder.Services.AddControllersWithViews();
 
-// DbContext
 var conn = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlServer(conn));
 
@@ -28,16 +28,14 @@ builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// Seed service DI
 builder.Services.AddScoped<ISeedService, SeedService>();
 
 var app = builder.Build();
 
-// Scoped seed call via interface (no async/await)
 using (var scope = app.Services.CreateScope())
 {
-    var seedService = scope.ServiceProvider.GetRequiredService<ISeedService>();
-    seedService.SeedDatabase();
+    var seeder = scope.ServiceProvider.GetRequiredService<ISeedService>();
+    seeder.SeedDatabase();
 }
 
 if (!app.Environment.IsDevelopment())
