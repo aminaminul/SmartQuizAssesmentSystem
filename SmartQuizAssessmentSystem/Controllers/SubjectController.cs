@@ -9,6 +9,5 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             return View();
         }
-
     }
 }

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    public class AdminController : Controller
-    {  
+    [Authorize(Roles ="Student")]
+    public class StudentController : Controller
+    {
         public IActionResult Dashboard()
         {
             return View();
