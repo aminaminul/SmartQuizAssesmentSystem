@@ -1,19 +1,20 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using QuizSystemRepository.Data;
 using QuizSystemModel.Models;
+using QuizSystemRepository.Data;
+using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MVC
 builder.Services.AddControllersWithViews();
+
+// DbContext
 var conn = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlServer(conn));
 
-//builder.Services.AddDbContext<AppDbContext>(options=>
-//.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
+// Identity
 builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -27,11 +28,18 @@ builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+// Seed service DI
+builder.Services.AddScoped<ISeedService, SeedService>();
+
 var app = builder.Build();
 
-await SeedService.SeedDatabase(app.Services);
+// Scoped seed call via interface (no async/await)
+using (var scope = app.Services.CreateScope())
+{
+    var seedService = scope.ServiceProvider.GetRequiredService<ISeedService>();
+    seedService.SeedDatabase();
+}
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -39,13 +47,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 
-
 app.UseAuthentication();
-
 app.UseAuthorization();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

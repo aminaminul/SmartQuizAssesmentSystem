@@ -4,38 +4,48 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
+using QuizSystemService.Interfaces;
 
 namespace QuizSystemService.Services
 {
-    public class SeedService
+    public class SeedService : ISeedService
     {
-        public static async Task SeedDatabase(IServiceProvider serviceProvider)
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<SeedService> _logger;
+
+        public SeedService(IServiceProvider serviceProvider, ILogger<SeedService> logger)
         {
-            using var scope = serviceProvider.CreateScope();
+            _serviceProvider = serviceProvider;
+            _logger = logger;
+        }
+
+        public void SeedDatabase()
+        {
+            using var scope = _serviceProvider.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<QuizSystemRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<QuizSystemUser>>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<SeedService>>();
 
             try
             {
-                // ✅ Migration (NOT EnsureCreated)
-                await context.Database.MigrateAsync();
+                // Migration (sync)
+                context.Database.Migrate();
 
-                // ✅ Roles
+                // Roles
                 string[] roles = { "Admin", "Instructor", "Student" };
                 foreach (var role in roles)
                 {
-                    if (!await roleManager.RoleExistsAsync(role))
+                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
                     {
-                        await roleManager.CreateAsync(new QuizSystemRole { Name = role });
+                        roleManager.CreateAsync(new QuizSystemRole { Name = role })
+                                   .GetAwaiter().GetResult();
                     }
                 }
 
-                // ✅ Admin User
+                // Admin
                 var adminEmail = "admin@gmail.com";
-                if (await userManager.FindByEmailAsync(adminEmail) == null)
+                if (userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult() == null)
                 {
                     var admin = new QuizSystemUser
                     {
@@ -46,16 +56,62 @@ namespace QuizSystemService.Services
                         EmailConfirmed = true
                     };
 
-                    var result = await userManager.CreateAsync(admin, "Admin@123");
+                    var result = userManager.CreateAsync(admin, "Admin@123")
+                                           .GetAwaiter().GetResult();
                     if (result.Succeeded)
                     {
-                        await userManager.AddToRoleAsync(admin, "Admin");
+                        userManager.AddToRoleAsync(admin, "Admin")
+                                   .GetAwaiter().GetResult();
+                    }
+                }
+
+                // Instructor
+                var instructorEmail = "instructor@gmail.com";
+                if (userManager.FindByEmailAsync(instructorEmail).GetAwaiter().GetResult() == null)
+                {
+                    var instructor = new QuizSystemUser
+                    {
+                        FirstName = "Instructor",
+                        LastName = "Test",
+                        UserName = instructorEmail,
+                        Email = instructorEmail,
+                        EmailConfirmed = true
+                    };
+
+                    var result = userManager.CreateAsync(instructor, "Instructor@123")
+                                           .GetAwaiter().GetResult();
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(instructor, "Instructor")
+                                   .GetAwaiter().GetResult();
+                    }
+                }
+
+                // Student
+                var studentEmail = "student@gmail.com";
+                if (userManager.FindByEmailAsync(studentEmail).GetAwaiter().GetResult() == null)
+                {
+                    var student = new QuizSystemUser
+                    {
+                        FirstName = "Student",
+                        LastName = "Test",
+                        UserName = studentEmail,
+                        Email = studentEmail,
+                        EmailConfirmed = true
+                    };
+
+                    var result = userManager.CreateAsync(student, "Student@123")
+                                           .GetAwaiter().GetResult();
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(student, "Student")
+                                   .GetAwaiter().GetResult();
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Database seeding failed");
+                _logger.LogError(ex, "Database seeding failed");
             }
         }
     }

@@ -12,8 +12,8 @@ using QuizSystemRepository.Data;
 namespace QuizSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251223122736_ChangedtableNames")]
-    partial class ChangedtableNames
+    [Migration("20251224054342_admindetails")]
+    partial class admindetails
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -4,7 +4,7 @@ namespace QuizSystemModel.Models
 {
     public class QuizSystemUser : IdentityUser<long>
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
     }
 }
