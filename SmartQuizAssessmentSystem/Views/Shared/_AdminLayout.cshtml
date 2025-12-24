@@ -1,7 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -47,18 +46,9 @@
             <h5 class="text-center mb-4">ADMIN</h5>
 
             <a asp-controller="Admin" asp-action="Dashboard" class="active">Dashboard</a>
-            <a asp-controller="Admin" asp-action="Instructors">Instructors</a>
-            <a asp-controller="Admin" asp-action="Students">Students</a>
-            <a asp-controller="Admin" asp-action="Classes">Classes</a>
-            <a asp-controller="Admin" asp-action="Subjects">Subjects</a>
-            <a asp-controller="Admin" asp-action="Quizzes">Quizzes</a>
-            <a asp-controller="Admin" asp-action="Questions">Questions</a>
-            <a asp-controller="Admin" asp-action="QuestionBank">Question Bank</a>
-            <a asp-controller="Admin" asp-action="AssignInstructor">Assign Instructor</a>
-            <a asp-controller="Admin" asp-action="Profile">My Profile</a>
+            <a asp-controller="Subject" asp-action="Index">Subjects</a>
+            
         </div>
-
-        <!-- MAIN CONTENT -->
         <div class="flex-grow-1">
 
             <!-- TOP BAR -->
@@ -66,8 +56,6 @@
                 <input class="form-control w-25" placeholder="Search..." />
                 <span>Admin</span>
             </div>
-
-            <!-- PAGE CONTENT -->
             <div class="p-4">
                 @RenderBody()
             </div>

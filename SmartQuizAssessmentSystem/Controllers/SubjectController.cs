@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
-    public class AdminController : Controller
+    public class SubjectController : Controller
     {
-        [Authorize(Roles = "Admin")]
-        public IActionResult Dashboard()
+        public IActionResult Index()
         {
             return View();
         }
+
     }
 }
