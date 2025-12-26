@@ -91,12 +91,11 @@ namespace SmartQuizAssessmentSystem.Controllers
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
+            string[] roles = { "Admin", "Instructor", "Student" };
 
             if (result.Succeeded)
-            {
-          
-                await userManager.AddToRoleAsync(user, "User");
-
+            {  
+                await userManager.AddToRoleAsync(user, "roles");
                 await signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Login", "Account");
             }

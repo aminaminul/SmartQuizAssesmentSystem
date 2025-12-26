@@ -1,20 +1,20 @@
-﻿.account-container{
+﻿.account-container {
     background-image: url('../Images/Login.jpg');
     background-size:cover;
     background-position:center;
-    background-repeat: repeat-y;
+    background-repeat:repeat-y;
     display:flex;
     justify-content:center;
     align-items:center;
-    min-height: 100vh;
-    padding: 2rem 0;
+    min-height:100vh;
+    padding:2rem 0;
 }
 
-.account-box{
-    background-color: floralwhite;
+.account-box {
+    background-color:floralwhite;
     padding:30px;
     border-radius:10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    box-shadow:0 0 10px rgba(0,0,0,0.3);
     max-width:500px;
     width:100%;
     opacity:.9;
