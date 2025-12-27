@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
+using QuizSystemService;
 using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
-using QuizSystemService;
+using SmartQuizAssessmentSystem.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,8 @@ builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ISeedService, SeedService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
 
 var app = builder.Build();
 
@@ -45,6 +48,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();

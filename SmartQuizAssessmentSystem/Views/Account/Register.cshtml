@@ -10,7 +10,6 @@
     <div class="account-box">
         @if (string.IsNullOrEmpty(Model?.RegistrationType))
         {
-            <!-- CHOOSE USER TYPE -->
             <h2 class="text-center mb-4">Register</h2>
             <p class="text-center">Select How You Want To Register.</p>
 
@@ -45,15 +44,14 @@
                 </a>
             </div>
         }
-
         else if (Model.RegistrationType == "Student")
         {
             <h2 class="text-center mb-4">Student Registration</h2>
 
             <form asp-controller="Account" asp-action="Register" method="post">
                 @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div> 
-                
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                 <input type="hidden" asp-for="RegistrationType" value="Student" />
                 <input type="hidden" asp-for="Role" value="Student" />
 
@@ -187,9 +185,8 @@
     </div>
 </div>
 
-@section Scripts 
-{
+@section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
