@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
+using QuizSystemRepository.Data;
+
 namespace SmartQuizAssessmentSystem.Controllers
 {
     public class AccountController : Controller
@@ -9,13 +12,17 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly SignInManager<QuizSystemUser> signInManager;
         private readonly UserManager<QuizSystemUser> userManager;
         private readonly RoleManager<QuizSystemRole> roleManager;
+        private readonly AppDbContext context;
 
-        public AccountController(SignInManager<QuizSystemUser> signInManager, UserManager<QuizSystemUser> userManager, RoleManager<QuizSystemRole> roleManager)
+        public AccountController(SignInManager<QuizSystemUser> signInManager,UserManager<QuizSystemUser> userManager,RoleManager<QuizSystemRole> roleManager,AppDbContext context)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.context = context;
         }
+
+        //LOGIN
 
         [HttpGet]
         public IActionResult Login()
@@ -51,7 +58,6 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            //CHECK ROLE (SAFE)
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 return RedirectToAction("Dashboard", "Admin");
@@ -66,18 +72,34 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
+        //REGISTER
+
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            var model = new RegisterViewModel();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrEmpty(model.FirstName) && !string.IsNullOrEmpty(model.RegistrationType))
             {
+                if (model.RegistrationType == "Student")
+                    model.Role = "Student";
+                else if (model.RegistrationType == "Instructor")
+                    model.Role = "Instructor";
+                return View(model);
+            }
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (model.Role != "Student" && model.Role != "Instructor")
+            {
+                ModelState.AddModelError("Role", "Invalid role selection.");
                 return View(model);
             }
 
@@ -86,27 +108,59 @@ namespace SmartQuizAssessmentSystem.Controllers
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 UserName = model.Email,
-                Email = model.Email,
-                
+                Email = model.Email
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
-            string[] roles = { "Admin", "Instructor", "Student" };
 
-            if (result.Succeeded)
-            {  
-                await userManager.AddToRoleAsync(user, "roles");
-                await signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Login", "Account");
-            }
-
-            foreach (var error in result.Errors)
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return View(model);
             }
 
-            return View(model);
+            await userManager.AddToRoleAsync(user, model.Role);
+
+            //Student
+            if (model.Role == "Student")
+            {
+                var student = new Student
+                {
+                    Name = $"{model.FirstName} {model.LastName}",
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    Status = ModelStatus.Active,
+                };
+                context.Student.Add(student);
+            }
+            //Instructor
+            else if (model.Role == "Instructor")
+            {
+                var instructor = new Instructor
+                {
+                    Name = $"{model.FirstName} {model.LastName}",
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    HscPassingInstrutute = model.HscPassingInstitute,
+                    HscGrade = model.HscGrade,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    Status = ModelStatus.Active,
+                    EducationMedium = model.EducationMediumId
+                };
+                context.Instructor.Add(instructor);
+            }
+
+            await context.SaveChangesAsync();
+
+            await signInManager.SignInAsync(user, isPersistent: false);
+            return RedirectToAction("Login", "Account");
         }
+
+        //VERIFY EMAIL
 
         [HttpGet]
         public IActionResult VerifyEmail()
@@ -136,6 +190,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
+        //CHANGE PASSWORD
         [HttpGet]
         public IActionResult ChangePassword(string username)
         {
@@ -148,6 +203,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -180,6 +236,8 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
         }
+
+        //LOGOUT 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
