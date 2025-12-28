@@ -21,6 +21,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
+        //Education Medium Index
         public IActionResult Index(long? selectedMediumId)
         {
             var mediums = _context.EducationMedium.ToList();
@@ -43,6 +44,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View();
         }
 
+
+        // Create New Education Medium
         public IActionResult Create()
         {
             return View();
@@ -60,7 +63,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (exists)
             {
-                ModelState.AddModelError("Name", "This education medium already exists.");
+                ModelState.AddModelError("Name", "This Education Medium Already Exists.");
                 return View(model);
             }
 
@@ -77,6 +80,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        //Edit Education Medium
         public IActionResult Edit(long id)
         {
             var medium = _context.EducationMedium.Find(id);
@@ -110,6 +115,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        //Delete Education Medium
         public IActionResult Delete(long id)
         {
             var medium = _context.EducationMedium
@@ -141,6 +148,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        //Approve Education Medium
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Approve(long id)
@@ -161,6 +170,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        //Reject Education Medium
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Reject(long id)

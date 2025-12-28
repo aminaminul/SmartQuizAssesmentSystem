@@ -22,6 +22,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
+        //Index of Class
         public IActionResult Index(long? educationMediumId)
         {
             var classes = _context.Class
@@ -40,6 +41,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(classes.ToList());
         }
 
+
+    //Create New Class
         public IActionResult Create()
         {
             var mediums = _context.EducationMedium.ToList();
@@ -64,6 +67,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (model.EducationMedium != null && model.EducationMedium.Id != 0)
                 mediumId = model.EducationMedium.Id;
 
+            //Check Logic if Exists
             bool exists = _context.Class
                 .Include(c => c.EducationMedium)
                 .Any(c =>
@@ -73,7 +77,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (exists)
             {
-                ModelState.AddModelError("Name", "This class already exists for the selected education medium.");
+                ModelState.AddModelError("Name", "This Class Already Exists For The Selected Education Medium.");
                 var mediums = _context.EducationMedium.ToList();
                 ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
                     mediums, "Id", "Name", educationMediumId);
@@ -99,7 +103,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        //Edit Class
         public IActionResult Edit(long id)
         {
             var cls = _context.Class.Find(id);
@@ -126,6 +130,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //Show Class Details
         public IActionResult Details(long id)
         {
             var cls = _context.Class
@@ -135,6 +140,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(cls);
         }
 
+
+        //Delete Class
         public IActionResult Delete(long id)
         {
             var cls = _context.Class
@@ -156,6 +163,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        //Approved Class
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Approve(long id)
@@ -174,6 +183,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        //Rejected Class
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Reject(long id)
