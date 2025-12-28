@@ -47,7 +47,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Admin");
         }
 
         // REGISTER

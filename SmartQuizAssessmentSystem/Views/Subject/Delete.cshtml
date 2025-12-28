@@ -1,0 +1,24 @@
+﻿@model QuizSystemModel.Models.Subject
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    ViewData["Title"] = "Delete Subject";
+}
+
+<h4>Delete Subject</h4>
+
+<h5>Are you sure you want to delete this subject?</h5>
+
+<div class="mb-3">
+    <strong>Name:</strong> @Model.Name
+</div>
+<div class="mb-3">
+    <strong>Approved:</strong> @(Model.IsApproved ? "Yes" : "No")
+</div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
