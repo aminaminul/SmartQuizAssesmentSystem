@@ -60,6 +60,26 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
+            long? mediumId = educationMediumId;
+            if (model.EducationMedium != null && model.EducationMedium.Id != 0)
+                mediumId = model.EducationMedium.Id;
+
+            bool exists = _context.Class
+                .Include(c => c.EducationMedium)
+                .Any(c =>
+                    c.Name.ToLower() == model.Name.ToLower() &&
+                    c.EducationMedium != null &&
+                    c.EducationMedium.Id == mediumId);
+
+            if (exists)
+            {
+                ModelState.AddModelError("Name", "This class already exists for the selected education medium.");
+                var mediums = _context.EducationMedium.ToList();
+                ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                    mediums, "Id", "Name", educationMediumId);
+                return View(model);
+            }
+
             var currentUser = _userManager.GetUserAsync(User).Result;
 
             model.CreatedAt = DateTime.UtcNow;
@@ -67,9 +87,9 @@ namespace SmartQuizAssessmentSystem.Controllers
             model.IsApproved = false;
             model.CreatedBy = currentUser;
 
-            if (educationMediumId.HasValue)
+            if (mediumId.HasValue)
             {
-                var medium = _context.EducationMedium.Find(educationMediumId.Value);
+                var medium = _context.EducationMedium.Find(mediumId.Value);
                 model.EducationMedium = medium;
             }
 
@@ -78,8 +98,8 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        
-        
+
+
         public IActionResult Edit(long id)
         {
             var cls = _context.Class.Find(id);
