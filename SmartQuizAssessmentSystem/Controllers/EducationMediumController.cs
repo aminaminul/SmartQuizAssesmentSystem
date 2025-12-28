@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
+using System.Linq;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -20,10 +21,26 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(long? selectedMediumId)
         {
             var mediums = _context.EducationMedium.ToList();
-            return View(mediums);
+            ViewBag.Mediums = mediums;
+            ViewBag.SelectedMediumId = selectedMediumId;
+
+            var classes = Enumerable.Empty<Class>().ToList();
+
+            if (selectedMediumId.HasValue)
+            {
+                classes = _context.Class
+                    .Include(c => c.EducationMedium)
+                    .Where(c => c.EducationMedium != null &&
+                                c.EducationMedium.Id == selectedMediumId.Value)
+                    .ToList();
+            }
+
+            ViewBag.Classes = classes;
+
+            return View();
         }
 
         public IActionResult Create()
@@ -37,6 +54,15 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            bool exists = _context.EducationMedium
+                .Any(m => m.Name.ToLower() == model.Name.ToLower());
+
+            if (exists)
+            {
+                ModelState.AddModelError("Name", "This education medium already exists.");
+                return View(model);
+            }
 
             var currentUser = _userManager.GetUserAsync(User).Result;
 
@@ -70,10 +96,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var existing = _context.EducationMedium
-                .Include(m => m.CreatedBy)
-                .FirstOrDefault(m => m.Id == id);
-
+            var existing = _context.EducationMedium.Find(id);
             if (existing == null)
                 return NotFound();
 
@@ -105,20 +128,17 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (medium == null)
                 return NotFound();
 
+            var relatedClasses = _context.Class
+                .Include(c => c.EducationMedium)
+                .Where(c => c.EducationMedium != null && c.EducationMedium.Id == id)
+                .ToList();
+
+            _context.Class.RemoveRange(relatedClasses);
+
             _context.EducationMedium.Remove(medium);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
-        }
-
-        public IActionResult Details(long id)
-        {
-            var medium = _context.EducationMedium
-                .FirstOrDefault(m => m.Id == id);
-            if (medium == null)
-                return NotFound();
-
-            return View(medium);
         }
 
         [HttpPost]
