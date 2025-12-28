@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.BusinessRules;
+using QuizSystemModel.ViewModels;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
-using System.Linq;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -22,7 +22,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        //Index of Class
+        //Class Index
         public IActionResult Index(long? educationMediumId)
         {
             var classes = _context.Class
@@ -36,68 +36,66 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
 
             var mediums = _context.EducationMedium.ToList();
-            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", educationMediumId);
+            ViewBag.EducationMediumId = new SelectList(
+                mediums, "Id", "Name", educationMediumId);
 
             return View(classes.ToList());
         }
 
-
-    //Create New Class
+        //Class Create
         public IActionResult Create()
         {
-            var mediums = _context.EducationMedium.ToList();
-            ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                mediums, "Id", "Name");
-            return View();
+            var vm = new ClassMediumView();
+            return View(vm);
         }
 
+        //Class Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Class model, long? educationMediumId)
+        public IActionResult Create(ClassMediumView model)
         {
             if (!ModelState.IsValid)
-            {
-                var mediums = _context.EducationMedium.ToList();
-                ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                    mediums, "Id", "Name", educationMediumId);
                 return View(model);
-            }
-
-            long? mediumId = educationMediumId;
-            if (model.EducationMedium != null && model.EducationMedium.Id != 0)
-                mediumId = model.EducationMedium.Id;
-
-            //Check Logic if Exists
-            bool exists = _context.Class
-                .Include(c => c.EducationMedium)
-                .Any(c =>
-                    c.Name.ToLower() == model.Name.ToLower() &&
-                    c.EducationMedium != null &&
-                    c.EducationMedium.Id == mediumId);
-
-            if (exists)
-            {
-                ModelState.AddModelError("Name", "This Class Already Exists For The Selected Education Medium.");
-                var mediums = _context.EducationMedium.ToList();
-                ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                    mediums, "Id", "Name", educationMediumId);
-                return View(model);
-            }
 
             var currentUser = _userManager.GetUserAsync(User).Result;
 
-            model.CreatedAt = DateTime.UtcNow;
-            model.Status = ModelStatus.Active;
-            model.IsApproved = false;
-            model.CreatedBy = currentUser;
+            var className = model.Class.ToString(); 
+            var mediumName = model.Medium.ToString();
 
-            if (mediumId.HasValue)
+            var medium = _context.EducationMedium
+                .FirstOrDefault(m => m.Name.ToLower() == mediumName.ToLower());
+
+            if (medium == null)
             {
-                var medium = _context.EducationMedium.Find(mediumId.Value);
-                model.EducationMedium = medium;
+                ModelState.AddModelError("Medium", "Selected Education Medium Does Not Exist. Please Create It First.");
+                return View(model);
             }
 
-            _context.Class.Add(model);
+            // Prevent Duplicate Class Under Same Medium
+            bool exists = _context.Class
+                .Include(c => c.EducationMedium)
+                .Any(c =>
+                    c.Name.ToLower() == className.ToLower() &&
+                    c.EducationMedium != null &&
+                    c.EducationMedium.Id == medium.Id);
+
+            if (exists)
+            {
+                ModelState.AddModelError("", "This Class Already Exists For The Selected Education Medium.");
+                return View(model);
+            }
+
+            var cls = new Class
+            {
+                Name = className,
+                EducationMedium = medium,
+                CreatedAt = DateTime.UtcNow,
+                Status = ModelStatus.Active,
+                IsApproved = false,
+                CreatedBy = currentUser
+            };
+
+            _context.Class.Add(cls);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
+using QuizSystemModel.ViewModels;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
-using System.Linq;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -21,7 +21,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        //Education Medium Index
+        //EducationMedium Index
         public IActionResult Index(long? selectedMediumId)
         {
             var mediums = _context.EducationMedium.ToList();
@@ -44,37 +44,45 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View();
         }
 
-
-        // Create New Education Medium
+        //EducationMedium Create
         public IActionResult Create()
         {
-            return View();
+            var vm = new ClassMediumView();
+            return View(vm);
         }
 
+        //EducationMedium Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(EducationMedium model)
+        public IActionResult Create(ClassMediumView model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
+            var mediumName = model.Medium.ToString();
+
+            // Prevent Duplicate Mediums
             bool exists = _context.EducationMedium
-                .Any(m => m.Name.ToLower() == model.Name.ToLower());
+                .Any(m => m.Name.ToLower() == mediumName.ToLower());
 
             if (exists)
             {
-                ModelState.AddModelError("Name", "This Education Medium Already Exists.");
+                ModelState.AddModelError("", "This Education Medium Already Exists.");
                 return View(model);
             }
 
             var currentUser = _userManager.GetUserAsync(User).Result;
 
-            model.CreatedAt = DateTime.UtcNow;
-            model.Status = ModelStatus.Active;
-            model.IsApproved = false;
-            model.CreatedBy = currentUser;
+            var entity = new EducationMedium
+            {
+                Name = mediumName,
+                CreatedAt = DateTime.UtcNow,
+                Status = ModelStatus.Active,
+                IsApproved = false,
+                CreatedBy = currentUser
+            };
 
-            _context.EducationMedium.Add(model);
+            _context.EducationMedium.Add(entity);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
