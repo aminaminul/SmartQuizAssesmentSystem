@@ -45,60 +45,77 @@ namespace SmartQuizAssessmentSystem.Controllers
         //Class Create
         public IActionResult Create()
         {
-            var vm = new ClassMediumView();
-            return View(vm);
+            PopulateEducationMediumDropdown();
+            return View();
         }
 
-        //Class Create
+        // Class Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ClassMediumView model)
+        public IActionResult Create(Class model, long? educationMediumId)
         {
             if (!ModelState.IsValid)
-                return View(model);
-
-            var currentUser = _userManager.GetUserAsync(User).Result;
-
-            var className = model.Class.ToString(); 
-            var mediumName = model.Medium.ToString();
-
-            var medium = _context.EducationMedium
-                .FirstOrDefault(m => m.Name.ToLower() == mediumName.ToLower());
-
-            if (medium == null)
             {
-                ModelState.AddModelError("Medium", "Selected Education Medium Does Not Exist. Please Create It First.");
+                PopulateEducationMediumDropdown(educationMediumId);
                 return View(model);
             }
 
-            // Prevent Duplicate Class Under Same Medium
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                ModelState.AddModelError("Name", "Class name is required.");
+                PopulateEducationMediumDropdown(educationMediumId);
+                return View(model);
+            }
+
+            if (!educationMediumId.HasValue)
+            {
+                ModelState.AddModelError("", "Please select an education medium.");
+                PopulateEducationMediumDropdown(educationMediumId);
+                return View(model);
+            }
+
+            var medium = _context.EducationMedium.Find(educationMediumId.Value);
+            if (medium == null)
+            {
+                ModelState.AddModelError("", "Selected education medium does not exist.");
+                PopulateEducationMediumDropdown(educationMediumId);
+                return View(model);
+            }
+
+            // Prevent duplicate class name under same medium
             bool exists = _context.Class
                 .Include(c => c.EducationMedium)
                 .Any(c =>
-                    c.Name.ToLower() == className.ToLower() &&
+                    c.Name.ToLower() == model.Name.ToLower() &&
                     c.EducationMedium != null &&
                     c.EducationMedium.Id == medium.Id);
 
             if (exists)
             {
-                ModelState.AddModelError("", "This Class Already Exists For The Selected Education Medium.");
+                ModelState.AddModelError("Name", "This class already exists for the selected education medium.");
+                PopulateEducationMediumDropdown(educationMediumId);
                 return View(model);
             }
 
-            var cls = new Class
-            {
-                Name = className,
-                EducationMedium = medium,
-                CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
-                IsApproved = false,
-                CreatedBy = currentUser
-            };
+            var currentUser = _userManager.GetUserAsync(User).Result;
 
-            _context.Class.Add(cls);
+            model.CreatedAt = DateTime.UtcNow;
+            model.Status = ModelStatus.Active;
+            model.IsApproved = false;
+            model.CreatedBy = currentUser;
+            model.EducationMedium = medium;
+
+            _context.Class.Add(model);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateEducationMediumDropdown(long? selectedId = null)
+        {
+            var mediums = _context.EducationMedium.ToList();
+            ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                mediums, "Id", "Name", selectedId);
         }
 
         //Edit Class

@@ -47,46 +47,46 @@ namespace SmartQuizAssessmentSystem.Controllers
         //EducationMedium Create
         public IActionResult Create()
         {
-            var vm = new ClassMediumView();
-            return View(vm);
+            return View();
         }
 
         //EducationMedium Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ClassMediumView model)
+        public IActionResult Create(EducationMedium model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var mediumName = model.Medium.ToString();
+            if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                ModelState.AddModelError("Name", "Name is required.");
+                return View(model);
+            }
 
-            // Prevent Duplicate Mediums
+            // Prevent Duplicate Medium Names
             bool exists = _context.EducationMedium
-                .Any(m => m.Name.ToLower() == mediumName.ToLower());
+                .Any(m => m.Name.ToLower() == model.Name.ToLower());
 
             if (exists)
             {
-                ModelState.AddModelError("", "This Education Medium Already Exists.");
+                ModelState.AddModelError("Name", "This education medium already exists.");
                 return View(model);
             }
 
             var currentUser = _userManager.GetUserAsync(User).Result;
 
-            var entity = new EducationMedium
-            {
-                Name = mediumName,
-                CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
-                IsApproved = false,
-                CreatedBy = currentUser
-            };
+            model.CreatedAt = DateTime.UtcNow;
+            model.Status = ModelStatus.Active;
+            model.IsApproved = false;
+            model.CreatedBy = currentUser;
 
-            _context.EducationMedium.Add(entity);
+            _context.EducationMedium.Add(model);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }
+
 
 
         //Edit Education Medium
@@ -155,7 +155,6 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
 
         //Approve Education Medium
         [HttpPost]
