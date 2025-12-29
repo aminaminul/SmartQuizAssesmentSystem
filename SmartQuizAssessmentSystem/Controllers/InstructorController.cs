@@ -26,9 +26,12 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             var instructors = _context.Instructor
                 .Include(i => i.EducationMedium)
+                .Where(i => i.Status != ModelStatus.Deleted)
                 .ToList();
+
             return View(instructors);
         }
+
 
         //Instructor Create
         public IActionResult Create()
@@ -227,7 +230,10 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (instructor == null)
                 return NotFound();
 
-            _context.Instructor.Remove(instructor);
+            instructor.Status = ModelStatus.Deleted;
+            instructor.ModifiedAt = DateTime.UtcNow;
+
+            _context.Instructor.Update(instructor);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
