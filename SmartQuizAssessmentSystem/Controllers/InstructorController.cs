@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 using QuizSystemRepository.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -14,11 +16,13 @@ namespace SmartQuizAssessmentSystem.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<QuizSystemUser> _userManager;
+        private readonly RoleManager<QuizSystemRole> _roleManager;
 
-        public InstructorController(AppDbContext context, UserManager<QuizSystemUser> userManager)
+        public InstructorController(AppDbContext context,RoleManager<QuizSystemRole> rolemanager, UserManager<QuizSystemUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = rolemanager;
         }
 
         //Instructor
@@ -37,17 +41,20 @@ namespace SmartQuizAssessmentSystem.Controllers
         public IActionResult Create()
         {
             PopulateEducationMediumDropdown();
-            return View();
+            var vm = new RegisterViewModel();
+            return View(vm);
         }
 
         //Instructor Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Instructor model, long? educationMediumId)
+
+        public async Task<IActionResult> Create(RegisterViewModel model)
         {
+
             if (!ModelState.IsValid)
             {
-                PopulateEducationMediumDropdown(educationMediumId);
+                PopulateEducationMediumDropdown(model.EducationMediumId);
                 return View(model);
             }
 
@@ -55,56 +62,90 @@ namespace SmartQuizAssessmentSystem.Controllers
                 ModelState.AddModelError("Email", "Email Is Required.");
             if (string.IsNullOrWhiteSpace(model.PhoneNumber))
                 ModelState.AddModelError("PhoneNumber", "Phone Number Is Required.");
+            if (string.IsNullOrWhiteSpace(model.Password))
+                ModelState.AddModelError("Password", "Password Is Required.");
 
-            if (!ModelState.IsValid)
-            {
-                PopulateEducationMediumDropdown(educationMediumId);
-                return View(model);
-            }
-
-            //Duplicate Email
             bool emailExists = _context.Instructor
                 .Any(i => i.Email != null &&
                           i.Email.ToLower() == model.Email.ToLower());
-
             if (emailExists)
-            {
                 ModelState.AddModelError("Email", "This Email Is Already Used By Another Instructor.");
-            }
 
-            //Duplicate Phone
             bool phoneExists = _context.Instructor
                 .Any(i => i.PhoneNumber != null &&
                           i.PhoneNumber == model.PhoneNumber);
-
             if (phoneExists)
-            {
                 ModelState.AddModelError("PhoneNumber", "This Phone Number Is Already Used By Another Instructor.");
-            }
 
+            // stop here if any validation error
             if (!ModelState.IsValid)
             {
-                PopulateEducationMediumDropdown(educationMediumId);
+                PopulateEducationMediumDropdown(model.EducationMediumId);
                 return View(model);
             }
 
-            var currentUser = _userManager.GetUserAsync(User).Result;
-
-            model.CreatedAt = DateTime.UtcNow;
-            model.Status = ModelStatus.Active;
-            model.CreatedBy = currentUser;
-
-            if (educationMediumId.HasValue)
+            // 1) Create Identity user
+            var user = new QuizSystemUser
             {
-                var medium = _context.EducationMedium.Find(educationMediumId.Value);
-                model.EducationMedium = medium;
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                UserName = model.Email,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
+            };
+
+            IdentityResult userResult = await _userManager.CreateAsync(user, model.Password);
+            if (!userResult.Succeeded)
+            {
+                foreach (var error in userResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+
+                PopulateEducationMediumDropdown(model.EducationMediumId);
+                return View(model);
             }
 
-            _context.Instructor.Add(model);
-            _context.SaveChanges();
+            // 2) Ensure role exists and add to role
+            if (!await _roleManager.RoleExistsAsync("Instructor"))
+            {
+                await _roleManager.CreateAsync(new QuizSystemRole { Name = "Instructor" });
+            }
+
+            IdentityResult roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
+            if (!roleResult.Succeeded)
+            {
+                foreach (var error in roleResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+
+                PopulateEducationMediumDropdown(model.EducationMediumId);
+                return View(model);
+            }
+
+            // 3) Create Instructor
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            var instructor = new Instructor
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                HscPassingInstrutute = model.HscPassingInstitute,
+                HscPassingYear = model.HscPassingYear,
+                HscGrade = model.HscGrade,
+                EducationMediumId = model.EducationMediumId,
+                UserId = user.Id,
+                CreatedAt = DateTime.UtcNow,
+                Status = ModelStatus.Active,
+                CreatedBy = currentUser
+            };
+
+            _context.Instructor.Add(instructor);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+
+
 
         //Instructor Edit
         public IActionResult Edit(long id)

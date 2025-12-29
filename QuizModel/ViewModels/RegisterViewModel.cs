@@ -1,5 +1,6 @@
 ﻿using QuizSystemModel.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QuizSystemModel.ViewModels
 {
@@ -16,13 +17,14 @@ namespace QuizSystemModel.ViewModels
         [DataType(DataType.Password), Compare("Password")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
-        public string Role { get; set; }
+        
+        public string? Role { get; set; }
         public string? RegistrationType { get; set; }
-        
-        
+
+
         // Student
-        public EducationMedium? EducationMediumId { get; set; }
+        public long? EducationMediumId { get; set; }
+        public EducationMedium? EducationMedium { get; set; }
         public Class? ClassId { get; set; }
 
         

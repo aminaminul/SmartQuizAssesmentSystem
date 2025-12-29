@@ -24,6 +24,7 @@ namespace QuizSystemModel.Models
         public string? HscGrade { get; set; }
         public long? UserId { get; set; }
         public QuizSystemUser? User { get; set; }
+        public long? EducationMediumId { get; set; }
         public EducationMedium? EducationMedium { get; set; }
     }
 }

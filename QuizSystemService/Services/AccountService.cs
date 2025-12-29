@@ -93,7 +93,7 @@ namespace SmartQuizAssessmentSystem.Services
                     UserId = user.Id,
                     CreatedAt = DateTime.UtcNow,
                     Status = ModelStatus.Active,
-                    EducationMedium = model.EducationMediumId
+                    EducationMedium = model.EducationMedium
                 };
                 _context.Instructor.Add(instructor);
             }
