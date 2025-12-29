@@ -13,8 +13,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly IAccountService _accountService;
 
         public AccountController(
-            SignInManager<QuizSystemUser> signInManager,
-            IAccountService accountService)
+            SignInManager<QuizSystemUser> signInManager,IAccountService accountService)
         {
             _signInManager = signInManager;
             _accountService = accountService;

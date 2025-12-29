@@ -82,7 +82,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            // Prevent duplicate class name under same medium
+            // Prevent Duplicate Class Name Under Same Medium
             bool exists = _context.Class
                 .Include(c => c.EducationMedium)
                 .Any(c =>

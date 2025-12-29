@@ -1,0 +1,27 @@
+﻿@model QuizSystemModel.Models.Instructor
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    ViewData["Title"] = "Delete Instructor";
+}
+
+<h4>Delete Instructor</h4>
+
+<h5>Are You Sure You Want To Delete This Instructor?</h5>
+
+<div class="mb-3">
+    <strong>Name:</strong> @Model.Name
+</div>
+<div class="mb-3">
+    <strong>Email:</strong> @Model.Email
+</div>
+<div class="mb-3">
+    <strong>Phone:</strong> @Model.PhoneNumber
+</div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

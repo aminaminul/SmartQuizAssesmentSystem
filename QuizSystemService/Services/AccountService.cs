@@ -14,10 +14,7 @@ namespace SmartQuizAssessmentSystem.Services
         private readonly RoleManager<QuizSystemRole> _roleManager;
         private readonly AppDbContext _context;
 
-        public AccountService(
-            UserManager<QuizSystemUser> userManager,
-            RoleManager<QuizSystemRole> roleManager,
-            AppDbContext context)
+        public AccountService(UserManager<QuizSystemUser> userManager,RoleManager<QuizSystemRole> roleManager,AppDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;

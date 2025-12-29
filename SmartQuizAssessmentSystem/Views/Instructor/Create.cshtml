@@ -1,0 +1,67 @@
+﻿@model QuizSystemModel.Models.Instructor
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    ViewData["Title"] = "Create Instructor";
+}
+
+<h4>Create Instructor</h4>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="HscPassingInstrutute" class="form-label"></label>
+        <input asp-for="HscPassingInstrutute" class="form-control" />
+        <span asp-validation-for="HscPassingInstrutute" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="HscPassingYear" class="form-label"></label>
+        <input asp-for="HscPassingYear" class="form-control" />
+        <span asp-validation-for="HscPassingYear" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="HscGrade" class="form-label"></label>
+        <input asp-for="HscGrade" class="form-control" />
+        <span asp-validation-for="HscGrade" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Education Medium</label>
+        <select name="educationMediumId" class="form-select"
+                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.EducationMediumId">
+            <option value="">Select Education Medium</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
