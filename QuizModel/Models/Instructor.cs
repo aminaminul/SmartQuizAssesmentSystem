@@ -10,7 +10,8 @@ namespace QuizSystemModel.Models
     public class Instructor
     {
         public long Id { get; set; }
-        public string Name { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public QuizSystemUser? CreatedBy { get; set; }
         public QuizSystemUser? ModifiedBy { get; set; }
         public DateTime CreatedAt { get; set; }

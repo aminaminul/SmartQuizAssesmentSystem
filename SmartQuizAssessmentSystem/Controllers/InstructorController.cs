@@ -165,7 +165,8 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            existing.Name = model.Name;
+            existing.FirstName = model.FirstName;
+            existing.LastName = model.LastName;
             existing.Email = model.Email;
             existing.PhoneNumber = model.PhoneNumber;
             existing.HscPassingInstrutute = model.HscPassingInstrutute;

@@ -69,7 +69,8 @@ namespace SmartQuizAssessmentSystem.Services
             {
                 var student = new Student
                 {
-                    Name = $"{model.FirstName} {model.LastName}",
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     UserId = user.Id,
@@ -81,8 +82,9 @@ namespace SmartQuizAssessmentSystem.Services
             else if (model.Role == "Instructor")
             {
                 var instructor = new Instructor
-                {
-                    Name = $"{model.FirstName} {model.LastName}",
+                { 
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     HscPassingInstrutute = model.HscPassingInstitute,
