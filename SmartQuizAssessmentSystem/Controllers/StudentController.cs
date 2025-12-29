@@ -2,13 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace SmartQuizAssessmentSystem.Controllers
-{
-    [Authorize(Roles ="Student")]
+{ 
     public class StudentController : Controller
     {
+        [Authorize(Roles = "Student")]
         public IActionResult Dashboard()
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index()
+        {
+            return View();
+        }
     }
+    
 }
