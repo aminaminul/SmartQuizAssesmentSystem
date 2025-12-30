@@ -14,43 +14,43 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="mb-3">
-        <label asp-for="FirstName" class="form-label"></label>
+        <label asp-for="FirstName" class="form-label">First Name</label>
         <input asp-for="FirstName" class="form-control" />
         <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="LastName" class="form-label"></label>
+        <label asp-for="LastName" class="form-label"> Last Name</label>
         <input asp-for="LastName" class="form-control" />
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
+        <label asp-for="Email" class="form-label">Email Address</label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="PhoneNumber" class="form-label"></label>
+        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
         <input asp-for="PhoneNumber" class="form-control" />
         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="HscPassingInstrutute" class="form-label"></label>
+        <label asp-for="HscPassingInstrutute" class="form-label">Hsc Passing Instrutute</label>
         <input asp-for="HscPassingInstrutute" class="form-control" />
         <span asp-validation-for="HscPassingInstrutute" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="HscPassingYear" class="form-label"></label>
+        <label asp-for="HscPassingYear" class="form-label">Hsc Passing Year</label>
         <input asp-for="HscPassingYear" class="form-control" />
         <span asp-validation-for="HscPassingYear" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="HscGrade" class="form-label"></label>
+        <label asp-for="HscGrade" class="form-label">Hsc Grade</label>
         <input asp-for="HscGrade" class="form-control" />
         <span asp-validation-for="HscGrade" class="text-danger"></span>
     </div>
@@ -59,7 +59,7 @@
         <label class="form-label">Education Medium</label>
         <select name="educationMediumId" class="form-select"
                 asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.EducationMediumId">
-            <option value="">-- Select Education Medium --</option>
+            <option value="">Select Education Medium</option>
         </select>
     </div>
 

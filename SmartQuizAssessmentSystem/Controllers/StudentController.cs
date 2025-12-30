@@ -57,17 +57,17 @@ namespace SmartQuizAssessmentSystem.Controllers
         public IActionResult Create()
         {
             PopulateDropdowns();
-            var vm = new StudentViewModel { Role = "Student" };
+            var vm = new StudentAddView { Role = "Student" };
             return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(StudentViewModel model)
+        public async Task<IActionResult> Create(StudentAddView model)
         {
             if (!ModelState.IsValid)
             {
-                PopulateDropdowns(model.EducationMediumId, model.ClassId);
+                PopulateDropdowns(model.EducationMediumId);
                 return View(model);
             }
 
@@ -84,7 +84,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                PopulateDropdowns(model.EducationMediumId, model.ClassId);
+                PopulateDropdowns(model.EducationMediumId);
                 return View(model);
             }
 
@@ -104,7 +104,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 foreach (var error in userResult.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
 
-                PopulateDropdowns(model.EducationMediumId, model.ClassId);
+                PopulateDropdowns(model.EducationMediumId);
                 return View(model);
             }
 
@@ -120,7 +120,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 foreach (var error in roleResult.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
 
-                PopulateDropdowns(model.EducationMediumId, model.ClassId);
+                PopulateDropdowns(model.EducationMediumId);
                 return View(model);
             }
 
@@ -134,7 +134,6 @@ namespace SmartQuizAssessmentSystem.Controllers
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 EducationMediumId = model.EducationMediumId,
-                ClassId = model.ClassId,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active,
@@ -259,9 +258,6 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
                 _context.EducationMedium.ToList(), "Id", "Name", educationMediumId);
-
-            ViewBag.ClassId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                _context.Class.ToList(), "Id", "Name", classId);
         }
     }
 }

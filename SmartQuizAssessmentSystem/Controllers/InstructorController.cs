@@ -41,7 +41,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         public IActionResult Create()
         {
             PopulateEducationMediumDropdown();
-            var vm = new RegisterViewModel();
+            var vm = new InstructorAddViewModel();
             return View(vm);
         }
 
@@ -49,7 +49,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> Create(RegisterViewModel model)
+        public async Task<IActionResult> Create(InstructorAddViewModel model)
         {
 
             if (!ModelState.IsValid)

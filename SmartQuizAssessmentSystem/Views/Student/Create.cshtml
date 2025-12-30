@@ -1,4 +1,4 @@
-﻿@model QuizSystemModel.ViewModels.StudentViewModel
+﻿@model QuizSystemModel.ViewModels.StudentAddView
 
 @{
     ViewData["Title"] = "Create Student";
@@ -43,16 +43,6 @@
             <option value="">Select Education Medium</option>
         </select>
         <span asp-validation-for="EducationMediumId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ClassId">Class</label>
-        <select asp-for="ClassId"
-                asp-items="ViewBag.ClassId"
-                class="form-control">
-            <option value="">Select Class</option>
-        </select>
-        <span asp-validation-for="ClassId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
