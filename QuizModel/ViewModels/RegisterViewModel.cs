@@ -27,20 +27,6 @@ namespace QuizSystemModel.ViewModels
         [DataType(DataType.Password), Compare("Password")]
         public string ConfirmPassword { get; set; }
 
-        
-        public string? Role { get; set; }
-        public string? RegistrationType { get; set; }
-
-
-        // Student
-        public long? EducationMediumId { get; set; }
-        public EducationMedium? EducationMedium { get; set; }
-        public long? ClassId { get; set; }  
-        public Class? Class { get; set; }
-
-
-
-        // Instructor
         [Required, Phone]
         [RegularExpression(@"^\+?\d{10,15}$",ErrorMessage = "Invalid Phone Number")]
         public string PhoneNumber { get; set; }
@@ -57,5 +43,11 @@ namespace QuizSystemModel.ViewModels
         [Required]
         [RegularExpression(@"^(5(\.0{1,2})?|[0-4](\.\d{1,2})?)$",ErrorMessage = "Invalid GPA")]
         public string HscGrade { get; set; }
+        public string? Role { get; set; }
+        public string? RegistrationType { get; set; }
+        public long? EducationMediumId { get; set; }
+        public EducationMedium? EducationMedium { get; set; }
+        public long? ClassId { get; set; }
+        public Class? Class { get; set; }
     }
 }
