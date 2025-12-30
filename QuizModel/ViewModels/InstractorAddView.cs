@@ -39,7 +39,7 @@ namespace QuizSystemModel.ViewModels
         public long? HscPassingYear { get; set; }
 
         [Required]
-        [RegularExpression(@"^(5(\\.0{1,2})?|[0-4](\\.\\d{1,2})?)$", ErrorMessage = "Invalid GPA")]
+        [Range(4.00, 5.00, ErrorMessage = "GPA must be between 4.00 and 5.00")]
         public string HscGrade { get; set; }
 
         public string? Role { get; set; }

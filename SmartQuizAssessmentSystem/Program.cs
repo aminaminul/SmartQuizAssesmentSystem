@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using QuizSystemModel.Repositories;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
-using QuizSystemService;
+using QuizSystemRepository.Repositories;
 using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
 using SmartQuizAssessmentSystem.Services;
@@ -33,6 +34,8 @@ builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
 builder.Services.AddScoped<ISeedService, SeedService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<IInstructorService, InstructorService>();
 
 var app = builder.Build();
 
