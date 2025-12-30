@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
-using QuizSystemModel.Repositories;
+using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
 

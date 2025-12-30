@@ -1,166 +1,90 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using QuizSystemModel.BusinessRules;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
-using QuizSystemRepository.Data;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class StudentController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IStudentService _studentService;
         private readonly UserManager<QuizSystemUser> _userManager;
-        private readonly RoleManager<QuizSystemRole> _roleManager;
 
         public StudentController(
-            AppDbContext context,
-            UserManager<QuizSystemUser> userManager,
-            RoleManager<QuizSystemRole> roleManager)
+            IStudentService studentService,
+            UserManager<QuizSystemUser> userManager)
         {
-            _context = context;
+            _studentService = studentService;
             _userManager = userManager;
-            _roleManager = roleManager;
         }
-        public IActionResult Index()
-        {
-            var students = _context.Student
-                .Include(s => s.EducationMedium)
-                .Include(s => s.Class)
-                .Where(s => s.Status != ModelStatus.Deleted)
-                .ToList();
 
+        // LIST
+        public async Task<IActionResult> Index()
+        {
+            var students = await _studentService.GetAllAsync();
             return View(students);
         }
 
-        public IActionResult Details(long id)
+        // DETAILS
+        public async Task<IActionResult> Details(long id)
         {
-            var student = _context.Student
-                .Include(s => s.EducationMedium)
-                .Include(s => s.Class)
-                .Include(s => s.User)
-                .FirstOrDefault(s => s.Id == id);
-
+            var student = await _studentService.GetByIdAsync(id, includeUser: true);
             if (student == null)
                 return NotFound();
 
             return View(student);
         }
 
-        // Create Student
-        public IActionResult Create()
+        // CREATE (GET)
+        public async Task<IActionResult> Create()
         {
-            PopulateDropdowns();
+            await PopulateDropdownsAsync();
             var vm = new StudentAddView { Role = "Student" };
             return View(vm);
         }
 
+        // CREATE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(StudentAddView model)
         {
             if (!ModelState.IsValid)
             {
-                PopulateDropdowns(model.EducationMediumId);
-                return View(model);
-            }
-
-            //Checks Duplicate Email and Phone Number
-            bool emailExists = _context.Student
-                .Any(s => s.Email != null && s.Email.ToLower() == model.Email!.ToLower());
-            if (emailExists)
-                ModelState.AddModelError("Email", "This Email Is Already Used By Another Student.");
-
-            bool phoneExists = _context.Student
-                .Any(s => s.PhoneNumber != null && s.PhoneNumber == model.PhoneNumber);
-            if (phoneExists)
-                ModelState.AddModelError("PhoneNumber", "This Phone Number Is Already Used By Another Student.");
-
-            if (!ModelState.IsValid)
-            {
-                PopulateDropdowns(model.EducationMediumId);
-                return View(model);
-            }
-
-            //Create Identity user
-            var user = new QuizSystemUser
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                UserName = model.Email,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber
-            };
-
-            var userResult = await _userManager.CreateAsync(user, model.Password!);
-            if (!userResult.Succeeded)
-            {
-                foreach (var error in userResult.Errors)
-                    ModelState.AddModelError(string.Empty, error.Description);
-
-                PopulateDropdowns(model.EducationMediumId);
-                return View(model);
-            }
-
-            //Ensure Roles
-            if (!await _roleManager.RoleExistsAsync(model.Role!))
-            {
-                await _roleManager.CreateAsync(new QuizSystemRole { Name = model.Role });
-            }
-
-            var roleResult = await _userManager.AddToRoleAsync(user, model.Role!);
-            if (!roleResult.Succeeded)
-            {
-                foreach (var error in roleResult.Errors)
-                    ModelState.AddModelError(string.Empty, error.Description);
-
-                PopulateDropdowns(model.EducationMediumId);
+                await PopulateDropdownsAsync(model.EducationMediumId);
                 return View(model);
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
 
-            //Create Student Entity
-            var student = new Student
+            try
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                EducationMediumId = model.EducationMediumId,
-                UserId = user.Id,
-                CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
-                CreatedBy = currentUser
-            };
-
-            _context.Student.Add(student);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+                await _studentService.CreateAsync(model, currentUser!);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateDropdownsAsync(model.EducationMediumId);
+                return View(model);
+            }
         }
 
-        // Update Student
-        public IActionResult Edit(long id)
+        // EDIT (GET)
+        public async Task<IActionResult> Edit(long id)
         {
-            var student = _context.Student
-                .Include(s => s.EducationMedium)
-                .Include(s => s.Class)
-                .FirstOrDefault(s => s.Id == id);
-
+            var student = await _studentService.GetByIdAsync(id);
             if (student == null)
                 return NotFound();
 
-            PopulateDropdowns(student.EducationMediumId, student.ClassId);
+            await PopulateDropdownsAsync(student.EducationMediumId, student.ClassId);
             return View(student);
         }
 
+        // EDIT (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, Student model, long? educationMediumId, long? classId)
@@ -170,94 +94,55 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                PopulateDropdowns(educationMediumId, classId);
+                await PopulateDropdownsAsync(educationMediumId, classId);
                 return View(model);
             }
 
-            var existing = _context.Student
-                .Include(s => s.EducationMedium)
-                .Include(s => s.Class)
-                .FirstOrDefault(s => s.Id == id);
-
-            if (existing == null)
-                return NotFound();
-
-            if (!string.IsNullOrWhiteSpace(model.Email))
+            try
             {
-                bool emailExists = _context.Student
-                    .Any(s => s.Id != id &&
-                              s.Email != null &&
-                              s.Email.ToLower() == model.Email.ToLower());
-                if (emailExists)
-                    ModelState.AddModelError("Email", "This email is already used by another student.");
+                var ok = await _studentService.UpdateAsync(id, model, educationMediumId, classId);
+                if (!ok)
+                    return NotFound();
+
+                return RedirectToAction(nameof(Index));
             }
-
-            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+            catch (InvalidOperationException ex)
             {
-                bool phoneExists = _context.Student
-                    .Any(s => s.Id != id &&
-                              s.PhoneNumber != null &&
-                              s.PhoneNumber == model.PhoneNumber);
-                if (phoneExists)
-                    ModelState.AddModelError("PhoneNumber", "This phone number is already used by another student.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                PopulateDropdowns(educationMediumId, classId);
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateDropdownsAsync(educationMediumId, classId);
                 return View(model);
             }
-
-            existing.FirstName = model.FirstName;
-            existing.LastName = model.LastName;
-            existing.Email = model.Email;
-            existing.PhoneNumber = model.PhoneNumber;
-            existing.Status = model.Status;
-            existing.ModifiedAt = DateTime.UtcNow;
-            existing.EducationMediumId = educationMediumId;
-            existing.ClassId = classId;
-
-            _context.Update(existing);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
         }
 
-        // Delete Student
-        public IActionResult Delete(long id)
+        // DELETE (GET)
+        public async Task<IActionResult> Delete(long id)
         {
-            var student = _context.Student
-                .Include(s => s.EducationMedium)
-                .Include(s => s.Class)
-                .FirstOrDefault(s => s.Id == id);
-
+            var student = await _studentService.GetByIdAsync(id);
             if (student == null)
                 return NotFound();
 
             return View(student);
         }
 
+        // DELETE (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var student = _context.Student.Find(id);
-            if (student == null)
+            var currentUser = await _userManager.GetUserAsync(User);
+            var ok = await _studentService.SoftDeleteAsync(id, currentUser!);
+            if (!ok)
                 return NotFound();
-
-            student.Status = ModelStatus.Deleted;
-            student.ModifiedAt = DateTime.UtcNow;
-
-            _context.Student.Update(student);
-            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
-
-        private void PopulateDropdowns(long? educationMediumId = null, long? classId = null)
+        private async Task PopulateDropdownsAsync(long? educationMediumId = null, long? classId = null)
         {
-            ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                _context.EducationMedium.ToList(), "Id", "Name", educationMediumId);
+            var mediums = await _studentService.GetEducationMediumsAsync();
+            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", educationMediumId);
+
+            var classes = await _studentService.GetClassesAsync();
+            ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
         }
     }
 }

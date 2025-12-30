@@ -7,14 +7,14 @@ using QuizSystemService.Interfaces;
 
 namespace QuizSystemService.Services
 {
-    public class InstructorService : IInstructorService
+    public class StudentService : IStudentService
     {
-        private readonly IInstructorRepository _repo;
+        private readonly IStudentRepository _repo;
         private readonly UserManager<QuizSystemUser> _userManager;
         private readonly RoleManager<QuizSystemRole> _roleManager;
 
-        public InstructorService(
-            IInstructorRepository repo,
+        public StudentService(
+            IStudentRepository repo,
             UserManager<QuizSystemUser> userManager,
             RoleManager<QuizSystemRole> roleManager)
         {
@@ -23,35 +23,26 @@ namespace QuizSystemService.Services
             _roleManager = roleManager;
         }
 
-        public async Task<List<Instructor>> GetAllAsync() 
-        { 
-            return await _repo.GetAllAsync(); 
-        } 
+        public Task<List<Student>> GetAllAsync() => _repo.GetAllAsync();
 
-        public async Task<Instructor?> GetByIdAsync(long id)
-        { 
-            return await _repo.GetByIdAsync(id); 
-        }
+        public Task<Student?> GetByIdAsync(long id, bool includeUser = false) =>
+            _repo.GetByIdAsync(id, includeUser);
 
-        public async Task<Instructor?> GetForEditAsync(long id)
+        public Task<List<EducationMedium>> GetEducationMediumsAsync() =>
+            _repo.GetEducationMediumsAsync();
+
+        public Task<List<Class>> GetClassesAsync() =>
+            _repo.GetClassesAsync();
+
+        public async Task<bool> CreateAsync(StudentAddView model, QuizSystemUser currentUser)
         {
-            return await _repo.GetByIdAsync(id);
-        }
-
-        public async Task<List<EducationMedium>> GetEducationMediumsAsync()
-        {
-            return await _repo.GetEducationMediumsAsync();
-        }
-
-        public async Task<bool> CreateAsync(InstructorAddViewModel model, QuizSystemUser currentUser)
-        {
-            // Email and Phone Verify
-            if (await _repo.EmailExistsAsync(model.Email))
-                throw new InvalidOperationException("This Email Is Already Used By Another Instructor.");
+            // Checks Duplicates
+            if (await _repo.EmailExistsAsync(model.Email!))
+                throw new InvalidOperationException("This Email Is Already Used By Another Student.");
 
             if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
                 await _repo.PhoneExistsAsync(model.PhoneNumber))
-                throw new InvalidOperationException("This Phone Number Is Already Used By Another Instructor.");
+                throw new InvalidOperationException("This Phone Number Is Already Used By Another Student.");
 
             // Identity user
             var user = new QuizSystemUser
@@ -63,42 +54,37 @@ namespace QuizSystemService.Services
                 PhoneNumber = model.PhoneNumber
             };
 
-            var userResult = await _userManager.CreateAsync(user, model.Password);
+            var userResult = await _userManager.CreateAsync(user, model.Password!);
             if (!userResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", userResult.Errors.Select(e => e.Description)));
 
-            //if (!await _roleManager.RoleExistsAsync("Instructor"))
-                //await _roleManager.CreateAsync(new QuizSystemRole { Name = "Instructor" });
+            var roleName = model.Role ?? "Student";
+            if (!await _roleManager.RoleExistsAsync(roleName))
+                await _roleManager.CreateAsync(new QuizSystemRole { Name = roleName });
 
-            var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
             if (!roleResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
 
-            // Instructor
-            var instructor = new Instructor
+            // Domain student
+            var student = new Student
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                HscPassingInstrutute = model.HscPassingInstitute,
-                HscPassingYear = model.HscPassingYear,
-                HscGrade = model.HscGrade,
                 EducationMediumId = model.EducationMediumId,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active,
-                CreatedBy = currentUser,
-                ModifiedBy= currentUser,
-                ModifiedAt= DateTime.UtcNow
-                
+                CreatedBy = currentUser
             };
 
-            await _repo.AddAsync(instructor);
+            await _repo.AddAsync(student);
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, Instructor model, long? educationMediumId)
+        public async Task<bool> UpdateAsync(long id, Student model, long? educationMediumId, long? classId)
         {
             var existing = await _repo.GetByIdAsync(id);
             if (existing == null)
@@ -106,23 +92,20 @@ namespace QuizSystemService.Services
 
             if (!string.IsNullOrWhiteSpace(model.Email) &&
                 await _repo.EmailExistsAsync(model.Email, id))
-                throw new InvalidOperationException("This Email Is Already Used By Another Instructor.");
+                throw new InvalidOperationException("This email is already used by another student.");
 
             if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
                 await _repo.PhoneExistsAsync(model.PhoneNumber, id))
-                throw new InvalidOperationException("This Phone Number Is Already Used By Another Instructor.");
+                throw new InvalidOperationException("This phone number is already used by another student.");
 
             existing.FirstName = model.FirstName;
             existing.LastName = model.LastName;
             existing.Email = model.Email;
             existing.PhoneNumber = model.PhoneNumber;
-            existing.HscPassingInstrutute = model.HscPassingInstrutute;
-            existing.HscPassingYear = model.HscPassingYear;
-            existing.HscGrade = model.HscGrade;
             existing.Status = model.Status;
-            existing.ModifiedBy = model.User;
             existing.ModifiedAt = DateTime.UtcNow;
             existing.EducationMediumId = educationMediumId;
+            existing.ClassId = classId;
 
             await _repo.UpdateAsync(existing);
             return true;
@@ -130,15 +113,15 @@ namespace QuizSystemService.Services
 
         public async Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser)
         {
-            var instructor = await _repo.GetByIdAsync(id);
-            if (instructor == null)
+            var student = await _repo.GetByIdAsync(id);
+            if (student == null)
                 return false;
 
-            instructor.Status = ModelStatus.Deleted;
-            instructor.ModifiedAt = DateTime.UtcNow;
-            instructor.ModifiedBy = currentUser;
+            student.Status = ModelStatus.Deleted;
+            student.ModifiedAt = DateTime.UtcNow;
+            student.ModifiedBy = currentUser;
 
-            await _repo.UpdateAsync(instructor);
+            await _repo.UpdateAsync(student);
             return true;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 
-namespace QuizSystemService.Services
+namespace QuizSystemService.Interfaces
 {
     public interface IInstructorService
     {
