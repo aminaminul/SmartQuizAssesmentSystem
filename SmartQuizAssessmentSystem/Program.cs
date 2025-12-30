@@ -18,9 +18,10 @@ builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlServer(conn));
 // Identity
 builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
 {
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 3;
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
-    options.Password.RequiredLength = 6;
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;

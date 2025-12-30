@@ -57,14 +57,6 @@ namespace SmartQuizAssessmentSystem.Controllers
                 PopulateEducationMediumDropdown(model.EducationMediumId);
                 return View(model);
             }
-
-            if (string.IsNullOrWhiteSpace(model.Email))
-                ModelState.AddModelError("Email", "Email Is Required.");
-            if (string.IsNullOrWhiteSpace(model.PhoneNumber))
-                ModelState.AddModelError("PhoneNumber", "Phone Number Is Required.");
-            if (string.IsNullOrWhiteSpace(model.Password))
-                ModelState.AddModelError("Password", "Password Is Required.");
-
             bool emailExists = _context.Instructor
                 .Any(i => i.Email != null &&
                           i.Email.ToLower() == model.Email.ToLower());
@@ -77,14 +69,14 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (phoneExists)
                 ModelState.AddModelError("PhoneNumber", "This Phone Number Is Already Used By Another Instructor.");
 
-            // stop here if any validation error
+
             if (!ModelState.IsValid)
             {
                 PopulateEducationMediumDropdown(model.EducationMediumId);
                 return View(model);
             }
 
-            // 1) Create Identity user
+            //Create Identity user
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -104,7 +96,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            // 2) Ensure role exists and add to role
+            //Ensure Role Exists And Add To Tole
             if (!await _roleManager.RoleExistsAsync("Instructor"))
             {
                 await _roleManager.CreateAsync(new QuizSystemRole { Name = "Instructor" });
@@ -120,7 +112,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            // 3) Create Instructor
+            //Create Instructor
             var currentUser = await _userManager.GetUserAsync(User);
 
             var instructor = new Instructor

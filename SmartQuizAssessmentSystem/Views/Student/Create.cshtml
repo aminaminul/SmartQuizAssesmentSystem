@@ -1,4 +1,4 @@
-﻿@model QuizSystemModel.ViewModels.StudentViewModel
+﻿@model QuizSystemModel.ViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Create Student";
 }
@@ -8,7 +8,7 @@
 <form asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     
-    <input type="hidden" asp-for="Role" value="Instructor" />
+    <input type="hidden" asp-for="Role" value="Student" />
 
     <div class="form-group">
         <label asp-for="FirstName"></label>

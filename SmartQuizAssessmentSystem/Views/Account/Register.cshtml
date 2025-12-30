@@ -13,24 +13,21 @@
             <h2 class="text-center mb-4">Register</h2>
             <p class="text-center">Select How You Want To Register.</p>
 
-            <div class="d-grid gap-2">
-                <form asp-controller="Account" asp-action="Register" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="RegistrationType" value="Student" />
-                    <button type="submit" class="btn btn-success w-100 p-2">
-                        Register as Student
-                    </button>
-                </form>
+            <form asp-controller="Account" asp-action="RegisterSelect" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="registrationType" value="Student" />
+                <button type="submit" class="btn btn-success w-100 p-2">
+                    Register as Student
+                </button>
+            </form>
 
-                <form asp-controller="Account" asp-action="Register" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="RegistrationType" value="Instructor" />
-                    <button type="submit" class="btn btn-secondary w-100">
-                        Register as Instructor
-                    </button>
-                </form>
-            </div>
-
+            <form asp-controller="Account" asp-action="RegisterSelect" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="registrationType" value="Instructor" />
+                <button type="submit" class="btn btn-secondary w-100">
+                    Register as Instructor
+                </button>
+            </form>
             <p class="text-center mt-3">
                 Already have an account?
                 <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
@@ -48,7 +45,7 @@
         {
             <h2 class="text-center mb-4">Student Registration</h2>
 
-            <form asp-controller="Account" asp-action="Register" method="post">
+            <form asp-controller="Account" asp-action="RegisterSubmit" method="post">
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -105,7 +102,7 @@
         {
             <h2 class="text-center mb-4">Instructor Registration</h2>
 
-            <form asp-controller="Account" asp-action="Register" method="post">
+            <form asp-controller="Account" asp-action="RegisterSubmit" method="post">
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

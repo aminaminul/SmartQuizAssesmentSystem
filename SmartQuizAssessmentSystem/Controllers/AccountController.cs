@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
-using SmartQuizAssessmentSystem.Services;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -13,7 +12,8 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly IAccountService _accountService;
 
         public AccountController(
-            SignInManager<QuizSystemUser> signInManager,IAccountService accountService)
+            SignInManager<QuizSystemUser> signInManager,
+            IAccountService accountService)
         {
             _signInManager = signInManager;
             _accountService = accountService;
@@ -51,32 +51,40 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         // REGISTER
 
+        // Student / Instructor
         [HttpGet]
         public IActionResult Register()
         {
-            return View(new RegisterViewModel());
+            var model = new RegisterViewModel();
+            ModelState.Clear();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public IActionResult RegisterSelect(string registrationType)
         {
-            //Student/Instructor
-            if (string.IsNullOrEmpty(model.FirstName) &&
-                !string.IsNullOrEmpty(model.RegistrationType))
+            var model = new RegisterViewModel
             {
-                model.Role = model.RegistrationType;
-                return View(model);
-            }
+                RegistrationType = registrationType,
+                Role = registrationType
+            };
+            ModelState.Clear();
+            return View("Register", model);
+        }
 
-            //Full form submission
+        //Full Form Submit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterSubmit(RegisterViewModel model)
+        {
             if (!ModelState.IsValid)
-                return View(model);
+                return View("Register", model);
 
             if (model.Role != "Student" && model.Role != "Instructor")
             {
-                ModelState.AddModelError("Role", "Invalid role selection.");
-                return View(model);
+                ModelState.AddModelError("Role", "Invalid Role Selection.");
+                return View("Register", model);
             }
 
             var result = await _accountService.RegisterAsync(model);
@@ -87,8 +95,10 @@ namespace SmartQuizAssessmentSystem.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return View(model);
+
+                return View("Register", model);
             }
+
             return RedirectToAction("Login", "Account");
         }
 
