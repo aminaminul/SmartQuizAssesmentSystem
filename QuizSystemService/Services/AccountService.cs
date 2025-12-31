@@ -23,7 +23,7 @@ namespace SmartQuizAssessmentSystem.Services
 
         public async Task<IdentityResult> RegisterAsync(RegisterViewModel model)
         {
-            //Ensure role exists
+            //Ensure Role Exists
             if (string.IsNullOrWhiteSpace(model.Role))
             {
                 return IdentityResult.Failed(new IdentityError
@@ -42,7 +42,7 @@ namespace SmartQuizAssessmentSystem.Services
                 }
             }
 
-            //Create Identity user
+            //Create Identity User
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -58,7 +58,7 @@ namespace SmartQuizAssessmentSystem.Services
                 return result;
             }
 
-            //Assign role
+            //Assign Role
             var roleAssignResult = await _userManager.AddToRoleAsync(user, model.Role);
             if (!roleAssignResult.Succeeded)
             {

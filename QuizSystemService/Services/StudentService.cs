@@ -66,7 +66,7 @@ namespace QuizSystemService.Services
             if (!roleResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
 
-            // Domain student
+            // Student
             var student = new Student
             {
                 FirstName = model.FirstName,

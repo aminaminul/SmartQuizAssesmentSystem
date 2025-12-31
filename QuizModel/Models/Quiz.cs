@@ -1,10 +1,4 @@
 ﻿using QuizSystemModel.BusinessRules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace QuizSystemModel.Models
 {
     public class Quiz
@@ -29,11 +23,11 @@ namespace QuizSystemModel.Models
         public ModelStatus Status { get; set; }
         public string Description { get; set; }
         public DateTime? StartAt { get; set; }
-        public DateTime? ÈndAt { get; set; }
+        public DateTime? EndAt { get; set; }
         public DateTime? Duration { get; set; }
         public int TotalMarks { get; set; }
         public decimal RequiredPassPercentage { get; set; }
-
-
+        public string Subject { get; set; }
+        public ICollection<QuestionBank> Questions { get; set; } = new List<QuestionBank>();
     }
 }

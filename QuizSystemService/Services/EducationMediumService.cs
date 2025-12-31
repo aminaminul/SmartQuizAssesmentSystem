@@ -62,20 +62,20 @@ namespace QuizSystemService.Services
             return true;
         }
 
-        // Medium + related classes soft delete
+        // Medium and Related Classes Soft Delete
         public async Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser)
         {
             var medium = await _mediumRepo.GetByIdAsync(id);
             if (medium == null)
                 return false;
 
-            // 1) medium
+            //Medium
             medium.Status = ModelStatus.Deleted;
             medium.ModifiedAt = DateTime.UtcNow;
             medium.ModifiedBy = currentUser;
             await _mediumRepo.UpdateAsync(medium);
 
-            // 2) related classes
+            //Related Classes
             var classes = await _classRepo.GetByMediumAsync(id);
             foreach (var cls in classes)
             {

@@ -1,10 +1,4 @@
 ﻿using QuizSystemModel.BusinessRules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace QuizSystemModel.Models
 {
     public class QuestionBank
@@ -16,6 +10,7 @@ namespace QuizSystemModel.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public ModelStatus Status { get; set; }
+        public long QuizId { get; set; }
         public Quiz Quiz { get; set; }
         public string QuestionText { get; set; }
         public string Description { get; set; }
@@ -24,7 +19,7 @@ namespace QuizSystemModel.Models
         public string OptionC { get; set; }
         public string OptionD { get; set; }
         public string RightOption { get; set; }
-        public int Markes { get; set; }
-
+        public int Marks { get; set; }
+        public string Subject { get; set; }
     }
 }

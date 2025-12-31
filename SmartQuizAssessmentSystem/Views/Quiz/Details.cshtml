@@ -1,0 +1,41 @@
+﻿@model QuizSystemModel.Models.Quiz
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    ViewData["Title"] = "Quiz Details";
+}
+
+<h2>Quiz Details</h2>
+
+<div class="mb-3">
+    <strong>Name:</strong> @Model.Name
+</div>
+<div class="mb-3">
+    <strong>Subject:</strong> @Model.Subject
+</div>
+<div class="mb-3">
+    <strong>Description:</strong> @Model.Description
+</div>
+<div class="mb-3">
+    <strong>Start:</strong> @Model.StartAt
+</div>
+<div class="mb-3">
+    <strong>End:</strong> @Model.EndAt
+</div>
+<div class="mb-3">
+    <strong>Total Marks:</strong> @Model.TotalMarks
+</div>
+<div class="mb-3">
+    <strong>Pass %:</strong> @Model.RequiredPassPercentage
+</div>
+<div class="mb-3">
+    <strong>Approved:</strong> @(Model.IsApproved ? "Yes" : "No")
+</div>
+<h4>Questions</h4>
+<p>
+    <a asp-controller="Question" asp-action="Index" asp-route-quizId="@Model.Id" class="btn btn-outline-primary">
+        View Questions
+    </a>
+</p>
+
+<a asp-action="Index" class="btn btn-secondary">Back</a>

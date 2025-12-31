@@ -53,7 +53,7 @@ namespace QuizSystemService.Services
                 await _repo.PhoneExistsAsync(model.PhoneNumber))
                 throw new InvalidOperationException("This Phone Number Is Already Used By Another Instructor.");
 
-            // Identity user
+            // Identity User
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -66,9 +66,6 @@ namespace QuizSystemService.Services
             var userResult = await _userManager.CreateAsync(user, model.Password);
             if (!userResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", userResult.Errors.Select(e => e.Description)));
-
-            //if (!await _roleManager.RoleExistsAsync("Instructor"))
-                //await _roleManager.CreateAsync(new QuizSystemRole { Name = "Instructor" });
 
             var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
             if (!roleResult.Succeeded)

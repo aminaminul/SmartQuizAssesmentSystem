@@ -1,5 +1,4 @@
-﻿// QuizSystemService/Interfaces/IClassService.cs
-using QuizSystemModel.Models;
+﻿using QuizSystemModel.Models;
 
 namespace QuizSystemService.Interfaces
 {

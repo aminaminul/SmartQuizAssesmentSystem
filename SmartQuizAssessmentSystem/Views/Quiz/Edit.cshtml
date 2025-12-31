@@ -1,0 +1,70 @@
+﻿@model QuizSystemModel.Models.Quiz
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    ViewData["Title"] = "Edit Quiz";
+}
+
+<h2>Edit Quiz</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Subject" class="form-label"></label>
+        <select asp-for="Subject" class="form-select">
+            <option>English</option>
+            <option>Bangla</option>
+            <option>Math</option>
+        </select>
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="StartAt" class="form-label"></label>
+            <input asp-for="StartAt" type="datetime-local" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="EndAt" class="form-label"></label>
+            <input asp-for="EndAt" type="datetime-local" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Duration (minutes)</label>
+            <input type="number" class="form-control" name="durationMinutes" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="TotalMarks" class="form-label"></label>
+            <input asp-for="TotalMarks" class="form-control" />
+            <span asp-validation-for="TotalMarks" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="RequiredPassPercentage" class="form-label"></label>
+            <input asp-for="RequiredPassPercentage" class="form-control" />
+            <span asp-validation-for="RequiredPassPercentage" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

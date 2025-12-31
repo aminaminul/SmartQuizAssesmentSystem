@@ -1,5 +1,4 @@
-﻿// QuizSystemService/Interfaces/IEducationMediumService.cs
-using QuizSystemModel.Models;
+﻿using QuizSystemModel.Models;
 
 namespace QuizSystemService.Interfaces
 {

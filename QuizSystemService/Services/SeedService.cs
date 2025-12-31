@@ -28,7 +28,7 @@ namespace QuizSystemService.Services
             {
                 _context.Database.Migrate();
 
-                // Roles
+                //Roles
                 string[] roles = { "Admin", "Instructor", "Student" };
                 foreach (var role in roles)
                 {
@@ -61,7 +61,7 @@ namespace QuizSystemService.Services
                     }
                 }
 
-                // Instructor
+                //Instructor
                 var instructorEmail = "instructor@gmail.com";
                 if (_userManager.FindByEmailAsync(instructorEmail).GetAwaiter().GetResult() == null)
                 {
@@ -83,7 +83,7 @@ namespace QuizSystemService.Services
                     }
                 }
 
-                // Student
+                //Student
                 var studentEmail = "student@gmail.com";
                 if (_userManager.FindByEmailAsync(studentEmail).GetAwaiter().GetResult() == null)
                 {

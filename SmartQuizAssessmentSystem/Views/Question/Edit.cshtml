@@ -1,0 +1,132 @@
+﻿@model QuizSystemModel.Models.QuestionBank
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    var quiz = ViewBag.Quiz as QuizSystemModel.Models.Quiz;
+    ViewData["Title"] = "Edit Question";
+}
+
+<h2>Edit Question - @quiz?.Name</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="QuizId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Subject" class="form-label"></label>
+        <select asp-for="Subject" class="form-select">
+            <option>English</option>
+            <option>Bangla</option>
+            <option>Math</option>
+        </select>
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Title</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3" id="textQuestionContainer">
+        <label asp-for="QuestionText" class="form-label">Question</label>
+        <textarea asp-for="QuestionText" class="form-control"></textarea>
+        <span asp-validation-for="QuestionText" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 d-none" id="mathQuestionContainer">
+        <label class="form-label">Math Question (MathLive)</label>
+        <math-field id="mathQuestion" style="width:100%; min-height:60px; border:1px solid #ccc;"></math-field>
+        <input type="hidden" asp-for="QuestionText" id="QuestionTextHidden" />
+        <span asp-validation-for="QuestionText" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="OptionA" class="form-label"></label>
+            <input asp-for="OptionA" class="form-control" />
+            <span asp-validation-for="OptionA" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="OptionB" class="form-label"></label>
+            <input asp-for="OptionB" class="form-control" />
+            <span asp-validation-for="OptionB" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="OptionC" class="form-label"></label>
+            <input asp-for="OptionC" class="form-control" />
+            <span asp-validation-for="OptionC" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="OptionD" class="form-label"></label>
+            <input asp-for="OptionD" class="form-control" />
+            <span asp-validation-for="OptionD" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RightOption" class="form-label"></label>
+        <select asp-for="RightOption" class="form-select">
+            <option value="">-- Select --</option>
+            <option value="A">Option A</option>
+            <option value="B">Option B</option>
+            <option value="C">Option C</option>
+            <option value="D">Option D</option>
+        </select>
+        <span asp-validation-for="RightOption" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Marks" class="form-label"></label>
+        <input asp-for="Marks" class="form-control" />
+        <span asp-validation-for="Marks" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Index" asp-route-quizId="@Model.QuizId" asp-route-subject="@Model.Subject" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://unpkg.com/mathlive"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const subjectSelect = document.getElementById('@Html.IdFor(m => m.Subject)');
+            const textContainer = document.getElementById('textQuestionContainer');
+            const mathContainer = document.getElementById('mathQuestionContainer');
+            const hidden = document.getElementById('QuestionTextHidden');
+            const textarea = document.getElementById('@Html.IdFor(m => m.QuestionText)');
+            const mf = document.getElementById('mathQuestion');
+
+            function updateUI() {
+                if (subjectSelect.value === 'Math') {
+                    textContainer.classList.add('d-none');
+                    mathContainer.classList.remove('d-none');
+                    mf.value = textarea.value || '';
+                    hidden.value = mf.value;
+                } else {
+                    textContainer.classList.remove('d-none');
+                    mathContainer.classList.add('d-none');
+                }
+            }
+
+            subjectSelect.addEventListener('change', updateUI);
+
+            mf.addEventListener('input', () => {
+                hidden.value = mf.value;
+            });
+
+            updateUI();
+        });
+    </script>
+}
