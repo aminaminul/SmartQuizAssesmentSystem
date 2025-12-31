@@ -26,7 +26,7 @@ namespace QuizSystemRepository.Repositories
             {
                 query = query.Where(c => c.EducationMediumId == educationMediumId.Value);
             }
-                
+
             return await query.ToListAsync();
         }
 
@@ -52,6 +52,14 @@ namespace QuizSystemRepository.Repositories
             return query.AnyAsync();
         }
 
+        public Task<List<Class>> GetByMediumAsync(long mediumId)
+        {
+            return _context.Class
+                .Where(c => c.EducationMediumId == mediumId &&
+                            c.Status != ModelStatus.Deleted)
+                .ToListAsync();
+        }
+
         public async Task AddAsync(Class cls)
         {
             _context.Class.Add(cls);
@@ -63,18 +71,5 @@ namespace QuizSystemRepository.Repositories
             _context.Class.Update(cls);
             await _context.SaveChangesAsync();
         }
-
-        public async Task DeleteAsync(Class cls)
-        {
-            _context.Class.Remove(cls);
-            await _context.SaveChangesAsync();
-        }
-
-        public Task<List<EducationMedium>> GetEducationMediumsAsync()
-        {
-            return _context.EducationMedium.ToListAsync();
-        }
-
-        public Task SaveChangesAsync() => _context.SaveChangesAsync();
     }
 }

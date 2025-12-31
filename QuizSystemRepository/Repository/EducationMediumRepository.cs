@@ -55,13 +55,5 @@ namespace QuizSystemRepository.Repositories
             _context.EducationMedium.Remove(medium);
             await _context.SaveChangesAsync();
         }
-
-        public Task<List<Class>> GetClassesByMediumAsync(long mediumId)
-        {
-            return _context.Class
-                .Include(c => c.EducationMedium)
-                .Where(c => c.EducationMediumId == mediumId)
-                .ToListAsync();
-        }
     }
 }

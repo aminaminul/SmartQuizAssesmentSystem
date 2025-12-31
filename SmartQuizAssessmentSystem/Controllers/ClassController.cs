@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// SmartQuizAssessmentSystem/Controllers/ClassController.cs
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,35 +12,36 @@ namespace SmartQuizAssessmentSystem.Controllers
     public class ClassController : Controller
     {
         private readonly IClassService _classService;
+        private readonly IEducationMediumService _mediumService;
         private readonly UserManager<QuizSystemUser> _userManager;
 
         public ClassController(
             IClassService classService,
+            IEducationMediumService mediumService,
             UserManager<QuizSystemUser> userManager)
         {
             _classService = classService;
+            _mediumService = mediumService;
             _userManager = userManager;
         }
 
-        // Index
         public async Task<IActionResult> Index(long? educationMediumId)
         {
             var classes = await _classService.GetAllAsync(educationMediumId);
+            var mediums = await _mediumService.GetAllAsync();
 
-            var mediums = await _classService.GetEducationMediumsAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", educationMediumId);
 
             return View(classes);
         }
 
-        // Create (GET)
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             await PopulateEducationMediumDropdownAsync();
             return View(new Class());
         }
 
-        // Create (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Class model, long? educationMediumId)
@@ -72,7 +74,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // Edit (GET)
+        [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
             var cls = await _classService.GetByIdAsync(id);
@@ -81,7 +83,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(cls);
         }
 
-        // Edit (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, Class model)
@@ -103,15 +104,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // Details
-        public async Task<IActionResult> Details(long id)
-        {
-            var cls = await _classService.GetByIdAsync(id, includeMedium: true);
-            if (cls == null) return NotFound();
-            return View(cls);
-        }
-
-        // Delete (GET)
+        [HttpGet]
         public async Task<IActionResult> Delete(long id)
         {
             var cls = await _classService.GetByIdAsync(id, includeMedium: true);
@@ -119,7 +112,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(cls);
         }
 
-        // Delete (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -131,33 +123,9 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Approve
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(long id)
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var ok = await _classService.ApproveAsync(id, currentUser!);
-            if (!ok) return NotFound();
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        // Reject
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(long id)
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var ok = await _classService.RejectAsync(id, currentUser!);
-            if (!ok) return NotFound();
-
-            return RedirectToAction(nameof(Index));
-        }
-
         private async Task PopulateEducationMediumDropdownAsync(long? selectedId = null)
         {
-            var mediums = await _classService.GetEducationMediumsAsync();
+            var mediums = await _mediumService.GetAllAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedId);
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// SmartQuizAssessmentSystem/Controllers/EducationMediumController.cs
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
@@ -20,7 +21,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        // Index
         public async Task<IActionResult> Index(long? selectedMediumId)
         {
             var mediums = await _mediumService.GetAllAsync();
@@ -37,13 +37,12 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View();
         }
 
-        // Create (GET)
+        [HttpGet]
         public IActionResult Create()
         {
             return View(new EducationMedium());
         }
 
-        // Create (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EducationMedium model)
@@ -65,7 +64,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // Edit (GET)
+        [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
             var medium = await _mediumService.GetByIdAsync(id);
@@ -75,7 +74,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(medium);
         }
 
-        // Edit (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, EducationMedium model)
@@ -100,7 +98,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // Delete (GET)
+        [HttpGet]
         public async Task<IActionResult> Delete(long id)
         {
             var medium = await _mediumService.GetByIdAsync(id);
@@ -110,7 +108,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(medium);
         }
 
-        // Delete (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -122,7 +119,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Approve
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id)
@@ -134,7 +130,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Reject
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id)

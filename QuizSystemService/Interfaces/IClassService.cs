@@ -1,4 +1,5 @@
-﻿using QuizSystemModel.Models;
+﻿// QuizSystemService/Interfaces/IClassService.cs
+using QuizSystemModel.Models;
 
 namespace QuizSystemService.Interfaces
 {
@@ -6,13 +7,8 @@ namespace QuizSystemService.Interfaces
     {
         Task<List<Class>> GetAllAsync(long? educationMediumId = null);
         Task<Class?> GetByIdAsync(long id, bool includeMedium = false);
-
         Task<bool> CreateAsync(Class model, long educationMediumId, QuizSystemUser currentUser);
         Task<bool> UpdateAsync(long id, Class model);
         Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser);
-        Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
-        Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
-
-        Task<List<EducationMedium>> GetEducationMediumsAsync();
     }
 }
