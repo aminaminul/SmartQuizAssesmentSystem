@@ -40,6 +40,9 @@ builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
+builder.Services.AddScoped<IEducationMediumRepository, EducationMediumRepository>();
+builder.Services.AddScoped<IEducationMediumService, EducationMediumService>();
+
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IClassService, ClassService>();
 

@@ -1,107 +1,84 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using QuizSystemModel.BusinessRules;
-using QuizSystemModel.ViewModels;
 using QuizSystemModel.Models;
-using QuizSystemRepository.Data;
+using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class EducationMediumController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IEducationMediumService _mediumService;
         private readonly UserManager<QuizSystemUser> _userManager;
 
-        public EducationMediumController(AppDbContext context, UserManager<QuizSystemUser> userManager)
+        public EducationMediumController(
+            IEducationMediumService mediumService,
+            UserManager<QuizSystemUser> userManager)
         {
-            _context = context;
+            _mediumService = mediumService;
             _userManager = userManager;
         }
 
-        //EducationMedium Index
-        public IActionResult Index(long? selectedMediumId)
+        // Index
+        public async Task<IActionResult> Index(long? selectedMediumId)
         {
-            var mediums = _context.EducationMedium.ToList();
+            var mediums = await _mediumService.GetAllAsync();
             ViewBag.Mediums = mediums;
             ViewBag.SelectedMediumId = selectedMediumId;
 
-            var classes = Enumerable.Empty<Class>().ToList();
-
+            var classes = new List<Class>();
             if (selectedMediumId.HasValue)
             {
-                classes = _context.Class
-                    .Include(c => c.EducationMedium)
-                    .Where(c => c.EducationMedium != null &&
-                                c.EducationMedium.Id == selectedMediumId.Value)
-                    .ToList();
+                classes = await _mediumService.GetClassesByMediumAsync(selectedMediumId.Value);
             }
-
             ViewBag.Classes = classes;
 
             return View();
         }
 
-        //EducationMedium Create
+        // Create (GET)
         public IActionResult Create()
         {
-            return View();
+            return View(new EducationMedium());
         }
 
-        //EducationMedium Create
+        // Create (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(EducationMedium model)
+        public async Task<IActionResult> Create(EducationMedium model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            if (string.IsNullOrWhiteSpace(model.Name))
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            try
             {
-                ModelState.AddModelError("Name", "Name is required.");
+                await _mediumService.CreateAsync(model, currentUser!);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 return View(model);
             }
-
-            // Prevent Duplicate Medium Names
-            bool exists = _context.EducationMedium
-                .Any(m => m.Name.ToLower() == model.Name.ToLower());
-
-            if (exists)
-            {
-                ModelState.AddModelError("Name", "This education medium already exists.");
-                return View(model);
-            }
-
-            var currentUser = _userManager.GetUserAsync(User).Result;
-
-            model.CreatedAt = DateTime.UtcNow;
-            model.Status = ModelStatus.Active;
-            model.IsApproved = false;
-            model.CreatedBy = currentUser;
-
-            _context.EducationMedium.Add(model);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
         }
 
-
-
-        //Edit Education Medium
-        public IActionResult Edit(long id)
+        // Edit (GET)
+        public async Task<IActionResult> Edit(long id)
         {
-            var medium = _context.EducationMedium.Find(id);
+            var medium = await _mediumService.GetByIdAsync(id);
             if (medium == null)
                 return NotFound();
 
             return View(medium);
         }
 
+        // Edit (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(long id, EducationMedium model)
+        public async Task<IActionResult> Edit(long id, EducationMedium model)
         {
             if (id != model.Id)
                 return NotFound();
@@ -109,93 +86,63 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var existing = _context.EducationMedium.Find(id);
-            if (existing == null)
-                return NotFound();
+            try
+            {
+                var ok = await _mediumService.UpdateAsync(id, model);
+                if (!ok) return NotFound();
 
-            existing.Name = model.Name;
-            existing.ModifiedAt = DateTime.UtcNow;
-            existing.Status = model.Status;
-
-            _context.Update(existing);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
         }
 
-
-        //Delete Education Medium
-        public IActionResult Delete(long id)
+        // Delete (GET)
+        public async Task<IActionResult> Delete(long id)
         {
-            var medium = _context.EducationMedium
-                .FirstOrDefault(m => m.Id == id);
+            var medium = await _mediumService.GetByIdAsync(id);
             if (medium == null)
                 return NotFound();
 
             return View(medium);
         }
 
+        // Delete (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(long id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var medium = _context.EducationMedium.Find(id);
-            if (medium == null)
-                return NotFound();
-
-            var relatedClasses = _context.Class
-                .Include(c => c.EducationMedium)
-                .Where(c => c.EducationMedium != null && c.EducationMedium.Id == id)
-                .ToList();
-
-            _context.Class.RemoveRange(relatedClasses);
-
-            _context.EducationMedium.Remove(medium);
-            _context.SaveChanges();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var ok = await _mediumService.SoftDeleteAsync(id, currentUser!);
+            if (!ok) return NotFound();
 
             return RedirectToAction(nameof(Index));
         }
 
-        //Approve Education Medium
+        // Approve
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Approve(long id)
+        public async Task<IActionResult> Approve(long id)
         {
-            var medium = _context.EducationMedium.Find(id);
-            if (medium == null)
-                return NotFound();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var ok = await _mediumService.ApproveAsync(id, currentUser!);
+            if (!ok) return NotFound();
 
-            var currentUser = _userManager.GetUserAsync(User).Result;
-
-            medium.IsApproved = true;
-            medium.ApprovedAt = DateTime.UtcNow;
-            medium.ApprovedBy = currentUser;
-            medium.RejectedAt = null;
-            medium.RejectedBy = null;
-
-            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 
-
-        //Reject Education Medium
+        // Reject
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Reject(long id)
+        public async Task<IActionResult> Reject(long id)
         {
-            var medium = _context.EducationMedium.Find(id);
-            if (medium == null)
-                return NotFound();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var ok = await _mediumService.RejectAsync(id, currentUser!);
+            if (!ok) return NotFound();
 
-            var currentUser = _userManager.GetUserAsync(User).Result;
-
-            medium.IsApproved = false;
-            medium.RejectedAt = DateTime.UtcNow;
-            medium.RejectedBy = currentUser;
-            medium.ApprovedAt = null;
-            medium.ApprovedBy = null;
-
-            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }
