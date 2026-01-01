@@ -13,7 +13,9 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly IStudentService _studentService;
         private readonly UserManager<QuizSystemUser> _userManager;
 
-        public StudentController(IStudentService studentService,UserManager<QuizSystemUser> userManager)
+        public StudentController(
+            IStudentService studentService,
+            UserManager<QuizSystemUser> userManager)
         {
             _studentService = studentService;
             _userManager = userManager;
@@ -25,7 +27,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View();
         }
 
-        // LIST
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -33,7 +34,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(students);
         }
 
-        // DETAILS
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(long id)
         {
             var student = await _studentService.GetByIdAsync(id, includeUser: true);
@@ -43,7 +44,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        // CREATE (GET)
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             await PopulateDropdownsAsync();
@@ -51,14 +53,14 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(vm);
         }
 
-        // CREATE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(StudentAddView model)
         {
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(model.EducationMediumId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
 
@@ -72,12 +74,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateDropdownsAsync(model.EducationMediumId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
         }
 
-        // EDIT (GET)
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long id)
         {
             var student = await _studentService.GetByIdAsync(id);
@@ -88,9 +91,9 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        // EDIT (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long id, Student model, long? educationMediumId, long? classId)
         {
             if (id != model.Id)
@@ -118,7 +121,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // DELETE (GET)
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long id)
         {
             var student = await _studentService.GetByIdAsync(id);
@@ -128,9 +132,9 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        // DELETE (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -140,6 +144,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         private async Task PopulateDropdownsAsync(long? educationMediumId = null, long? classId = null)
         {
             var mediums = await _studentService.GetEducationMediumsAsync();

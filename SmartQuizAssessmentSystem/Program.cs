@@ -32,6 +32,8 @@ builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ISeedService, SeedService>();
+
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();

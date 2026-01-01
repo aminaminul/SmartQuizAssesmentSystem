@@ -36,7 +36,6 @@ namespace QuizSystemService.Services
 
         public async Task<bool> CreateAsync(StudentAddView model, QuizSystemUser currentUser)
         {
-            // Checks Duplicates
             if (await _repo.EmailExistsAsync(model.Email!))
                 throw new InvalidOperationException("This Email Is Already Used By Another Student.");
 
@@ -44,7 +43,6 @@ namespace QuizSystemService.Services
                 await _repo.PhoneExistsAsync(model.PhoneNumber))
                 throw new InvalidOperationException("This Phone Number Is Already Used By Another Student.");
 
-            // Identity user
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -66,7 +64,6 @@ namespace QuizSystemService.Services
             if (!roleResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
 
-            // Student
             var student = new Student
             {
                 FirstName = model.FirstName,
@@ -74,6 +71,7 @@ namespace QuizSystemService.Services
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 EducationMediumId = model.EducationMediumId,
+                ClassId = model.ClassId,      // Class save
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active,

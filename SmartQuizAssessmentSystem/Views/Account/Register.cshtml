@@ -1,189 +1,35 @@
-﻿@using QuizSystemModel.ViewModels
-@model RegisterViewModel
-
-@{
+﻿@{
     ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
 
 <div class="account-container">
     <div class="account-box">
-        @if (string.IsNullOrEmpty(Model?.RegistrationType))
-        {
-            <h2 class="text-center mb-4">Register</h2>
-            <p class="text-center">Select How You Want To Register.</p>
+        <h2 class="text-center mb-4">Register</h2>
+        <p class="text-center">Select How You Want To Register.</p>
 
-            <form asp-controller="Account" asp-action="RegisterSelect" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="registrationType" value="Student" />
-                <button type="submit" class="btn btn-success w-100 p-2">
-                    Register as Student
-                </button>
-            </form>
+        <a asp-controller="Account" asp-action="RegisterStudent"
+           class="btn btn-success w-100 p-2 mb-2">
+            Register as Student
+        </a>
 
-            <form asp-controller="Account" asp-action="RegisterSelect" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="registrationType" value="Instructor" />
-                <button type="submit" class="btn btn-secondary w-100">
-                    Register as Instructor
-                </button>
-            </form>
-            <p class="text-center mt-3">
-                Already have an account?
-                <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
-                    Login
-                </a>
-            </p>
+        <a asp-controller="Account" asp-action="RegisterInstructor"
+           class="btn btn-secondary w-100">
+            Register as Instructor
+        </a>
 
-            <div class="text-center">
-                <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">
-                    Back
-                </a>
-            </div>
-        }
-        else if (Model.RegistrationType == "Student")
-        {
-            <h2 class="text-center mb-4">Student Registration</h2>
+        <p class="text-center mt-3">
+            Already have an account?
+            <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
+                Login
+            </a>
+        </p>
 
-            <form asp-controller="Account" asp-action="RegisterSubmit" method="post">
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <input type="hidden" asp-for="RegistrationType" value="Student" />
-                <input type="hidden" asp-for="Role" value="Student" />
-
-                <div class="mb-3">
-                    <label asp-for="FirstName" class="form-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="LastName" class="form-label"></label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
-
-                <input type="submit" value="Register" class="btn btn-success w-100 p-2" />
-
-                <p class="text-center mt-2">
-                    Already have an account?
-                    <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
-                        Login
-                    </a>
-                </p>
-
-                <div class="text-center">
-                    <a asp-controller="Account" asp-action="Register" class="text-decoration-none mt-3">
-                        Back
-                    </a>
-                </div>
-            </form>
-        }
-        else if (Model.RegistrationType == "Instructor")
-        {
-            <h2 class="text-center mb-4">Instructor Registration</h2>
-
-            <form asp-controller="Account" asp-action="RegisterSubmit" method="post">
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <input type="hidden" asp-for="RegistrationType" value="Instructor" />
-                <input type="hidden" asp-for="Role" value="Instructor" />
-
-                <div class="mb-3">
-                    <label asp-for="FirstName" class="form-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="LastName" class="form-label"></label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="PhoneNumber" class="form-label"></label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="HscPassingInstitute" class="form-label"></label>
-                    <input asp-for="HscPassingInstitute" class="form-control" />
-                    <span asp-validation-for="HscPassingInstitute" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="HscPassingYear" class="form-label"></label>
-                    <input asp-for="HscPassingYear" class="form-control" />
-                    <span asp-validation-for="HscPassingYear" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="HscGrade" class="form-label"></label>
-                    <input asp-for="HscGrade" class="form-control" />
-                    <span asp-validation-for="HscGrade" class="text-danger"></span>
-                </div>
-
-                <input type="submit" value="Register" class="btn btn-success w-100 p-2" />
-
-                <p class="text-center mt-2">
-                    Already have an account?
-                    <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
-                        Login
-                    </a>
-                </p>
-
-                <div class="text-center">
-                    <a asp-controller="Account" asp-action="Register" class="text-decoration-none mt-3">
-                        Back
-                    </a>
-                </div>
-            </form>
-        }
+        <div class="text-center">
+            <a asp-controller="Home" asp-action="Index"
+               class="text-decoration-none mt-3">
+                Back
+            </a>
+        </div>
     </div>
 </div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

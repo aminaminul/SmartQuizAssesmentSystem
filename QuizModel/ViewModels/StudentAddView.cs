@@ -33,6 +33,10 @@ namespace QuizSystemModel.ViewModels
         [Required(ErrorMessage = "Education Medium is required")]
         public long? EducationMediumId { get; set; }
         public EducationMedium? EducationMedium { get; set; }
+        
+        [Required(ErrorMessage = "Class is required")]
+        public long? ClassId { get; set; }
+        public Class? Class { get; set; }
         public string? Role { get; set; }
     }
 }

@@ -72,10 +72,10 @@ namespace QuizSystemRepository.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task SaveChangesAsync() 
-        { 
-            await _context.SaveChangesAsync(); 
-        } 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
 
         public Task<List<EducationMedium>> GetEducationMediumsAsync()
         {

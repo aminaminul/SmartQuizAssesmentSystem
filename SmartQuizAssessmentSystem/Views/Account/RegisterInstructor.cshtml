@@ -1,0 +1,91 @@
+﻿@model QuizSystemModel.ViewModels.InstructorAddViewModel
+
+@{
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+    ViewData["Title"] = "Instructor Registration";
+}
+
+<div class="account-container">
+    <div class="account-box">
+        <h2>Instructor Registration</h2>
+        <form asp-action="RegisterInstructor" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-2">
+                <label asp-for="FirstName"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="EducationMediumId">Education Medium</label>
+                <select asp-for="EducationMediumId"
+                        asp-items="ViewBag.MediumList"
+                        class="form-control">
+                    <option value="">Select Education Medium</option>
+                </select>
+                <span asp-validation-for="EducationMediumId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="HscPassingInstitute"></label>
+                <input asp-for="HscPassingInstitute" class="form-control" />
+                <span asp-validation-for="HscPassingInstitute" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="HscPassingYear"></label>
+                <input asp-for="HscPassingYear" class="form-control" />
+                <span asp-validation-for="HscPassingYear" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="HscGrade"></label>
+                <input asp-for="HscGrade" class="form-control" />
+                <span asp-validation-for="HscGrade" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <input type="hidden" asp-for="Role" value="Instructor" />
+
+            <button type="submit" class="btn btn-primary mt-2">Register</button>
+            <a asp-action="Login" class="btn btn-link mt-2">Back to Login</a>
+        </form>
+
+        @section Scripts {
+            @{
+                await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            }
+        }
+    </div>
+</div>
+

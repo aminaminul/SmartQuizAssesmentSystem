@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿// SmartQuizAssessmentSystem/Services/AccountService.cs
+using Microsoft.AspNetCore.Identity;
 using QuizSystemModel.BusinessRules;
+using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
-using QuizSystemRepository.Data;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Services
@@ -12,37 +12,106 @@ namespace SmartQuizAssessmentSystem.Services
     {
         private readonly UserManager<QuizSystemUser> _userManager;
         private readonly RoleManager<QuizSystemRole> _roleManager;
-        private readonly AppDbContext _context;
+        private readonly IAccountRepository _accountRepository;
 
-        public AccountService(UserManager<QuizSystemUser> userManager,RoleManager<QuizSystemRole> roleManager,AppDbContext context)
+        public AccountService(
+            UserManager<QuizSystemUser> userManager,
+            RoleManager<QuizSystemRole> roleManager,
+            IAccountRepository accountRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _context = context;
+            _accountRepository = accountRepository;
         }
 
-        public async Task<IdentityResult> RegisterAsync(RegisterViewModel model)
+        public async Task<IdentityResult> RegisterStudentAsync(StudentAddView model)
         {
-            //Ensure Role Exists
-            if (string.IsNullOrWhiteSpace(model.Role))
-            {
+            const string defaultRoleName = "Student";
+            var roleName = string.IsNullOrWhiteSpace(model.Role)
+                ? defaultRoleName
+                : model.Role!;
+
+            // duplicate checks against Student table
+            if (await _accountRepository.StudentEmailExistsAsync(model.Email!))
                 return IdentityResult.Failed(new IdentityError
                 {
-                    Description = "Role is required."
+                    Code = "DuplicateStudentEmail",
+                    Description = "This email is already used by another student."
                 });
-            }
 
-            if (!await _roleManager.RoleExistsAsync(model.Role))
-            {
-                var role = new QuizSystemRole { Name = model.Role };
-                var roleResult = await _roleManager.CreateAsync(role);
-                if (!roleResult.Succeeded)
+            if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
+                await _accountRepository.StudentPhoneExistsAsync(model.PhoneNumber))
+                return IdentityResult.Failed(new IdentityError
                 {
-                    return roleResult;
-                }
-            }
+                    Code = "DuplicateStudentPhone",
+                    Description = "This phone number is already used by another student."
+                });
 
-            //Create Identity User
+            var ensureRoleResult = await EnsureRoleExistsAsync(roleName);
+            if (!ensureRoleResult.Succeeded)
+                return ensureRoleResult;
+
+            var user = new QuizSystemUser
+            {
+                FirstName = model.FirstName!,
+                LastName = model.LastName!,
+                UserName = model.Email,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
+            };
+
+            var createResult = await _userManager.CreateAsync(user, model.Password!);
+            if (!createResult.Succeeded)
+                return createResult;
+
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!roleResult.Succeeded)
+                return roleResult;
+
+            var student = new Student
+            {
+                FirstName = model.FirstName!,
+                LastName = model.LastName!,
+                Email = model.Email!,
+                PhoneNumber = model.PhoneNumber!,
+                UserId = user.Id,
+                EducationMediumId = model.EducationMediumId,
+                ClassId = model.ClassId,           // IMPORTANT: Class set here
+                CreatedAt = DateTime.UtcNow,
+                Status = ModelStatus.Active
+            };
+
+            await _accountRepository.AddStudentAsync(student);
+
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> RegisterInstructorAsync(InstructorAddViewModel model)
+        {
+            const string defaultRoleName = "Instructor";
+            var roleName = string.IsNullOrWhiteSpace(model.Role)
+                ? defaultRoleName
+                : model.Role!;
+
+            if (await _accountRepository.InstructorEmailExistsAsync(model.Email))
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "DuplicateInstructorEmail",
+                    Description = "This email is already used by another instructor."
+                });
+
+            if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
+                await _accountRepository.InstructorPhoneExistsAsync(model.PhoneNumber))
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "DuplicateInstructorPhone",
+                    Description = "This phone number is already used by another instructor."
+                });
+
+            var ensureRoleResult = await EnsureRoleExistsAsync(roleName);
+            if (!ensureRoleResult.Succeeded)
+                return ensureRoleResult;
+
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -52,54 +121,41 @@ namespace SmartQuizAssessmentSystem.Services
                 PhoneNumber = model.PhoneNumber
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-            {
-                return result;
-            }
+            var createResult = await _userManager.CreateAsync(user, model.Password);
+            if (!createResult.Succeeded)
+                return createResult;
 
-            //Assign Role
-            var roleAssignResult = await _userManager.AddToRoleAsync(user, model.Role);
-            if (!roleAssignResult.Succeeded)
-            {
-                return roleAssignResult;
-            }
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!roleResult.Succeeded)
+                return roleResult;
 
-            if (model.Role == "Student")
+            var instructor = new Instructor
             {
-                var student = new Student
-                {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    UserId = user.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    Status = ModelStatus.Active
-                };
-                _context.Student.Add(student);
-            }
-            else if (model.Role == "Instructor")
-            {
-                var instructor = new Instructor
-                { 
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    HscPassingInstrutute = model.HscPassingInstitute,
-                    HscPassingYear = model.HscPassingYear,
-                    HscGrade = model.HscGrade,
-                    UserId = user.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    Status = ModelStatus.Active,
-                    EducationMedium = model.EducationMedium
-                };
-                _context.Instructor.Add(instructor);
-            }
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                HscPassingInstrutute = model.HscPassingInstitute,
+                HscPassingYear = model.HscPassingYear,
+                HscGrade = model.HscGrade,
+                UserId = user.Id,
+                CreatedAt = DateTime.UtcNow,
+                Status = ModelStatus.Active,
+                EducationMediumId = model.EducationMediumId
+            };
 
-            await _context.SaveChangesAsync();
+            await _accountRepository.AddInstructorAsync(instructor);
+
             return IdentityResult.Success;
+        }
+
+        private async Task<IdentityResult> EnsureRoleExistsAsync(string roleName)
+        {
+            if (await _roleManager.RoleExistsAsync(roleName))
+                return IdentityResult.Success;
+
+            var role = new QuizSystemRole { Name = roleName };
+            return await _roleManager.CreateAsync(role);
         }
     }
 }

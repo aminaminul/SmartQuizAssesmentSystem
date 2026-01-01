@@ -5,6 +5,7 @@ namespace QuizSystemService.Interfaces
 {
     public interface IAccountService
     {
-        Task<IdentityResult> RegisterAsync(RegisterViewModel model);
+        Task<IdentityResult> RegisterStudentAsync(StudentAddView model);
+        Task<IdentityResult> RegisterInstructorAsync(InstructorAddViewModel model);
     }
 }
