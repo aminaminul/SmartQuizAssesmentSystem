@@ -60,7 +60,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return RedirectToAction("Dashboard", "Admin");
 
             if (roles.Contains("Instructor"))
-                return RedirectToAction("Dashboard", "Instructor");
+                return RedirectToAction("Dashboard", "InstructorDashboard");
 
             if (roles.Contains("Student"))
                 return RedirectToAction("Dashboard", "Student");

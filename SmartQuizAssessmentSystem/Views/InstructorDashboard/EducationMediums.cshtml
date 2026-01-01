@@ -1,0 +1,32 @@
+﻿@model IEnumerable<QuizSystemModel.Models.EducationMedium>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "All Education Mediums";
+}
+
+<h2>All Education Mediums</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Approved</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.Name</td>
+                <td>@(m.IsApproved ? "Yes" : "No")</td>
+                <td>
+                    <a asp-action="EducationMediumDetails" asp-route-id="@m.Id" class="btn btn-sm btn-info">
+                        Details
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

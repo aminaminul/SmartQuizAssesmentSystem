@@ -27,7 +27,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _subjectService = subjectService;
         }
 
-        public IActionResult Index()
+        public IActionResult Dashboard()
         {
             return View();
         }

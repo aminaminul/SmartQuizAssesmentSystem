@@ -1,0 +1,21 @@
+﻿@model QuizSystemModel.Models.EducationMedium
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Education Medium Details";
+}
+
+<h2>Education Medium Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">@Model.Status</dd>
+
+    <dt class="col-sm-3">Approved</dt>
+    <dd class="col-sm-9">@((Model.IsApproved ? "Yes" : "No"))</dd>
+</dl>
+
+<a asp-action="EducationMediums" class="btn btn-secondary">Back to Mediums</a>

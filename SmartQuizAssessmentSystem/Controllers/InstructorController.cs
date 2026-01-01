@@ -21,12 +21,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = "Instructor")]
-        public IActionResult Dashboard()
-        {
-            return View();
-        }
-
         // LIST
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()

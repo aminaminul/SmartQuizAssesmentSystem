@@ -53,20 +53,28 @@
                     {
                         <h5 class="text-center mb-4">ADMIN</h5>
                         <a asp-controller="Admin" asp-action="Dashboard" class="active">Dashboard</a>
+                        <a asp-controller="Quiz" asp-action="Index">Manage Quiz</a>
                         <a asp-controller="Instructor" asp-action="Index">Instructors</a>
                         <a asp-controller="Student" asp-action="Index">Students</a>
                         <a asp-controller="EducationMedium" asp-action="Index">Education Medium</a>
                         <a asp-controller="Class" asp-action="Index">Classes</a>
                         <a asp-controller="Subject" asp-action="Index">Subjects</a>
-                        <a asp-controller="Quiz" asp-action="Index">Quiz</a>
+                        
                     }
                     else if (User.IsInRole("Instructor"))
                     {
                         <h5 class="text-center mb-4">INSTRUCTOR</h5>
-                        <a asp-controller="Instructor" asp-action="Dashboard" class="active">Dashboard</a>
-                        <a asp-controller="Student" asp-action="Index">Students</a>
-                        <a asp-controller="Subject" asp-action="Index">Subjects</a>
-                        <a asp-controller="Quiz" asp-action="Index">Quiz</a>
+
+                        <a asp-controller="InstructorDashboard" asp-action="Index" class="active">Dashboard</a>
+
+                        <a asp-controller="Quiz" asp-action="Index">Manage Quiz</a>
+                        <a asp-controller="InstructorDashboard" asp-action="Instructors">Instructors</a>
+                        <a asp-controller="InstructorDashboard" asp-action="Students">Students</a>
+                        <a asp-controller="InstructorDashboard" asp-action="EducationMediums">Education Medium</a>
+                        <a asp-controller="InstructorDashboard" asp-action="Classes">Classes</a>
+                        <a asp-controller="InstructorDashboard" asp-action="Subjects">Subjects</a>
+
+                        
                     }
                     else if (User.IsInRole("Student"))
                     {

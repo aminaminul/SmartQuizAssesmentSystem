@@ -1,0 +1,36 @@
+﻿@model IEnumerable<QuizSystemModel.Models.Instructor>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "All Instructor";
+}
+
+<h2>All Teachers</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Education Medium</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@(i.FirstName + " " + i.LastName)</td>
+                <td>@i.Email</td>
+                <td>@i.PhoneNumber</td>
+                <td>@i.EducationMedium?.Name</td>
+                <td>
+                    <a asp-action="InstructorDetails" asp-route-id="@i.Id" class="btn btn-sm btn-info">
+                        Details
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
