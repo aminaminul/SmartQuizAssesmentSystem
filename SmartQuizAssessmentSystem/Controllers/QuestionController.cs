@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
@@ -23,40 +24,40 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        // List questions of a quiz, optionally by subject
         public async Task<IActionResult> Index(long quizId, string? subject)
         {
-            var quiz = await _quizService.GetByIdAsync(quizId);
+            var quiz = await _quizService.GetEntityAsync(quizId);
             if (quiz == null) return NotFound();
 
             ViewBag.Quiz = quiz;
             ViewBag.Subject = subject;
 
             var questions = await _questionService.GetByQuizAsync(quizId, subject);
-            return View(questions);
+            return View(questions); // entity list
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(long quizId, string? subject)
         {
-            var quiz = await _quizService.GetByIdAsync(quizId);
+            var quiz = await _quizService.GetEntityAsync(quizId);
             if (quiz == null) return NotFound();
 
-            var model = new QuestionBank
+            ViewBag.Quiz = quiz;
+
+            var vm = new QuestionViewModel
             {
                 QuizId = quizId,
                 Subject = subject ?? quiz.Subject
             };
 
-            ViewBag.Quiz = quiz;
-            return View(model);
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(QuestionBank model)
+        public async Task<IActionResult> Create(QuestionViewModel model)
         {
-            var quiz = await _quizService.GetByIdAsync(model.QuizId);
+            var quiz = await _quizService.GetEntityAsync(model.QuizId);
             if (quiz == null) return NotFound();
 
             if (!ModelState.IsValid)
@@ -83,22 +84,22 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
-            var question = await _questionService.GetByIdAsync(id);
-            if (question == null) return NotFound();
+            var vm = await _questionService.GetForEditAsync(id);
+            if (vm == null) return NotFound();
 
-            var quiz = await _quizService.GetByIdAsync(question.QuizId);
+            var quiz = await _quizService.GetEntityAsync(vm.QuizId);
             ViewBag.Quiz = quiz;
 
-            return View(question);
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, QuestionBank model)
+        public async Task<IActionResult> Edit(long id, QuestionViewModel model)
         {
             if (id != model.Id) return NotFound();
 
-            var quiz = await _quizService.GetByIdAsync(model.QuizId);
+            var quiz = await _quizService.GetEntityAsync(model.QuizId);
             if (quiz == null) return NotFound();
 
             if (!ModelState.IsValid)
@@ -127,27 +128,27 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(long id)
         {
-            var question = await _questionService.GetByIdAsync(id);
-            if (question == null) return NotFound();
+            var q = await _questionService.GetEntityAsync(id);
+            if (q == null) return NotFound();
 
-            var quiz = await _quizService.GetByIdAsync(question.QuizId);
+            var quiz = await _quizService.GetEntityAsync(q.QuizId);
             ViewBag.Quiz = quiz;
 
-            return View(question);
+            return View(q);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var question = await _questionService.GetByIdAsync(id);
-            if (question == null) return NotFound();
+            var q = await _questionService.GetEntityAsync(id);
+            if (q == null) return NotFound();
 
             var currentUser = await _userManager.GetUserAsync(User);
             var ok = await _questionService.SoftDeleteAsync(id, currentUser!);
             if (!ok) return NotFound();
 
-            return RedirectToAction(nameof(Index), new { quizId = question.QuizId, subject = question.Subject });
+            return RedirectToAction(nameof(Index), new { quizId = q.QuizId, subject = q.Subject });
         }
     }
 }

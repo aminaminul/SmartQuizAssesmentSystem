@@ -1,6 +1,7 @@
 ﻿using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
 namespace QuizSystemService.Services
@@ -16,91 +17,121 @@ namespace QuizSystemService.Services
 
         public Task<List<Quiz>> GetAllAsync() => _repo.GetAllAsync();
 
-        public Task<Quiz?> GetByIdAsync(long id, bool includeQuestions = false) =>
+        public Task<Quiz?> GetEntityAsync(long id, bool includeQuestions = false) =>
             _repo.GetByIdAsync(id, includeQuestions);
 
-        public async Task<bool> CreateAsync(Quiz quiz, QuizSystemUser currentUser)
+        public async Task<QuizViewModel?> GetForEditAsync(long id)
         {
-            if (string.IsNullOrWhiteSpace(quiz.Name))
+            var quiz = await _repo.GetByIdAsync(id);
+            if (quiz == null) return null;
+
+            return new QuizViewModel
+            {
+                Id = quiz.Id,
+                Name = quiz.Name,
+                Subject = quiz.Subject,
+                Description = quiz.Description,
+                StartAt = quiz.StartAt,
+                EndAt = quiz.EndAt,
+                DurationMinutes = quiz.Duration.HasValue ? (int?)quiz.Duration.Value.TotalMinutes : null,
+                TotalMarks = quiz.TotalMarks,
+                RequiredPassPercentage = quiz.RequiredPassPercentage
+            };
+        }
+
+        public async Task<bool> CreateAsync(QuizViewModel model, QuizSystemUser currentUser)
+        {
+            if (string.IsNullOrWhiteSpace(model.Name))
                 throw new InvalidOperationException("Quiz name is required.");
 
-            quiz.CreatedAt = DateTime.UtcNow;
-            quiz.Status = ModelStatus.Active;
-            quiz.IsApproved = false;
-            quiz.CreatedBy = currentUser;
+            var quiz = new Quiz
+            {
+                Name = model.Name,
+                Subject = model.Subject,
+                Description = model.Description,
+                StartAt = model.StartAt,
+                EndAt = model.EndAt,
+                Duration = model.DurationMinutes.HasValue
+                    ? TimeSpan.FromMinutes(model.DurationMinutes.Value)
+                    : null,
+                TotalMarks = model.TotalMarks,
+                RequiredPassPercentage = model.RequiredPassPercentage,
+                CreatedAt = DateTime.UtcNow,
+                Status = ModelStatus.Active,
+                IsApproved = false,
+                CreatedBy = currentUser
+            };
 
             await _repo.AddAsync(quiz);
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, Quiz quiz, QuizSystemUser currentUser)
+        public async Task<bool> UpdateAsync(long id, QuizViewModel model, QuizSystemUser currentUser)
         {
-            var existing = await _repo.GetByIdAsync(id);
-            if (existing == null)
-                return false;
+            var quiz = await _repo.GetByIdAsync(id);
+            if (quiz == null) return false;
 
-            if (string.IsNullOrWhiteSpace(quiz.Name))
+            if (string.IsNullOrWhiteSpace(model.Name))
                 throw new InvalidOperationException("Quiz name is required.");
 
-            existing.Name = quiz.Name;
-            existing.Description = quiz.Description;
-            existing.Subject = quiz.Subject;
-            existing.StartAt = quiz.StartAt;
-            existing.EndAt = quiz.EndAt;
-            existing.Duration = quiz.Duration;
-            existing.TotalMarks = quiz.TotalMarks;
-            existing.RequiredPassPercentage = quiz.RequiredPassPercentage;
-            existing.Status = quiz.Status;
-            existing.ModifiedAt = DateTime.UtcNow;
-            existing.ModifiedBy = currentUser;
+            quiz.Name = model.Name;
+            quiz.Subject = model.Subject;
+            quiz.Description = model.Description;
+            quiz.StartAt = model.StartAt;
+            quiz.EndAt = model.EndAt;
+            quiz.Duration = model.DurationMinutes.HasValue
+                ? TimeSpan.FromMinutes(model.DurationMinutes.Value)
+                : null;
+            quiz.TotalMarks = model.TotalMarks;
+            quiz.RequiredPassPercentage = model.RequiredPassPercentage;
+            quiz.Status = quiz.Status; // if editable, set from model
+            quiz.ModifiedAt = DateTime.UtcNow;
+            quiz.ModifiedBy = currentUser;
 
-            await _repo.UpdateAsync(existing);
+            await _repo.UpdateAsync(quiz);
             return true;
         }
 
         public async Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser)
         {
-            var existing = await _repo.GetByIdAsync(id);
-            if (existing == null)
-                return false;
+            var quiz = await _repo.GetByIdAsync(id);
+            if (quiz == null) return false;
 
-            existing.Status = ModelStatus.Deleted;
-            existing.ModifiedAt = DateTime.UtcNow;
-            existing.ModifiedBy = currentUser;
+            quiz.Status = ModelStatus.Deleted;
+            quiz.ModifiedAt = DateTime.UtcNow;
+            quiz.ModifiedBy = currentUser;
 
-            await _repo.UpdateAsync(existing);
+            await _repo.UpdateAsync(quiz);
             return true;
         }
 
         public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
         {
-            var existing = await _repo.GetByIdAsync(id);
-            if (existing == null)
-                return false;
+            var quiz = await _repo.GetByIdAsync(id);
+            if (quiz == null) return false;
 
-            existing.IsApproved = true;
-            existing.ApprovedAt = DateTime.UtcNow;
-            existing.ApprovedBy = currentUser;
-            existing.RejectedAt = null;
-            existing.RejectedBy = null;
+            quiz.IsApproved = true;
+            quiz.ApprovedAt = DateTime.UtcNow;
+            quiz.ApprovedBy = currentUser;
+            quiz.RejectedAt = null;
+            quiz.RejectedBy = null;
 
-            await _repo.UpdateAsync(existing);
+            await _repo.UpdateAsync(quiz);
             return true;
         }
 
         public async Task<bool> RejectAsync(long id, QuizSystemUser currentUser)
         {
-            var existing = await _repo.GetByIdAsync(id);
-            if (existing == null)
-                return false;
+            var quiz = await _repo.GetByIdAsync(id);
+            if (quiz == null) return false;
 
-            existing.IsApproved = false;
-            existing.RejectedAt = DateTime.UtcNow;
-            existing.RejectedBy = currentUser;
-            existing.ApprovedAt = null;
-            existing.ApprovedBy = null;
+            quiz.IsApproved = false;
+            quiz.RejectedAt = DateTime.UtcNow;
+            quiz.RejectedBy = currentUser;
+            quiz.ApprovedAt = null;
+            quiz.ApprovedBy = null;
 
-            await _repo.UpdateAsync(existing);
+            await _repo.UpdateAsync(quiz);
             return true;
         }
     }

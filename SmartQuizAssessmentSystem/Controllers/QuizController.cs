@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
@@ -21,12 +22,12 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var quizzes = await _quizService.GetAllAsync();
-            return View(quizzes);
+            return View(quizzes); // entity list, same Index view as age
         }
 
         public async Task<IActionResult> Details(long id)
         {
-            var quiz = await _quizService.GetByIdAsync(id, includeQuestions: true);
+            var quiz = await _quizService.GetEntityAsync(id, includeQuestions: true);
             if (quiz == null) return NotFound();
             return View(quiz);
         }
@@ -34,12 +35,12 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new Quiz());
+            return View(new QuizViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Quiz model)
+        public async Task<IActionResult> Create(QuizViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -61,14 +62,14 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
-            var quiz = await _quizService.GetByIdAsync(id);
-            if (quiz == null) return NotFound();
-            return View(quiz);
+            var vm = await _quizService.GetForEditAsync(id);
+            if (vm == null) return NotFound();
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, Quiz model)
+        public async Task<IActionResult> Edit(long id, QuizViewModel model)
         {
             if (id != model.Id) return NotFound();
             if (!ModelState.IsValid) return View(model);
@@ -91,7 +92,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(long id)
         {
-            var quiz = await _quizService.GetByIdAsync(id);
+            var quiz = await _quizService.GetEntityAsync(id);
             if (quiz == null) return NotFound();
             return View(quiz);
         }

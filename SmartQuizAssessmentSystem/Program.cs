@@ -52,6 +52,7 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

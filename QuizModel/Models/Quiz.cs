@@ -24,7 +24,7 @@ namespace QuizSystemModel.Models
         public string Description { get; set; }
         public DateTime? StartAt { get; set; }
         public DateTime? EndAt { get; set; }
-        public DateTime? Duration { get; set; }
+        public TimeSpan? Duration { get; set; }
         public int TotalMarks { get; set; }
         public decimal RequiredPassPercentage { get; set; }
         public string Subject { get; set; }
