@@ -45,7 +45,6 @@
 </head>
 <body>
     <div class="d-flex">
-        <!-- LEFT SIDEBAR -->
         <div class="sidebar p-3">
             @{
                 if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -78,9 +77,8 @@
             }
         </div>
 
-        <!-- MAIN AREA -->
+
         <div class="flex-grow-1">
-            <!-- TOP BAR -->
             <div class="topbar d-flex justify-content-between align-items-center">
                 @if (User.IsInRole("Admin"))
                 {
