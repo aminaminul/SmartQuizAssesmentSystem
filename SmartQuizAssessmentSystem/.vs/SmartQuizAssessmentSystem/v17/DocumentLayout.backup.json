@@ -3,12 +3,50 @@
   "WorkspaceRootPath": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\class\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\class\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\subject\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\subject\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\shared\\_accountlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\shared\\_accountlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\subject\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\subject\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\subject\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\subject\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\subject\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\subject\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\controllers\\subjectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:controllers\\subjectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\subject\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\subject\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Migrations\\20260101091722_UpdateSubject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{832C8017-D789-4B05-AE6F-447BC19C132C}|..\\QuizModel\\QuizSystemModel.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\quizmodel\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16472030-AB8F-4F07-8494-65CA5C62F07B}|..\\QuizSystemService\\QuizSystemService.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\quizsystemservice\\services\\subjectservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E2D755B8-EB7F-47F1-B9B8-625186C6BDC5}|..\\QuizSystemRepository\\QuizSystemRepository.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\quizsystemrepository\\repository\\subjectrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16472030-AB8F-4F07-8494-65CA5C62F07B}|..\\QuizSystemService\\QuizSystemService.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\quizsystemservice\\interfaces\\isubjectservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E2D755B8-EB7F-47F1-B9B8-625186C6BDC5}|..\\QuizSystemRepository\\QuizSystemRepository.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\quizsystemrepository\\interfaces\\isubjectrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +56,22 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SubjectController.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Controllers\\SubjectController.cs",
+              "RelativeDocumentMoniker": "Controllers\\SubjectController.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Controllers\\SubjectController.cs",
+              "RelativeToolTip": "Controllers\\SubjectController.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAAAHcAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:05:06.389Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -40,26 +92,156 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Class\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Class\\Index.cshtml",
-              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Class\\Index.cshtml",
-              "RelativeToolTip": "Views\\Class\\Index.cshtml",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Subject\\Index.cshtml",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Index.cshtml",
+              "RelativeToolTip": "Views\\Subject\\Index.cshtml",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAUwCoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-01T07:51:50.6Z",
+              "WhenOpened": "2026-01-01T09:24:22.827Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "_AccountLayout.cshtml",
-              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Shared\\_AccountLayout.cshtml",
-              "RelativeDocumentMoniker": "Views\\Shared\\_AccountLayout.cshtml",
-              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Shared\\_AccountLayout.cshtml",
-              "RelativeToolTip": "Views\\Shared\\_AccountLayout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAGAAAAAAAAAA==",
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Details.cshtml",
+              "RelativeDocumentMoniker": "Views\\Subject\\Details.cshtml",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Details.cshtml",
+              "RelativeToolTip": "Views\\Subject\\Details.cshtml",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAC4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-01T07:01:24.135Z",
+              "WhenOpened": "2026-01-01T09:23:51.427Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Delete.cshtml",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Delete.cshtml",
+              "RelativeDocumentMoniker": "Views\\Subject\\Delete.cshtml",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Delete.cshtml",
+              "RelativeToolTip": "Views\\Subject\\Delete.cshtml",
+              "ViewState": "AgIAABcAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-01T09:23:24.198Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Create.cshtml",
+              "RelativeDocumentMoniker": "Views\\Subject\\Create.cshtml",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Create.cshtml",
+              "RelativeToolTip": "Views\\Subject\\Create.cshtml",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-01T09:22:34.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Views\\Subject\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\Subject\\Edit.cshtml",
+              "RelativeToolTip": "Views\\Subject\\Edit.cshtml",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAADYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-01T09:19:57.304Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "20260101091722_UpdateSubject.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Migrations\\20260101091722_UpdateSubject.cs",
+              "RelativeDocumentMoniker": "..\\QuizSystemRepository\\Migrations\\20260101091722_UpdateSubject.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Migrations\\20260101091722_UpdateSubject.cs",
+              "RelativeToolTip": "..\\QuizSystemRepository\\Migrations\\20260101091722_UpdateSubject.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAUwBYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:17:23.126Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Subject.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizModel\\Models\\Subject.cs",
+              "RelativeDocumentMoniker": "..\\QuizModel\\Models\\Subject.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizModel\\Models\\Subject.cs",
+              "RelativeToolTip": "..\\QuizModel\\Models\\Subject.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAUwCAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:14:18.585Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADEAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:12:34.024Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SubjectService.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemService\\Services\\SubjectService.cs",
+              "RelativeDocumentMoniker": "..\\QuizSystemService\\Services\\SubjectService.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemService\\Services\\SubjectService.cs",
+              "RelativeToolTip": "..\\QuizSystemService\\Services\\SubjectService.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAAAD0AAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:11:54.456Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ISubjectService.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemService\\Interfaces\\ISubjectService.cs",
+              "RelativeDocumentMoniker": "..\\QuizSystemService\\Interfaces\\ISubjectService.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemService\\Interfaces\\ISubjectService.cs",
+              "RelativeToolTip": "..\\QuizSystemService\\Interfaces\\ISubjectService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:11:29.93Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "SubjectRepository.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Repository\\SubjectRepository.cs",
+              "RelativeDocumentMoniker": "..\\QuizSystemRepository\\Repository\\SubjectRepository.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Repository\\SubjectRepository.cs",
+              "RelativeToolTip": "..\\QuizSystemRepository\\Repository\\SubjectRepository.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAuwBcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:11:00.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ISubjectRepository.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Interfaces\\ISubjectRepository.cs",
+              "RelativeDocumentMoniker": "..\\QuizSystemRepository\\Interfaces\\ISubjectRepository.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Interfaces\\ISubjectRepository.cs",
+              "RelativeToolTip": "..\\QuizSystemRepository\\Interfaces\\ISubjectRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-01T09:10:35.132Z",
               "EditorCaption": ""
             }
           ]

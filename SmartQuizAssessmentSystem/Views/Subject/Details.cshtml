@@ -22,13 +22,21 @@
         <dd class="col-sm-10">@Model.Status</dd>
 
         <dt class="col-sm-2">Created At</dt>
-        <dd class="col-sm-10">@Model.CreatedAt</dd>
+        <dd class="col-sm-10">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
 
         <dt class="col-sm-2">Approved At</dt>
-        <dd class="col-sm-10">@Model.ApprovedAt</dd>
+        <dd class="col-sm-10">
+            @(Model.ApprovedAt.HasValue
+                        ? Model.ApprovedAt.Value.ToString("yyyy-MM-dd HH:mm")
+                        : "N/A")
+        </dd>
 
         <dt class="col-sm-2">Rejected At</dt>
-        <dd class="col-sm-10">@Model.RejectedAt</dd>
+        <dd class="col-sm-10">
+            @(Model.RejectedAt.HasValue
+                        ? Model.RejectedAt.Value.ToString("yyyy-MM-dd HH:mm")
+                        : "N/A")
+        </dd>
     </dl>
 </div>
 

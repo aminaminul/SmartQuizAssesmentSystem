@@ -1,46 +1,43 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using QuizSystemModel.BusinessRules;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
-using QuizSystemRepository.Data;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class SubjectController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ISubjectService _subjectService;
+        private readonly IClassService _classService;
+        private readonly UserManager<QuizSystemUser> _userManager;
 
-        public SubjectController(AppDbContext context)
+        public SubjectController(
+            ISubjectService subjectService,
+            IClassService classService,
+            UserManager<QuizSystemUser> userManager)
         {
-            _context = context;
+            _subjectService = subjectService;
+            _classService = classService;
+            _userManager = userManager;
         }
 
         // GET: Subject
-        public IActionResult Index()
+        public async Task<IActionResult> Index(long? classId)
         {
-            var subjects = _context.Subject
-                .Include(s => s.Class)
-                .Where(s => s.Status != ModelStatus.Deleted)
-                .ToList();
+            var subjects = await _subjectService.GetAllAsync(classId);
+            var classes = await _classService.GetAllAsync(); // or a lighter call if you have one
 
+            ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
             return View(subjects);
         }
 
         // GET: Subject/Details/5
-        public IActionResult Details(long id)
+        public async Task<IActionResult> Details(long id)
         {
-            var subject = _context.Subject
-                .Include(s => s.Class)
-                .Include(s => s.CreatedBy)
-                .Include(s => s.ApprovedBy)
-                .Include(s => s.RejectedBy)
-                .FirstOrDefault(s => s.Id == id);
-
+            var subject = await _subjectService.GetByIdAsync(id, includeClass: true);
             if (subject == null)
                 return NotFound();
 
@@ -48,155 +45,103 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         // GET: Subject/Create
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            PopulateClassDropdown();
+            await PopulateClassDropdownAsync();
             return View(new Subject());
         }
 
         // POST: Subject/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Subject model, long? classId)
+        public async Task<IActionResult> Create(Subject model, long? classId)
         {
             if (!ModelState.IsValid)
             {
-                PopulateClassDropdown(classId);
+                await PopulateClassDropdownAsync(classId);
                 return View(model);
             }
 
-            if (string.IsNullOrWhiteSpace(model.Name))
-                ModelState.AddModelError("Name", "Name is required.");
+            var currentUser = await _userManager.GetUserAsync(User);
 
-            if (!ModelState.IsValid)
+            try
             {
-                PopulateClassDropdown(classId);
+                await _subjectService.CreateAsync(model, classId, currentUser!);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateClassDropdownAsync(classId);
                 return View(model);
             }
-
-            var currentUser = _context.Users
-                .FirstOrDefault(u => u.UserName == User.Identity!.Name);
-
-            model.CreatedAt = DateTime.UtcNow;
-            model.Status = ModelStatus.Active;
-            model.CreatedBy = currentUser;
-            model.IsApproved = false;
-
-            if (classId.HasValue)
-            {
-                var cls = _context.Class.Find(classId.Value);
-                model.Class = cls;
-            }
-
-            _context.Subject.Add(model);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Subject/Edit/5
-        public IActionResult Edit(long id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(long id)
         {
-            var subject = _context.Subject
-                .Include(s => s.Class)
-                .FirstOrDefault(s => s.Id == id);
-
+            var subject = await _subjectService.GetByIdAsync(id, includeClass: true);
             if (subject == null)
                 return NotFound();
 
-            long? classId = subject.Class?.Id;
-            PopulateClassDropdown(classId);
-
+            await PopulateClassDropdownAsync(subject.ClassId);
             return View(subject);
         }
 
         // POST: Subject/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(long id, Subject model, long? classId)
+        public async Task<IActionResult> Edit(long id, Subject model, long? classId)
         {
-            if (id != model.Id)
-                return NotFound();
-
+            if (id != model.Id) return NotFound();
             if (!ModelState.IsValid)
             {
-                PopulateClassDropdown(classId);
+                await PopulateClassDropdownAsync(classId ?? model.ClassId);
                 return View(model);
             }
 
-            var existing = _context.Subject
-                .Include(s => s.Class)
-                .FirstOrDefault(s => s.Id == id);
-
-            if (existing == null)
-                return NotFound();
-
-            if (string.IsNullOrWhiteSpace(model.Name))
-                ModelState.AddModelError("Name", "Name is required.");
-
-            if (!ModelState.IsValid)
+            try
             {
-                PopulateClassDropdown(classId);
+                var ok = await _subjectService.UpdateAsync(id, model, classId);
+                if (!ok) return NotFound();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateClassDropdownAsync(classId ?? model.ClassId);
                 return View(model);
             }
-
-            existing.Name = model.Name;
-            existing.IsApproved = model.IsApproved;
-            existing.Status = model.Status;
-            existing.ModifiedAt = DateTime.UtcNow;
-
-            if (classId.HasValue)
-            {
-                var cls = _context.Class.Find(classId.Value);
-                existing.Class = cls;
-            }
-            else
-            {
-                existing.Class = null;
-            }
-
-            _context.Update(existing);
-            _context.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Subject/Delete/5
-        public IActionResult Delete(long id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(long id)
         {
-            var subject = _context.Subject
-                .Include(s => s.Class)
-                .FirstOrDefault(s => s.Id == id);
-
-            if (subject == null)
-                return NotFound();
-
+            var subject = await _subjectService.GetByIdAsync(id, includeClass: true);
+            if (subject == null) return NotFound();
             return View(subject);
         }
 
-        // POST: Subject/Delete/5 (soft delete)
+        // POST: Subject/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(long id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var subject = _context.Subject.Find(id);
-            if (subject == null)
-                return NotFound();
-
-            subject.Status = ModelStatus.Deleted;
-            subject.ModifiedAt = DateTime.UtcNow;
-
-            _context.Subject.Update(subject);
-            _context.SaveChanges();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var ok = await _subjectService.SoftDeleteAsync(id, currentUser!);
+            if (!ok) return NotFound();
 
             return RedirectToAction(nameof(Index));
         }
 
-        private void PopulateClassDropdown(long? selectedId = null)
+        private async Task PopulateClassDropdownAsync(long? selectedId = null)
         {
-            var classes = _context.Class.ToList();
-            ViewBag.ClassId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                classes, "Id", "Name", selectedId);
+            var classes = await _classService.GetAllAsync();
+            ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedId);
         }
     }
 }
