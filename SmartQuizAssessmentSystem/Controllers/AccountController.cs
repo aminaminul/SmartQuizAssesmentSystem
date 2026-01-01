@@ -9,13 +9,13 @@ namespace SmartQuizAssessmentSystem.Controllers
     public class AccountController : Controller
     {
         private readonly SignInManager<QuizSystemUser> _signInManager;
+        private readonly UserManager<QuizSystemUser> _userManager;
         private readonly IAccountService _accountService;
 
-        public AccountController(
-            SignInManager<QuizSystemUser> signInManager,
-            IAccountService accountService)
+        public AccountController(SignInManager<QuizSystemUser> signInManager,UserManager<QuizSystemUser> userManager,IAccountService accountService)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _accountService = accountService;
         }
 
@@ -46,7 +46,26 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
-            return RedirectToAction("Dashboard", "Admin");
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                await _signInManager.SignOutAsync();
+                ModelState.AddModelError(string.Empty, "User not found.");
+                return View(model);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Admin"))
+                return RedirectToAction("Dashboard", "Admin");
+
+            if (roles.Contains("Instructor"))
+                return RedirectToAction("Dashboard", "Instructor");
+
+            if (roles.Contains("Student"))
+                return RedirectToAction("Dashboard", "Student");
+
+            return RedirectToAction("Index", "Home");
         }
 
         // REGISTER

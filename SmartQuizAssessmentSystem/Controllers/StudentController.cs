@@ -8,21 +8,25 @@ using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
         private readonly UserManager<QuizSystemUser> _userManager;
 
-        public StudentController(
-            IStudentService studentService,
-            UserManager<QuizSystemUser> userManager)
+        public StudentController(IStudentService studentService,UserManager<QuizSystemUser> userManager)
         {
             _studentService = studentService;
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "Student")]
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
         // LIST
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var students = await _studentService.GetAllAsync();
