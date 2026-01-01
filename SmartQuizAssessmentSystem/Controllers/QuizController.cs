@@ -22,7 +22,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var quizzes = await _quizService.GetAllAsync();
-            return View(quizzes); // entity list, same Index view as age
+            return View(quizzes);
         }
 
         public async Task<IActionResult> Details(long id)

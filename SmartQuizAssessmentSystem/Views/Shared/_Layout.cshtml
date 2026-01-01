@@ -1,48 +1,101 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Identity
+@using QuizSystemModel.Models
+@inject UserManager<QuizSystemUser> UserManager
+
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - QuizSystem</title>
-    <script type="importmap"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/UserRoles.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account.css" />
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 230px;
+            min-height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #ddd;
+        }
+
+            .sidebar a {
+                padding: 10px 15px;
+                display: block;
+                color: #333;
+                text-decoration: none;
+            }
+
+                .sidebar a:hover, .sidebar .active {
+                    background: #ffc107;
+                    color: #000;
+                    border-radius: 6px;
+                }
+
+        .topbar {
+            background: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QuizSystem</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <partial name="_LoginPartial" />
-                    </ul>
-                </div>
+    <div class="d-flex">
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar p-3">
+            @{
+                if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    if (User.IsInRole("Admin"))
+                    {
+                        <h5 class="text-center mb-4">ADMIN</h5>
+                        <a asp-controller="Admin" asp-action="Dashboard" class="active">Dashboard</a>
+                        <a asp-controller="Instructor" asp-action="Index">Instructors</a>
+                        <a asp-controller="Student" asp-action="Index">Students</a>
+                        <a asp-controller="EducationMedium" asp-action="Index">Education Medium</a>
+                        <a asp-controller="Class" asp-action="Index">Classes</a>
+                        <a asp-controller="Subject" asp-action="Index">Subjects</a>
+                        <a asp-controller="Quiz" asp-action="Index">Quiz</a>
+                    }
+                    else if (User.IsInRole("Instructor"))
+                    {
+                        <h5 class="text-center mb-4">INSTRUCTOR</h5>
+                        <a asp-controller="Instructor" asp-action="Dashboard" class="active">Dashboard</a>
+                        <a asp-controller="Student" asp-action="Index">Students</a>
+                        <a asp-controller="Subject" asp-action="Index">Subjects</a>
+                        <a asp-controller="Quiz" asp-action="Index">Quiz</a>
+                    }
+                    else if (User.IsInRole("Student"))
+                    {
+                        <h5 class="text-center mb-4">STUDENT</h5>
+                        <a asp-controller="Student" asp-action="Dashboard" class="active">Dashboard</a>
+                    }
+                }
+            }
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="flex-grow-1">
+            <!-- TOP BAR -->
+            <div class="topbar d-flex justify-content-between align-items-center">
+                @if (User.IsInRole("Admin"))
+                {
+                    <input class="form-control w-25" placeholder="Search..." />
+                }
+
+                <partial name="_LoginPartial" />
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+            <div class="p-4">
+                @RenderBody()
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - QuizSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

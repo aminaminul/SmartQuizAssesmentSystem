@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<QuizSystemModel.Models.QuestionBank>
 @{
-    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var quiz = ViewBag.Quiz as QuizSystemModel.Models.Quiz;
     string subject = ViewBag.Subject as string;
     ViewData["Title"] = "Questions for " + quiz?.Name;

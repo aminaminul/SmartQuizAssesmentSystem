@@ -7,7 +7,6 @@ using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class ClassController : Controller
     {
         private readonly IClassService _classService;
@@ -23,7 +22,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _mediumService = mediumService;
             _userManager = userManager;
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(long? educationMediumId)
         {
             var classes = await _classService.GetAllAsync(educationMediumId);
