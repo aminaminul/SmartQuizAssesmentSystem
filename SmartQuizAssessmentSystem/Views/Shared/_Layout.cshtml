@@ -65,7 +65,7 @@
                     {
                         <h5 class="text-center mb-4">INSTRUCTOR</h5>
 
-                        <a asp-controller="InstructorDashboard" asp-action="Index" class="active">Dashboard</a>
+                        <a asp-controller="InstructorDashboard" asp-action="Dashboard" class="active">Dashboard</a>
 
                         <a asp-controller="Quiz" asp-action="Index">Manage Quiz</a>
                         <a asp-controller="InstructorDashboard" asp-action="Instructors">Instructors</a>
@@ -79,7 +79,7 @@
                     else if (User.IsInRole("Student"))
                     {
                         <h5 class="text-center mb-4">STUDENT</h5>
-                        <a asp-controller="Student" asp-action="Dashboard" class="active">Dashboard</a>
+                        <a asp-controller="StudentDashboard" asp-action="Dashboard" class="active">Dashboard</a>
                     }
                 }
             }
