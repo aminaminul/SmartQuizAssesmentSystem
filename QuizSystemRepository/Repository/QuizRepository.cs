@@ -49,5 +49,23 @@ namespace QuizSystemRepository.Repositories
             _context.Quiz.Remove(quiz);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Quiz>> GetAvailableForStudentAsync(long studentUserId, DateTime now)
+        {
+            return await _context.Quiz
+                .Where(q => q.IsApproved
+                            && q.Status == ModelStatus.Active
+                            && (q.StartAt == null || q.StartAt <= now)
+                            && (q.EndAt == null || q.EndAt >= now))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<Quiz?> GetByIdWithQuestionsAsync(long quizId)
+        {
+            return await _context.Quiz
+                .Include(q => q.Questions)
+                .FirstOrDefaultAsync(q => q.Id == quizId);
+        }
     }
 }

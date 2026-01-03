@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
+using QuizSystemRepository.Interfaces;
 using QuizSystemRepository.Repositories;
 using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
@@ -57,6 +58,13 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 
+builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
+builder.Services.AddScoped<IAttemptedQuizAnswerRepository, AttemptedQuizAnswerRepository>();
+
+
+builder.Services.AddScoped<IStudentDashboardRepository, StudentDashboardRepository>();
+builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+builder.Services.AddScoped<IStudentQuizService, StudentQuizService>();
 
 var app = builder.Build();
 

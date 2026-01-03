@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QuizSystemRepository.Migrations
 {
     /// <inheritdoc />
-    public partial class Seeding : Migration
+    public partial class API : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -222,10 +222,11 @@ namespace QuizSystemRepository.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ÈndAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Duration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: true),
                     TotalMarks = table.Column<int>(type: "int", nullable: false),
-                    RequiredPassPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    RequiredPassPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -307,7 +308,8 @@ namespace QuizSystemRepository.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedById = table.Column<long>(type: "bigint", nullable: true),
                     ModifiedById = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -316,7 +318,7 @@ namespace QuizSystemRepository.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HscPassingInstrutute = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HscPassingYear = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HscPassingYear = table.Column<long>(type: "bigint", nullable: true),
                     HscGrade = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<long>(type: "bigint", nullable: true),
                     EducationMediumId = table.Column<long>(type: "bigint", nullable: true)
@@ -366,7 +368,8 @@ namespace QuizSystemRepository.Migrations
                     OptionC = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OptionD = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RightOption = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Markes = table.Column<int>(type: "int", nullable: false)
+                    Marks = table.Column<int>(type: "int", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -395,24 +398,30 @@ namespace QuizSystemRepository.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SubmittedById = table.Column<long>(type: "bigint", nullable: true),
-                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    QuizId = table.Column<long>(type: "bigint", nullable: false)
+                    QuizId = table.Column<long>(type: "bigint", nullable: false),
+                    StudentUserId = table.Column<long>(type: "bigint", nullable: false),
+                    StartAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsSubmitted = table.Column<bool>(type: "bit", nullable: false),
+                    TotalScore = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsPassed = table.Column<bool>(type: "bit", nullable: false),
+                    LastSavedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_QuizAttempt", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_QuizAttempt_AspNetUsers_SubmittedById",
-                        column: x => x.SubmittedById,
+                        name: "FK_QuizAttempt_AspNetUsers_StudentUserId",
+                        column: x => x.StudentUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_QuizAttempt_Quiz_QuizId",
                         column: x => x.QuizId,
                         principalTable: "Quiz",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -421,7 +430,8 @@ namespace QuizSystemRepository.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedById = table.Column<long>(type: "bigint", nullable: true),
                     ModifiedById = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -518,8 +528,8 @@ namespace QuizSystemRepository.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    QuizAttemptId = table.Column<long>(type: "bigint", nullable: true),
-                    QuestionBankId = table.Column<long>(type: "bigint", nullable: true),
+                    QuizAttemptId = table.Column<long>(type: "bigint", nullable: false),
+                    QuestionBankId = table.Column<long>(type: "bigint", nullable: false),
                     SelectedOption = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Score = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -530,12 +540,14 @@ namespace QuizSystemRepository.Migrations
                         name: "FK_AttemptedQuizAnswer_QuestionBank_QuestionBankId",
                         column: x => x.QuestionBankId,
                         principalTable: "QuestionBank",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AttemptedQuizAnswer_QuizAttempt_QuizAttemptId",
                         column: x => x.QuizAttemptId,
                         principalTable: "QuizAttempt",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -693,9 +705,9 @@ namespace QuizSystemRepository.Migrations
                 column: "QuizId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuizAttempt_SubmittedById",
+                name: "IX_QuizAttempt_StudentUserId",
                 table: "QuizAttempt",
-                column: "SubmittedById");
+                column: "StudentUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Student_ClassId",

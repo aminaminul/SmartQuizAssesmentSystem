@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QuizSystemModel.Models;
 
-namespace QuizSystemModel.Models
+public class AttemptedQuizAnswer
 {
-    public class AttemptedQuizAnswer
-    {
-        public long Id { get; set; }
-        public QuizAttempt? QuizAttempt { get; set; }
-        public QuestionBank? QuestionBank { get; set; }
-        public string? SelectedOption { get; set; }
-        public decimal Score { get; set; }
-    }
+    public long Id { get; set; }
+
+    public long QuizAttemptId { get; set; }
+    public QuizAttempt QuizAttempt { get; set; }
+
+    public long QuestionBankId { get; set; }
+    public QuestionBank QuestionBank { get; set; }
+
+    public string? SelectedOption { get; set; }
+    public decimal Score { get; set; }
 }

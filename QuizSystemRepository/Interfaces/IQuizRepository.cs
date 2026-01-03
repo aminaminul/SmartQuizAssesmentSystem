@@ -1,4 +1,5 @@
 ﻿using QuizSystemModel.Models;
+
 namespace QuizSystemModel.Interfaces
 {
     public interface IQuizRepository
@@ -8,5 +9,7 @@ namespace QuizSystemModel.Interfaces
         Task AddAsync(Quiz quiz);
         Task UpdateAsync(Quiz quiz);
         Task DeleteAsync(Quiz quiz);
+        Task<List<Quiz>> GetAvailableForStudentAsync(long studentUserId, DateTime now);
+        Task<Quiz?> GetByIdWithQuestionsAsync(long quizId);
     }
 }

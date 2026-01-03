@@ -12,8 +12,8 @@ using QuizSystemRepository.Data;
 namespace QuizSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251224063016_updateseed")]
-    partial class updateseed
+    [Migration("20260103171944_API")]
+    partial class API
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,35 @@ namespace QuizSystemRepository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AttemptedQuizAnswer", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("QuestionBankId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("QuizAttemptId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Score")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SelectedOption")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionBankId");
+
+                    b.HasIndex("QuizAttemptId");
+
+                    b.ToTable("AttemptedQuizAnswer");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
@@ -128,7 +157,7 @@ namespace QuizSystemRepository.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("QuizSystemModel.Models.AttemptedQuizAnswer", b =>
+            modelBuilder.Entity("QuizAttempt", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,25 +165,37 @@ namespace QuizSystemRepository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("QuestionBankId")
+                    b.Property<DateTime?>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPassed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSubmitted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastSavedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("QuizId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("QuizAttemptId")
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("StudentUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("Score")
+                    b.Property<decimal>("TotalScore")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("SelectedOption")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionBankId");
+                    b.HasIndex("QuizId");
 
-                    b.HasIndex("QuizAttemptId");
+                    b.HasIndex("StudentUserId");
 
-                    b.ToTable("AttemptedQuizAnswer");
+                    b.ToTable("QuizAttempt");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.Class", b =>
@@ -292,13 +333,19 @@ namespace QuizSystemRepository.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HscGrade")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HscPassingInstrutute")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HscPassingYear")
+                    b.Property<long?>("HscPassingYear")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedAt")
@@ -306,10 +353,6 @@ namespace QuizSystemRepository.Migrations
 
                     b.Property<long?>("ModifiedById")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -351,7 +394,7 @@ namespace QuizSystemRepository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Markes")
+                    b.Property<int>("Marks")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
@@ -394,6 +437,10 @@ namespace QuizSystemRepository.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -429,7 +476,10 @@ namespace QuizSystemRepository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Duration")
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime?>("EndAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsApproved")
@@ -460,11 +510,12 @@ namespace QuizSystemRepository.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TotalMarks")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("ÈndAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -477,32 +528,6 @@ namespace QuizSystemRepository.Migrations
                     b.HasIndex("RejectedById");
 
                     b.ToTable("Quiz");
-                });
-
-            modelBuilder.Entity("QuizSystemModel.Models.QuizAttempt", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("QuizId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("SubmittedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("SubmittedById")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuizId");
-
-                    b.HasIndex("SubmittedById");
-
-                    b.ToTable("QuizAttempt");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.QuizSystemRole", b =>
@@ -634,15 +659,17 @@ namespace QuizSystemRepository.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<long?>("ModifiedById")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -728,6 +755,25 @@ namespace QuizSystemRepository.Migrations
                     b.ToTable("Subject");
                 });
 
+            modelBuilder.Entity("AttemptedQuizAnswer", b =>
+                {
+                    b.HasOne("QuizSystemModel.Models.QuestionBank", "QuestionBank")
+                        .WithMany()
+                        .HasForeignKey("QuestionBankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QuizAttempt", "QuizAttempt")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuizAttemptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("QuestionBank");
+
+                    b.Navigation("QuizAttempt");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.HasOne("QuizSystemModel.Models.QuizSystemRole", null)
@@ -779,19 +825,23 @@ namespace QuizSystemRepository.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QuizSystemModel.Models.AttemptedQuizAnswer", b =>
+            modelBuilder.Entity("QuizAttempt", b =>
                 {
-                    b.HasOne("QuizSystemModel.Models.QuestionBank", "QuestionBank")
+                    b.HasOne("QuizSystemModel.Models.Quiz", "Quiz")
                         .WithMany()
-                        .HasForeignKey("QuestionBankId");
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("QuizSystemModel.Models.QuizAttempt", "QuizAttempt")
+                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "StudentUser")
                         .WithMany()
-                        .HasForeignKey("QuizAttemptId");
+                        .HasForeignKey("StudentUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("QuestionBank");
+                    b.Navigation("Quiz");
 
-                    b.Navigation("QuizAttempt");
+                    b.Navigation("StudentUser");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.Class", b =>
@@ -892,7 +942,7 @@ namespace QuizSystemRepository.Migrations
                         .HasForeignKey("ModifiedById");
 
                     b.HasOne("QuizSystemModel.Models.Quiz", "Quiz")
-                        .WithMany()
+                        .WithMany("Questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -929,23 +979,6 @@ namespace QuizSystemRepository.Migrations
                     b.Navigation("ModifiedBy");
 
                     b.Navigation("RejectedBy");
-                });
-
-            modelBuilder.Entity("QuizSystemModel.Models.QuizAttempt", b =>
-                {
-                    b.HasOne("QuizSystemModel.Models.Quiz", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("QuizSystemModel.Models.QuizSystemUser", "SubmittedBy")
-                        .WithMany()
-                        .HasForeignKey("SubmittedById");
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("SubmittedBy");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.Student", b =>
@@ -1012,6 +1045,16 @@ namespace QuizSystemRepository.Migrations
                     b.Navigation("ModifiedBy");
 
                     b.Navigation("RejectedBy");
+                });
+
+            modelBuilder.Entity("QuizAttempt", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("QuizSystemModel.Models.Quiz", b =>
+                {
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }
