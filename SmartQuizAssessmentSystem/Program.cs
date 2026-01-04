@@ -61,9 +61,12 @@ builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
 builder.Services.AddScoped<IAttemptedQuizAnswerRepository, AttemptedQuizAnswerRepository>();
 
+builder.Services.AddScoped<IAdminDashboardRepository, AdminDashboardRepository>();
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
 builder.Services.AddScoped<IStudentDashboardRepository, StudentDashboardRepository>();
 builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
+
 builder.Services.AddScoped<IStudentQuizService, StudentQuizService>();
 
 var app = builder.Build();

@@ -1,0 +1,167 @@
+﻿@using QuizSystemModel.ViewModels
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Admin Dashboard</h2>
+
+<div class="row mb-4">
+    <!-- Instructors -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-primary mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Instructors</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalInstructors</p>
+                <p class="card-text mb-3">
+                    Manage instructors and their active quizzes.
+                </p>
+                <a asp-controller="Instructors"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-success mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Students</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalStudents</p>
+                <p class="card-text mb-3">
+                    Create, update and manage student accounts with active quizzes.
+                </p>
+                <a asp-controller="Students"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Users -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-info mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Total Users</h5>
+                <p class="card-text display-6 mb-0">@Model.TotalUsers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Classes -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-secondary mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Classes</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalClasses</p>
+                <p class="card-text mb-3">
+                    Assign classes and link them with active quizzes.
+                </p>
+                <a asp-controller="Classes"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subjects -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Subjects</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalSubjects</p>
+                <p class="card-text mb-3">
+                    Manage subjects used across quizzes and questions.
+                </p>
+                <a asp-controller="Subjects"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quizzes -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-warning mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Quizzes</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalQuizzes</p>
+                <p class="card-text mb-3">
+                    Create, edit and manage quizzes before attempts.
+                </p>
+                <a asp-controller="Quiz"
+                   asp-action="Index"
+                   class="btn btn-dark btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Pending Approvals -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-danger mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Quiz Approvals</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingQuizzes</p>
+                <p class="card-text mb-3">
+                    Review and approve quizzes before they go live.
+                </p>
+                <a asp-controller="Quiz"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Pending
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-secondary mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Questions</h5>
+                <p class="card-text mb-3">
+                    Manage questions linked to each quiz.
+                </p>
+                <a asp-controller="Question"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MCQ Options -->
+    @* <div class="col-md-4 d-flex">
+        <div class="card text-dark bg-light mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">MCQ Options</h5>
+                <p class="card-text mb-3">
+                    Add, edit and delete options for multiple choice questions.
+                </p>
+                <a asp-controller="Option"
+                   asp-action="Index"
+                   class="btn btn-primary btn-sm mt-auto w-100">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div> *@
+</div>
