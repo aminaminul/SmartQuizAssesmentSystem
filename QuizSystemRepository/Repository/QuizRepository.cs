@@ -67,5 +67,13 @@ namespace QuizSystemRepository.Repositories
                 .Include(q => q.Questions)
                 .FirstOrDefaultAsync(q => q.Id == quizId);
         }
+        public Task<List<Quiz>> GetPendingAsync()
+        {
+            return _context.Quiz
+                .Where(q => !q.IsApproved)
+                .OrderByDescending(q => q.CreatedAt)
+                .ToListAsync();
+        }
+
     }
 }

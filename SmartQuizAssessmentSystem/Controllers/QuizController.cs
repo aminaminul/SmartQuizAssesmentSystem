@@ -107,6 +107,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Pending()
+        {
+            var pendingQuizzes = await _quizService.GetPendingAsync();
+            return View(pendingQuizzes);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id)

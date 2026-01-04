@@ -13,5 +13,6 @@ namespace QuizSystemService.Interfaces
         Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser);
         Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
         Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
+        Task<List<Quiz>> GetPendingAsync();
     }
 }

@@ -1,0 +1,63 @@
+﻿@using QuizSystemModel.Models
+@model IEnumerable<Quiz>
+
+@{
+    ViewData["Title"] = "Pending Quiz Approvals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Pending Quiz Approvals</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <p>No pending quizzes.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Created At</th>
+                <th>Total Marks</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var quiz in Model)
+            {
+                <tr>
+                    <td>@quiz.Name</td>
+                    <td>@quiz.Subject</td>
+                    <td>@quiz.CreatedAt.ToLocalTime()</td>
+                    <td>@quiz.TotalMarks</td>
+                    <td>
+                        <form asp-controller="Quiz"
+                              asp-action="Approve"
+                              method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@quiz.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Approve
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-controller="AdminDashboard"
+   asp-action="Dashboard"
+   class="btn btn-secondary">
+    Back to Dashboard
+</a>

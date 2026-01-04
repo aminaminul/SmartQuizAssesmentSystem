@@ -18,7 +18,7 @@
                 <p class="card-text mb-3">
                     Manage instructors and their active quizzes.
                 </p>
-                <a asp-controller="Instructors"
+                <a asp-controller="Instructor"
                    asp-action="Index"
                    class="btn btn-light btn-sm mt-auto w-100">
                     View More
@@ -36,7 +36,7 @@
                 <p class="card-text mb-3">
                     Create, update and manage student accounts with active quizzes.
                 </p>
-                <a asp-controller="Students"
+                <a asp-controller="Student"
                    asp-action="Index"
                    class="btn btn-light btn-sm mt-auto w-100">
                     View More
@@ -66,7 +66,7 @@
                 <p class="card-text mb-3">
                     Assign classes and link them with active quizzes.
                 </p>
-                <a asp-controller="Classes"
+                <a asp-controller="Class"
                    asp-action="Index"
                    class="btn btn-light btn-sm mt-auto w-100">
                     View More
@@ -84,7 +84,7 @@
                 <p class="card-text mb-3">
                     Manage subjects used across quizzes and questions.
                 </p>
-                <a asp-controller="Subjects"
+                <a asp-controller="Subject"
                    asp-action="Index"
                    class="btn btn-light btn-sm mt-auto w-100">
                     View More
@@ -97,7 +97,7 @@
     <div class="col-md-4 d-flex">
         <div class="card text-white bg-warning mb-3 shadow-sm w-100 h-100">
             <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-2">Quizzes</h5>
+                <h5 class="card-title mb-2">Quiz</h5>
                 <p class="card-text display-6 mb-2">@Model.TotalQuizzes</p>
                 <p class="card-text mb-3">
                     Create, edit and manage quizzes before attempts.
@@ -126,23 +126,6 @@
                    asp-action="Pending"
                    class="btn btn-light btn-sm mt-auto w-100">
                     View Pending
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Questions -->
-    <div class="col-md-4 d-flex">
-        <div class="card text-white bg-secondary mb-3 shadow-sm w-100 h-100">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-2">Questions</h5>
-                <p class="card-text mb-3">
-                    Manage questions linked to each quiz.
-                </p>
-                <a asp-controller="Question"
-                   asp-action="Index"
-                   class="btn btn-light btn-sm mt-auto w-100">
-                    View More
                 </a>
             </div>
         </div>

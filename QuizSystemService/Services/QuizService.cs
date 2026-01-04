@@ -1,4 +1,5 @@
-﻿using QuizSystemModel.BusinessRules;
+﻿using Microsoft.EntityFrameworkCore;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
@@ -105,6 +106,10 @@ namespace QuizSystemService.Services
             return true;
         }
 
+        public Task<List<Quiz>> GetPendingAsync()
+        {
+            return _repo.GetPendingAsync();
+        }
         public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
         {
             var quiz = await _repo.GetByIdAsync(id);
