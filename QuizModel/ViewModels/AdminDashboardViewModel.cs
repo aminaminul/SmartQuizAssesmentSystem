@@ -9,6 +9,7 @@
         public long PendingQuizzes { get; set; }
         public long TotalClasses { get; set; }
         public long TotalSubjects { get; set; }
+        public long TotalEducationMediums { get; set; }
     }
 
 }

@@ -21,6 +21,7 @@ namespace QuizSystemService.Services
             long pending = await _repo.GetPendingQuizCountAsync();
             long classes = await _repo.GetClassCountAsync();
             long subjects = await _repo.GetSubjectCountAsync();
+            long mediums = await _repo.GetEducationMediumCountAsync();
 
             return new AdminDashboardViewModel
             {
@@ -30,7 +31,8 @@ namespace QuizSystemService.Services
                 TotalQuizzes = quizzes,
                 PendingQuizzes = pending,
                 TotalClasses = classes,
-                TotalSubjects = subjects
+                TotalSubjects = subjects,
+                TotalEducationMediums = mediums
             };
         }
     }

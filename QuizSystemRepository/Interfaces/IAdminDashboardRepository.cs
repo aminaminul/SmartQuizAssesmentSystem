@@ -8,6 +8,7 @@
         Task<long> GetPendingQuizCountAsync();
         Task<long> GetClassCountAsync();
         Task<long> GetSubjectCountAsync();
+        Task<long> GetEducationMediumCountAsync();
     }
 
 }

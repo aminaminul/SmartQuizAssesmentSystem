@@ -8,10 +8,11 @@
 
 <h2>Admin Dashboard</h2>
 
+<!-- Top stats row -->
 <div class="row mb-4">
     <!-- Instructors -->
     <div class="col-md-4 d-flex">
-        <div class="card text-white bg-primary mb-3 shadow-sm w-100 h-100">
+        <div class="card text-white bg-success mb-3 shadow-sm w-100 h-100">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title mb-2">Instructors</h5>
                 <p class="card-text display-6 mb-2">@Model.TotalInstructors</p>
@@ -45,21 +46,30 @@
         </div>
     </div>
 
-    <!-- Total Users -->
+    <!-- Education Mediums -->
     <div class="col-md-4 d-flex">
-        <div class="card text-white bg-info mb-3 shadow-sm w-100 h-100">
+        <div class="card text-white bg-success mb-3 shadow-sm w-100 h-100">
             <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-2">Total Users</h5>
-                <p class="card-text display-6 mb-0">@Model.TotalUsers</p>
+                <h5 class="card-title mb-2">Education Mediums</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalEducationMediums</p>
+                <p class="card-text mb-3">
+                    Manage education mediums for instructors and students.
+                </p>
+                <a asp-controller="EducationMedium"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View More
+                </a>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Entities row -->
 <div class="row mb-4">
     <!-- Classes -->
     <div class="col-md-4 d-flex">
-        <div class="card text-white bg-secondary mb-3 shadow-sm w-100 h-100">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title mb-2">Classes</h5>
                 <p class="card-text display-6 mb-2">@Model.TotalClasses</p>
@@ -95,7 +105,7 @@
 
     <!-- Quizzes -->
     <div class="col-md-4 d-flex">
-        <div class="card text-white bg-warning mb-3 shadow-sm w-100 h-100">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title mb-2">Quiz</h5>
                 <p class="card-text display-6 mb-2">@Model.TotalQuizzes</p>
@@ -104,7 +114,7 @@
                 </p>
                 <a asp-controller="Quiz"
                    asp-action="Index"
-                   class="btn btn-dark btn-sm mt-auto w-100">
+                   class="btn btn-light btn-sm mt-auto w-100">
                     View More
                 </a>
             </div>
@@ -112,25 +122,42 @@
     </div>
 </div>
 
-<div class="col-md-4 d-flex">
+<!-- Pending approvals row -->
+<div class="row mb-4">
     <!-- Class Pending Approvals -->
-    <div class="card text-white bg-secondary mb-3 shadow-sm w-100 h-100">
-        <div class="card-body d-flex flex-column">
-            <h5 class="card-title mb-2">Pending Class Approvals</h5>
-            <p class="card-text mb-3">
-                Review and approve classes before assigning quizzes.
-            </p>
-            <a asp-controller="Class"
-               asp-action="Pending"
-               class="btn btn-light btn-sm mt-auto w-100">
-                View Pending
-            </a>
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-danger mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Class Approvals</h5>
+                <p class="card-text mb-3">
+                    Review and approve classes before assigning quizzes.
+                </p>
+                <a asp-controller="Class"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Pending
+                </a>
+            </div>
         </div>
     </div>
-</div>
 
+    <!-- Subject Pending Approvals -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-danger mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Subject Approvals</h5>
+                <p class="card-text mb-3">
+                    Review and approve subjects before use in quizzes.
+                </p>
+                <a asp-controller="Subject"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Pending
+                </a>
+            </div>
+        </div>
+    </div>
 
-<div class="row mb-4">
     <!-- Quiz Pending Approvals -->
     <div class="col-md-4 d-flex">
         <div class="card text-white bg-danger mb-3 shadow-sm w-100 h-100">
@@ -148,5 +175,4 @@
             </div>
         </div>
     </div>
-
 </div>

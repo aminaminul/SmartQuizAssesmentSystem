@@ -1,0 +1,71 @@
+﻿@using QuizSystemModel.Models
+@model IEnumerable<Subject>
+
+@{
+    ViewData["Title"] = "Pending Subject Approvals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Pending Subject Approvals</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <p>No pending subjects.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Subject Name</th>
+                <th>Created At</th>
+                <th>Approved</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.Name</td>
+                    <td>@s.CreatedAt.ToLocalTime()</td>
+                    <td>@(s.IsApproved ? "Yes" : "No")</td>
+                    <td class="d-flex gap-2">
+                        <form asp-controller="Subject"
+                              asp-action="Approve"
+                              method="post" class="me-1">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@s.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Approve
+                            </button>
+                        </form>
+
+                        <form asp-controller="Subject"
+                              asp-action="Reject"
+                              method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@s.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-controller="AdminDashboard"
+   asp-action="Dashboard"
+   class="btn btn-secondary">
+    Back to Dashboard
+</a>

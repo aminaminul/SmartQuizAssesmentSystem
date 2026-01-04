@@ -25,7 +25,6 @@ namespace QuizSystemService.Services
             if (string.IsNullOrWhiteSpace(model.Name))
                 throw new InvalidOperationException("Subject name is required.");
 
-            // optional: unique per class
             if (await _repo.NameExistsInClassAsync(model.Name, classId))
                 throw new InvalidOperationException("This subject already exists for the selected class.");
 
@@ -77,6 +76,41 @@ namespace QuizSystemService.Services
 
             await _repo.UpdateAsync(subject);
             return true;
+        }
+
+        public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
+        {
+            var entity = await _repo.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.IsApproved = true;
+            entity.ApprovedAt = DateTime.UtcNow;
+            entity.ApprovedBy = currentUser;
+            entity.RejectedAt = null;
+            entity.RejectedBy = null;
+
+            await _repo.UpdateAsync(entity);
+            return true;
+        }
+
+        public async Task<bool> RejectAsync(long id, QuizSystemUser currentUser)
+        {
+            var entity = await _repo.GetByIdAsync(id);
+            if (entity == null) return false;
+
+            entity.IsApproved = false;
+            entity.RejectedAt = DateTime.UtcNow;
+            entity.RejectedBy = currentUser;
+            entity.ApprovedAt = null;
+            entity.ApprovedBy = null;
+
+            await _repo.UpdateAsync(entity);
+            return true;
+        }
+
+        public Task<List<Subject>> GetPendingAsync()
+        {
+            return _repo.GetPendingAsync();
         }
     }
 }

@@ -137,6 +137,43 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        // Pending list
+        [HttpGet]
+        public async Task<IActionResult> Pending()
+        {
+            var pendingSubjects = await _subjectService.GetPendingAsync();
+            return View(pendingSubjects); // Views/Subject/Pending.cshtml
+        }
+
+        // Approve subject
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _subjectService.ApproveAsync(id, currentUser);
+            if (!ok) return NotFound();
+
+            TempData["SuccessMessage"] = "Subject approved successfully.";
+            return RedirectToAction(nameof(Pending));
+        }
+
+        // Reject subject
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reject(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _subjectService.RejectAsync(id, currentUser);
+            if (!ok) return NotFound();
+
+            TempData["SuccessMessage"] = "Subject rejected.";
+            return RedirectToAction(nameof(Pending));
+        }
 
         private async Task PopulateClassDropdownAsync(long? selectedId = null)
         {

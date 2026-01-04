@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.Interfaces;
+using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
 
 namespace QuizSystemRepository.Repositories
@@ -54,6 +55,16 @@ namespace QuizSystemRepository.Repositories
             var count = await query.LongCountAsync();
             return count;
         }
+        public async Task<long> GetEducationMediumCountAsync()
+        {
+            IQueryable<EducationMedium> query = _context.EducationMedium;
+
+            long total = await query.LongCountAsync();
+
+            return total;
+        }
+
+
 
     }
 
