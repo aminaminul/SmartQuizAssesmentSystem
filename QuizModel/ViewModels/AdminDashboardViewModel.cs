@@ -10,6 +10,8 @@
         public long TotalClasses { get; set; }
         public long TotalSubjects { get; set; }
         public long TotalEducationMediums { get; set; }
+        public long PendingClasses { get; set; }
+        public long PendingSubjects { get; set; }
     }
 
 }

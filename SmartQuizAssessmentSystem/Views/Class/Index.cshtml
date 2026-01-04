@@ -7,18 +7,6 @@
 
 <h4>Classes</h4>
 
-<form asp-action="Index" method="get" class="mb-3">
-    <div class="row">
-        <div class="col-md-4">
-            <select asp-for="@ViewContext.HttpContext.Request.Query["educationMediumId"]"
-                    asp-items="(SelectList)ViewBag.EducationMediumId"
-                    class="form-select">
-                <option value=""> All Education Mediums </option>
-            </select>
-        </div>
-    </div>
-</form>
-
 <p>
     <a asp-action="Create" class="btn btn-success">Create New Class</a>
 </p>

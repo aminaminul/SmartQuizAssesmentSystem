@@ -9,6 +9,8 @@
         Task<long> GetClassCountAsync();
         Task<long> GetSubjectCountAsync();
         Task<long> GetEducationMediumCountAsync();
+        Task<long> GetPendingClassCountAsync();
+        Task<long> GetPendingSubjectCountAsync();
     }
 
 }

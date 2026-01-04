@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
@@ -64,7 +65,23 @@ namespace QuizSystemRepository.Repositories
             return total;
         }
 
+        public async Task<long> GetPendingClassCountAsync()
+        {
+            var query = _context.Class
+                .Where(c => !c.IsApproved && c.Status == ModelStatus.Active);
 
+            var count = await query.LongCountAsync();
+            return count;
+        }
+
+        public async Task<long> GetPendingSubjectCountAsync()
+        {
+            var query = _context.Subject
+                .Where(s => !s.IsApproved && s.Status == ModelStatus.Active);
+
+            var count = await query.LongCountAsync();
+            return count;
+        }
 
     }
 
