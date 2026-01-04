@@ -78,5 +78,40 @@ namespace QuizSystemService.Services
             await _repo.UpdateAsync(cls);
             return true;
         }
+        public Task<List<Class>> GetPendingAsync()
+        {
+            return _repo.GetPendingAsync();
+        }
+        public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
+        {
+            var entity = await _repo.GetByIdAsync(id);
+            if (entity == null)
+                return false;
+
+            entity.IsApproved = true;
+            entity.ApprovedAt = DateTime.UtcNow;
+            entity.ApprovedBy = currentUser;
+            entity.RejectedAt = null;
+            entity.RejectedBy = null;
+
+            await _repo.UpdateAsync(entity);
+            return true;
+        }
+
+        public async Task<bool> RejectAsync(long id, QuizSystemUser currentUser)
+        {
+            var entity = await _repo.GetByIdAsync(id);
+            if (entity == null)
+                return false;
+
+            entity.IsApproved = false;
+            entity.RejectedAt = DateTime.UtcNow;
+            entity.RejectedBy = currentUser;
+            entity.ApprovedAt = null;
+            entity.ApprovedBy = null;
+
+            await _repo.UpdateAsync(entity);
+            return true;
+        }
     }
 }

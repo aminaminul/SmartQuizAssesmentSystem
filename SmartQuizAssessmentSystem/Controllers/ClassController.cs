@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemService.Interfaces;
+using QuizSystemService.Services;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -125,6 +126,46 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             var mediums = await _mediumService.GetAllAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedId);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Pending()
+        {
+            var pendingClasses = await _classService.GetPendingAsync();
+            return View(pendingClasses);
+        }
+
+        // APPROVE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+                return Unauthorized();
+
+            var ok = await _classService.ApproveAsync(id, currentUser);
+            if (!ok)
+                return NotFound();
+
+            TempData["SuccessMessage"] = "Class approved successfully.";
+            return RedirectToAction(nameof(Pending));
+        }
+
+        // REJECT
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reject(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+                return Unauthorized();
+
+            var ok = await _classService.RejectAsync(id, currentUser);
+            if (!ok)
+                return NotFound();
+
+            TempData["SuccessMessage"] = "Class rejected.";
+            return RedirectToAction(nameof(Pending));
         }
     }
 }

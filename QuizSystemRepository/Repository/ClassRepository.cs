@@ -71,5 +71,14 @@ namespace QuizSystemRepository.Repositories
             _context.Class.Update(cls);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<Class>> GetPendingAsync()
+        {
+            return await _context.Class
+                .Where(c => !c.IsApproved
+                            && c.Status == ModelStatus.Active)
+                .OrderByDescending(c => c.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

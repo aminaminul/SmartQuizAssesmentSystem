@@ -9,5 +9,8 @@ namespace QuizSystemService.Interfaces
         Task<bool> CreateAsync(Class model, long educationMediumId, QuizSystemUser currentUser);
         Task<bool> UpdateAsync(long id, Class model);
         Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser);
+        Task<List<Class>> GetPendingAsync();
+        Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
+        Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
     }
 }
