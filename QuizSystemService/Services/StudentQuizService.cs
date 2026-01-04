@@ -31,7 +31,7 @@ namespace QuizSystemService.Services
         {
             var quiz = await _quizRepository.GetByIdWithQuestionsAsync(quizId);
             if (quiz == null)
-                throw new Exception("Quiz not found");
+                throw new Exception("Quiz Not Found");
 
             var attempt = new QuizAttempt
             {

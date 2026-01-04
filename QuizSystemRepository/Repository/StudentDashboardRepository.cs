@@ -18,8 +18,8 @@ namespace QuizSystemRepository.Repositories
         public async Task<List<Quiz>> GetAvailableQuizzesAsync(long studentUserId, DateTime now)
         {
             return await _context.Quiz
-                .Where(q => q.IsApproved
-                            && q.Status == ModelStatus.Active
+                .Where(q => q.Status == ModelStatus.Active
+                            && q.IsApproved
                             && (q.StartAt == null || q.StartAt <= now)
                             && (q.EndAt == null || q.EndAt >= now))
                 .AsNoTracking()
