@@ -3,11 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{16472030-AB8F-4F07-8494-65CA5C62F07B}|..\\QuizSystemService\\QuizSystemService.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\quizsystemservice\\services\\admindashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\instructordashboard\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\instructordashboard\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\views\\admindashboard\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:views\\admindashboard\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|c:\\users\\amin\\onedrive\\desktop\\practicum\\final year project\\smartquizassesmentsystem\\smartquizassessmentsystem\\controllers\\instructordashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9DE03CCA-5FFB-90A6-F0C2-788CFCF7F007}|SmartQuizAssessmentSystem.csproj|solutionrelative:controllers\\instructordashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -17,22 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Dashboard.cshtml",
-              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\AdminDashboard\\Dashboard.cshtml",
-              "RelativeDocumentMoniker": "Views\\AdminDashboard\\Dashboard.cshtml",
-              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\AdminDashboard\\Dashboard.cshtml",
-              "RelativeToolTip": "Views\\AdminDashboard\\Dashboard.cshtml",
-              "ViewState": "AgIAAJ0AAAAAAAAAAAAAAJ8AAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-04T08:47:16.955Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -52,14 +39,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AdminDashboardService.cs",
-              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemService\\Services\\AdminDashboardService.cs",
-              "RelativeDocumentMoniker": "..\\QuizSystemService\\Services\\AdminDashboardService.cs",
-              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemService\\Services\\AdminDashboardService.cs",
-              "RelativeToolTip": "..\\QuizSystemService\\Services\\AdminDashboardService.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAYwCAAAAAnAAAAAAAAAA==",
+              "Title": "Dashboard.cshtml",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\InstructorDashboard\\Dashboard.cshtml",
+              "RelativeDocumentMoniker": "Views\\InstructorDashboard\\Dashboard.cshtml",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Views\\InstructorDashboard\\Dashboard.cshtml",
+              "RelativeToolTip": "Views\\InstructorDashboard\\Dashboard.cshtml",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAAAF8AAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-04T10:37:58.145Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InstructorDashboardController.cs",
+              "DocumentMoniker": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Controllers\\InstructorDashboardController.cs",
+              "RelativeDocumentMoniker": "Controllers\\InstructorDashboardController.cs",
+              "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\SmartQuizAssessmentSystem\\Controllers\\InstructorDashboardController.cs",
+              "RelativeToolTip": "Controllers\\InstructorDashboardController.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAA9wE0AAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T09:45:43.695Z",
+              "WhenOpened": "2026-01-04T10:27:02.77Z",
               "EditorCaption": ""
             }
           ]

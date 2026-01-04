@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using QuizSystemModel.Models;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
@@ -12,24 +14,35 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly IClassService _classService;
         private readonly IEducationMediumService _mediumService;
         private readonly ISubjectService _subjectService;
-
+        private readonly IInstructorDashboardService _dashboardService;
+        private readonly UserManager<QuizSystemUser> _userManager;
         public InstructorDashboardController(
             IStudentService studentService,
             IInstructorService instructorService,
             IClassService classService,
             IEducationMediumService mediumService,
-            ISubjectService subjectService)
+            ISubjectService subjectService,
+            IInstructorDashboardService dashboardService,
+            UserManager<QuizSystemUser> userManager)
         {
             _studentService = studentService;
             _instructorService = instructorService;
             _classService = classService;
             _mediumService = mediumService;
             _subjectService = subjectService;
+            _dashboardService = dashboardService;
+            _userManager = userManager;
         }
 
-        public IActionResult Dashboard()
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            var model = await _dashboardService.GetDashboardAsync(user.Id);
+            return View(model);
         }
 
         public async Task<IActionResult> Students()

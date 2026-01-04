@@ -64,6 +64,9 @@ builder.Services.AddScoped<IAttemptedQuizAnswerRepository, AttemptedQuizAnswerRe
 builder.Services.AddScoped<IAdminDashboardRepository, AdminDashboardRepository>();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
+builder.Services.AddScoped<IInstructorDashboardRepository, InstructorDashboardRepository>();
+builder.Services.AddScoped<IInstructorDashboardService, InstructorDashboardService>();
+
 builder.Services.AddScoped<IStudentDashboardRepository, StudentDashboardRepository>();
 builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
 

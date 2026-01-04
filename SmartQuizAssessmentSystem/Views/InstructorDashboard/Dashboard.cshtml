@@ -1,12 +1,121 @@
-﻿@{
+﻿@using QuizSystemModel.ViewModels
+@model InstructorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Instructor Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h4>Dashboard</h4>
+<h2>Instructor Dashboard</h2>
 
-<div class="row mt-4">
-    <div class="col-md-3">
-        <div class="card p-3">Quiz<br /></div>
+<div class="row mb-4">
+    <!-- My Quizzes  -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-primary mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">My Quizzes</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalQuizzes</p>
+                <p class="card-text mb-3">
+                    Create and manage your quizzes.
+                </p>
+                <a asp-controller="Quiz"
+                   asp-action="Index"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Quizzes
+                </a>
+            </div>
+        </div>
     </div>
+
+    <!-- Students -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-success mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Students</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalStudents</p>
+                <p class="card-text mb-3">
+                    View all registered students.
+                </p>
+                <a asp-controller="InstructorDashboard"
+                   asp-action="Students"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Students
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructors -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-info mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Instructors</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalInstructors</p>
+                <p class="card-text mb-3">
+                    View other instructors in the system.
+                </p>
+                <a asp-controller="InstructorDashboard"
+                   asp-action="Instructors"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Instructors
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Education Mediums -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-secondary mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Education Mediums</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalEducationMediums</p>
+                <p class="card-text mb-3">
+                    View available education mediums.
+                </p>
+                <a asp-controller="InstructorDashboard"
+                   asp-action="EducationMediums"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Mediums
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Classes -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Classes</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalClasses</p>
+                <p class="card-text mb-3">
+                    View class list for quiz assignments.
+                </p>
+                <a asp-controller="InstructorDashboard"
+                   asp-action="Classes"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Classes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subjects -->
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-warning mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Subjects</h5>
+                <p class="card-text display-6 mb-2">@Model.TotalSubjects</p>
+                <p class="card-text mb-3">
+                    View subjects used in quizzes.
+                </p>
+                <a asp-controller="InstructorDashboard"
+                   asp-action="Subjects"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Subjects
+                </a>
+            </div>
+        </div>
     </div>
 </div>
