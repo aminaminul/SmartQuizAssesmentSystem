@@ -35,5 +35,10 @@ namespace QuizSystemService.Services
 
             return model;
         }
+        public async Task<List<QuizAttempt>> GetAllAttemptsAsync(long studentUserId)
+        {
+            return await _dashboardRepository.GetStudentAttemptsAsync(studentUserId);
+        }
+
     }
 }

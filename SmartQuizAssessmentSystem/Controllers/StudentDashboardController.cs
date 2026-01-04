@@ -33,7 +33,14 @@ namespace SmartQuizAssessmentSystem.Controllers
             ViewBag.SuccessMessage = TempData["SuccessMessage"];
             return View(model);
         }
+        public async Task<IActionResult> AvailableQuizzes()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
+            var model = await _dashboardService.GetDashboardAsync(user.Id);
+            return View(model.AvailableQuizzes);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartQuiz(long quizId)
@@ -42,5 +49,20 @@ namespace SmartQuizAssessmentSystem.Controllers
             var attempt = await _studentQuizService.StartAttemptAsync(quizId, user.Id);
             return RedirectToAction("Attempt", "StudentQuiz", new { id = attempt.Id });
         }
+        public async Task<IActionResult> RecentAttempts()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var model = await _dashboardService.GetDashboardAsync(user.Id);
+            return View(model.RecentAttempts);
+        }
+        public async Task<IActionResult> AllAttempts()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var model = await _dashboardService.GetDashboardAsync(user.Id);
+            return View(model.RecentAttempts);
+        }
     }
+
 }

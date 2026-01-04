@@ -1,0 +1,42 @@
+﻿@using QuizSystemModel.Models
+@model IEnumerable<QuizAttempt>
+
+@{
+    ViewData["Title"] = "All Attempts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>All Attempts</h2>
+
+@if (!Model.Any())
+{
+    <p>No attempts yet.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Quiz</th>
+                <th>Started</th>
+                <th>Submitted</th>
+                <th>Score</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.Quiz.Name</td>
+                    <td>@a.StartAt.ToLocalTime()</td>
+                    <td>@(a.EndAt.HasValue? a.EndAt.Value.ToLocalTime().ToString() : "-")</td>
+                    <td>@a.TotalScore</td>
+                    <td>@(a.IsSubmitted ? (a.IsPassed ? "Passed" : "Failed") : "In Progress")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-controller="StudentDashboard" asp-action="Dashboard" class="btn btn-secondary"> Back to Dashboard</a>
