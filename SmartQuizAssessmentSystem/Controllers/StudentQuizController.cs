@@ -65,5 +65,17 @@ namespace SmartQuizAssessmentSystem.Controllers
             await _studentQuizService.SubmitAttemptAsync(attemptId, user.Id);
             return RedirectToAction("Result", new { id = attemptId });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Result(long id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+            var attempt = await _studentQuizService.GetAttemptWithQuestionsAsync(id, user.Id);
+            if (attempt == null || !attempt.IsSubmitted)
+                return NotFound();
+
+            return View(attempt);
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             var model = await _dashboardService.GetDashboardAsync(user.Id);
             model.StudentName = $"{user.FirstName} {user.LastName}";
+            
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
             return View(model);
         }
 

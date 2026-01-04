@@ -1,0 +1,18 @@
+﻿@using QuizSystemModel.Models
+@model QuizAttempt
+
+@{
+    ViewData["Title"] = "Quiz Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Quiz.Name - Result</h2>
+
+<p><strong>Score:</strong> @Model.TotalScore / @Model.Quiz.TotalMarks</p>
+<p><strong>Status:</strong> @(Model.IsPassed ? "Passed" : "Failed")</p>
+<p><strong>Started:</strong> @Model.StartAt.ToLocalTime()</p>
+<p><strong>Submitted:</strong> @Model.EndAt?.ToLocalTime()</p>
+
+<hr />
+
+<a asp-controller="StudentDashboard" asp-action="Dashboard" class="btn btn-primary"> Back to Dashboard</a>
