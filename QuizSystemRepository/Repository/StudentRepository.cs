@@ -86,5 +86,11 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.Class.ToListAsync();
         }
+        public Task<Student?> GetByUserIdAsync(long userId)
+        {
+            return _context.Student
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+        }
     }
 }

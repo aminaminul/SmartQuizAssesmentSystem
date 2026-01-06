@@ -1,0 +1,62 @@
+﻿@using QuizSystemModel.ViewModels
+@model StudentProfileUpdateViewModel
+
+@{
+    ViewData["Title"] = "Update Student Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Update Student Profile</h2>
+
+<form asp-action="UpdateProfile" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="StudentId" />
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="mb-3">
+        <label asp-for="FirstName" class="form-label"></label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LastName" class="form-label"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EducationMediumId" class="form-label"></label>
+        <select asp-for="EducationMediumId"
+                asp-items="ViewBag.EducationMediumId"
+                class="form-select">
+            <option value="">-- Select Education Medium --</option>
+        </select>
+        <span asp-validation-for="EducationMediumId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ClassId" class="form-label"></label>
+        <select asp-for="ClassId"
+                asp-items="ViewBag.ClassId"
+                class="form-select">
+            <option value="">-- Select Class --</option>
+        </select>
+        <span asp-validation-for="ClassId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <a asp-action="ViewProfile" class="btn btn-secondary ms-2">Cancel</a>
+</form>

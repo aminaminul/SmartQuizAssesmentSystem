@@ -74,5 +74,11 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.EducationMedium.ToListAsync();
         }
+        public Task<Instructor?> GetByUserIdAsync(long userId)
+        {
+            return _context.Instructor
+                .Include(i => i.User)
+                .FirstOrDefaultAsync(i => i.UserId == userId);
+        }
     }
 }

@@ -1,0 +1,65 @@
+﻿@using QuizSystemModel.Models
+@model IEnumerable<ProfileUpdateRequest>
+
+@{
+    ViewData["Title"] = "Pending Profile Updates";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Pending Profile Updates</h2>
+
+@if (!Model.Any())
+{
+    <p>No pending profile update requests.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User Id</th>
+                <th>Role</th>
+                <th>Requested At</th>
+                <th>Status</th>
+                <th>Admin Comment</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.UserId</td>
+                    <td>@r.Role</td>
+                    <td>@r.RequestedAt.ToLocalTime()</td>
+                    <td>@r.Status</td>
+                    <td>@r.AdminComment</td>
+                    <td class="d-flex gap-2">
+                        <form asp-controller="ProfileApproval"
+                              asp-action="Approve"
+                              method="post" class="me-1">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Approve
+                            </button>
+                        </form>
+
+                        <form asp-controller="ProfileApproval"
+                              asp-action="Reject"
+                              method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <input type="text" name="comment"
+                                   class="form-control form-control-sm me-1"
+                                   placeholder="Reason" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

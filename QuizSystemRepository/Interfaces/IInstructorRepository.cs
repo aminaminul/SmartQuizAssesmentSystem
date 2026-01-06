@@ -12,5 +12,6 @@ namespace QuizSystemModel.Interfaces
         Task UpdateAsync(Instructor instructor);
         Task SaveChangesAsync();
         Task<List<EducationMedium>> GetEducationMediumsAsync();
+        Task<Instructor?> GetByUserIdAsync(long userId);
     }
 }

@@ -19,7 +19,7 @@ namespace QuizSystemRepository.Data
         public DbSet<AttemptedQuizAnswer> AttemptedQuizAnswer { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<Instructor> Instructor { get; set; }
-
+        public DbSet<ProfileUpdateRequest> ProfileUpdateRequests { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -70,6 +70,9 @@ builder.Services.AddScoped<IInstructorDashboardService, InstructorDashboardServi
 builder.Services.AddScoped<IStudentDashboardRepository, StudentDashboardRepository>();
 builder.Services.AddScoped<IStudentDashboardService, StudentDashboardService>();
 
+builder.Services.AddScoped<IProfileUpdateRepository, ProfileUpdateRepository>();
+builder.Services.AddScoped<IProfileUpdateService, ProfileUpdateService>();
+
 builder.Services.AddScoped<IStudentQuizService, StudentQuizService>();
 
 var app = builder.Build();
