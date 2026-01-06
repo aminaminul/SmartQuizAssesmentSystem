@@ -1,10 +1,11 @@
 ﻿@using QuizSystemModel.Models
+@using QuizSystemModel.BusinessRules
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Education Mediums";
 
     var mediums = (IEnumerable<EducationMedium>)ViewBag.Mediums;
-    var selectedMediumId = (long?)ViewBag.SelectedMediumId;
+    long? selectedMediumId = ViewBag.SelectedMediumId as long?;
     var classes = (IEnumerable<Class>)ViewBag.Classes;
 }
 
@@ -27,21 +28,24 @@
     <tbody>
         @foreach (var m in mediums)
         {
+            var idLong = (long)m.Id;
+            <!-- enum -> long -->
+
             <tr>
                 <td>@m.Name</td>
                 <td>@(m.IsApproved ? "Yes" : "No")</td>
                 <td>@m.CreatedAt.ToString("g")</td>
                 <td>@m.Status</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@m.Id" class="btn btn-sm btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@m.Id" class="btn btn-sm btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@idLong" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@idLong" class="btn btn-sm btn-danger">Delete</a>
 
-                    <form asp-action="Approve" asp-route-id="@m.Id" method="post" style="display:inline">
+                    <form asp-action="Approve" asp-route-id="@idLong" method="post" style="display:inline">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-sm btn-success">Approve</button>
                     </form>
 
-                    <form asp-action="Reject" asp-route-id="@m.Id" method="post" style="display:inline">
+                    <form asp-action="Reject" asp-route-id="@idLong" method="post" style="display:inline">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-sm btn-warning">Reject</button>
                     </form>
@@ -62,7 +66,10 @@
                 <option value=""> Select Education Medium </option>
                 @foreach (var m in mediums)
                 {
-                    <option value="@m.Id" selected="@(selectedMediumId.HasValue && selectedMediumId.Value == m.Id)">
+                    var idLong = (long)m.Id;
+
+                    <option value="@idLong"
+                            selected="@(selectedMediumId.HasValue && selectedMediumId.Value == idLong)">
                         @m.Name
                     </option>
                 }
@@ -76,7 +83,8 @@
 
 @if (selectedMediumId.HasValue)
 {
-    var selectedMedium = mediums.FirstOrDefault(m => m.Id == selectedMediumId);
+    var selectedMedium = mediums.FirstOrDefault(m => (long)m.Id == selectedMediumId.Value);
+
     <h5>Classes under "@selectedMedium?.Name"</h5>
 
     @if (classes != null && classes.Any())
@@ -105,6 +113,6 @@
     }
     else
     {
-        <p>No classes found for this education medium.</p>
+        <p>No Classes Found For This Education Medium.</p>
     }
 }

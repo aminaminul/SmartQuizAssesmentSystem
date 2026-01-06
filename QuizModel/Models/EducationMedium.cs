@@ -9,7 +9,7 @@ namespace QuizSystemModel.Models
 {
     public class EducationMedium
     {
-        public long Id { get; set; }
+        public EducationMediums Id { get; set; }
         public string Name { get; set; }
 
         public QuizSystemUser? CreatedBy { get; set; }

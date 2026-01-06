@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
 using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
@@ -24,7 +25,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index(long? educationMediumId)
+        public async Task<IActionResult> Index(EducationMediums? educationMediumId)
         {
             var classes = await _classService.GetAllAsync(educationMediumId);
             var mediums = await _mediumService.GetAllAsync();
@@ -45,15 +46,13 @@ namespace SmartQuizAssessmentSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Class model, long? educationMediumId)
         {
-            if (!ModelState.IsValid)
-            {
-                await PopulateEducationMediumDropdownAsync(educationMediumId);
-                return View(model);
-            }
-
             if (!educationMediumId.HasValue)
             {
-                ModelState.AddModelError(string.Empty, "Please select an education medium.");
+                ModelState.AddModelError(string.Empty, "Please Select An Education Medium.");
+            }
+
+            if (!ModelState.IsValid)
+            {
                 await PopulateEducationMediumDropdownAsync(educationMediumId);
                 return View(model);
             }
@@ -62,7 +61,8 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             try
             {
-                await _classService.CreateAsync(model, educationMediumId.Value, currentUser!);
+                var mediumEnum = (EducationMediums)educationMediumId!.Value;
+                await _classService.CreateAsync(model, mediumEnum, currentUser!);
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException ex)
@@ -72,6 +72,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
@@ -166,6 +167,15 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             TempData["SuccessMessage"] = "Class rejected.";
             return RedirectToAction(nameof(Pending));
+        }
+        [HttpGet]
+        public async Task<IActionResult> Details(long id)
+        {
+            var cls = await _classService.GetByIdAsync(id, includeMedium: false);
+            if (cls == null)
+                return NotFound();
+
+            return View(cls);
         }
     }
 }

@@ -13,4 +13,10 @@
         Approved = 2,
         Rejected = 3
     }
+    public enum EducationMediums : long
+    {
+        Bengali = 1,
+        English = 2,
+    }
+
 }

@@ -15,7 +15,7 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public async Task<List<Class>> GetAllAsync(long? educationMediumId = null)
+        public async Task<List<Class>> GetAllAsync(EducationMediums? educationMediumId = null)
         {
             var query = _context.Class
                 .Include(c => c.EducationMedium)
@@ -30,6 +30,7 @@ namespace QuizSystemRepository.Repositories
             return await query.ToListAsync();
         }
 
+
         public Task<Class?> GetByIdAsync(long id, bool includeMedium = false)
         {
             var query = _context.Class.AsQueryable();
@@ -40,11 +41,11 @@ namespace QuizSystemRepository.Repositories
             return query.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public Task<bool> NameExistsInMediumAsync(string name, long educationMediumId, long? excludeId = null)
+        public Task<bool> NameExistsInMediumAsync(string name,EducationMediums educationMedium, long? excludeId = null)
         {
             var query = _context.Class
-                .Where(c => c.Name.ToLower() == name.ToLower() &&
-                            c.EducationMediumId == educationMediumId);
+                .Where(c => c.Name.ToLower() == name.ToLower()
+                            && c.EducationMediumId == educationMedium);
 
             if (excludeId.HasValue)
                 query = query.Where(c => c.Id != excludeId.Value);
@@ -52,13 +53,15 @@ namespace QuizSystemRepository.Repositories
             return query.AnyAsync();
         }
 
-        public Task<List<Class>> GetByMediumAsync(long mediumId)
+
+        public Task<List<Class>> GetByMediumAsync(EducationMediums medium)
         {
             return _context.Class
-                .Where(c => c.EducationMediumId == mediumId &&
+                .Where(c => c.EducationMediumId == medium &&
                             c.Status != ModelStatus.Deleted)
                 .ToListAsync();
         }
+
 
         public async Task AddAsync(Class cls)
         {

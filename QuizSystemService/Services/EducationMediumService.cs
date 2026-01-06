@@ -20,9 +20,12 @@ namespace QuizSystemService.Services
 
         public Task<List<EducationMedium>> GetAllAsync() => _mediumRepo.GetAllAsync();
 
-        public Task<EducationMedium?> GetByIdAsync(long id) => _mediumRepo.GetByIdAsync(id);
+        // SERVICE
+        public Task<EducationMedium?> GetByIdAsync(EducationMediums id) =>
+            _mediumRepo.GetByIdAsync(id);
 
-        public Task<List<Class>> GetClassesByMediumAsync(long mediumId) =>
+
+        public Task<List<Class>> GetClassesByMediumAsync(EducationMediums mediumId) =>
             _classRepo.GetByMediumAsync(mediumId);
 
         public async Task<bool> CreateAsync(EducationMedium model, QuizSystemUser currentUser)
@@ -42,7 +45,7 @@ namespace QuizSystemService.Services
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, EducationMedium model)
+        public async Task<bool> UpdateAsync(EducationMediums id, EducationMedium model)
         {
             var existing = await _mediumRepo.GetByIdAsync(id);
             if (existing == null)
@@ -63,7 +66,7 @@ namespace QuizSystemService.Services
         }
 
         // Medium and Related Classes Soft Delete
-        public async Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser)
+        public async Task<bool> SoftDeleteAsync(EducationMediums id, QuizSystemUser currentUser)
         {
             var medium = await _mediumRepo.GetByIdAsync(id);
             if (medium == null)
@@ -88,7 +91,7 @@ namespace QuizSystemService.Services
             return true;
         }
 
-        public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
+        public async Task<bool> ApproveAsync(EducationMediums id, QuizSystemUser currentUser)
         {
             var medium = await _mediumRepo.GetByIdAsync(id);
             if (medium == null)
@@ -104,7 +107,7 @@ namespace QuizSystemService.Services
             return true;
         }
 
-        public async Task<bool> RejectAsync(long id, QuizSystemUser currentUser)
+        public async Task<bool> RejectAsync(EducationMediums id, QuizSystemUser currentUser)
         {
             var medium = await _mediumRepo.GetByIdAsync(id);
             if (medium == null)

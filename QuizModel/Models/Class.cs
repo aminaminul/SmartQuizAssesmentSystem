@@ -21,7 +21,7 @@ namespace QuizSystemModel.Models
         public DateTime? ApprovedAt { get; set; }
         public DateTime? RejectedAt { get; set; }
         public ModelStatus Status { get; set; }
-        public long? EducationMediumId { get; set; }
+        public EducationMediums? EducationMediumId { get; set; }
         public EducationMedium? EducationMedium { get; set; }
     }
 }

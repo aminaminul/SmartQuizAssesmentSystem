@@ -16,29 +16,33 @@ namespace QuizSystemService.Services
             _mediumRepo = mediumRepo;
         }
 
-        public Task<List<Class>> GetAllAsync(long? educationMediumId = null) =>
-            _repo.GetAllAsync(educationMediumId);
+        public async Task<List<Class>> GetAllAsync(EducationMediums? educationMediumId = null)
+        {
+            var classes = await _repo.GetAllAsync(educationMediumId);
+            return classes;
+        }
 
-        public Task<Class?> GetByIdAsync(long id, bool includeMedium = false) =>
-            _repo.GetByIdAsync(id, includeMedium);
+        public async Task<Class?> GetByIdAsync(long id, bool includeMedium = false)
+        {
+            var cls = await _repo.GetByIdAsync(id, includeMedium);
+            return cls;
+        }
 
-        public async Task<bool> CreateAsync(Class model, long educationMediumId, QuizSystemUser currentUser)
+
+        public async Task<bool> CreateAsync(Class model,EducationMediums educationMedium, QuizSystemUser currentUser)
         {
             if (string.IsNullOrWhiteSpace(model.Name))
-                throw new InvalidOperationException("Class name is required.");
+                throw new InvalidOperationException("Class Name Is Required.");
 
-            var medium = await _mediumRepo.GetByIdAsync(educationMediumId);
-            if (medium == null)
-                throw new InvalidOperationException("Selected education medium does not exist.");
-
-            if (await _repo.NameExistsInMediumAsync(model.Name, educationMediumId))
-                throw new InvalidOperationException("This class already exists for the selected education medium.");
+            if (await _repo.NameExistsInMediumAsync(model.Name, educationMedium))
+                throw new InvalidOperationException(
+                    "This Class Already Exists For The Selected Education Medium.");
 
             model.CreatedAt = DateTime.UtcNow;
             model.Status = ModelStatus.Active;
             model.IsApproved = false;
             model.CreatedBy = currentUser;
-            model.EducationMediumId = educationMediumId;
+            model.EducationMediumId = educationMedium;
 
             await _repo.AddAsync(model);
             return true;
@@ -51,11 +55,11 @@ namespace QuizSystemService.Services
                 return false;
 
             if (string.IsNullOrWhiteSpace(model.Name))
-                throw new InvalidOperationException("Class name is required.");
+                throw new InvalidOperationException("Class Name Is Required.");
 
             if (existing.EducationMediumId.HasValue &&
                 await _repo.NameExistsInMediumAsync(model.Name, existing.EducationMediumId.Value, id))
-                throw new InvalidOperationException("This class already exists for the selected education medium.");
+                throw new InvalidOperationException("This Class Already Exists Ror The Selected Education Medium.");
 
             existing.Name = model.Name;
             existing.Status = model.Status;

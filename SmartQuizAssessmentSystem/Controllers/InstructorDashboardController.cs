@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
@@ -101,7 +102,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(mediums);
         }
 
-        public async Task<IActionResult> EducationMediumDetails(long id)
+        public async Task<IActionResult> EducationMediumDetails(EducationMediums id)
         {
             var medium = await _mediumService.GetByIdAsync(id);
             if (medium == null)
