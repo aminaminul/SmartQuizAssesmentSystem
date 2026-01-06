@@ -74,7 +74,7 @@
                         <a asp-controller="InstructorDashboard" asp-action="EducationMediums">Education Medium</a>
                         <a asp-controller="InstructorDashboard" asp-action="Classes">Classes</a>
                         <a asp-controller="InstructorDashboard" asp-action="Subjects">Subjects</a>
-                        <a asp-controller="InstructorProfile" asp-action="ViewProfile" class="nav-link"> View Profile</a>                       
+                        <a asp-controller="InstructorDashboard" asp-action="ViewProfile" class="nav-link"> View Profile</a>
                     }
                     else if (User.IsInRole("Student"))
                     {
@@ -84,7 +84,7 @@
                         <a asp-controller="StudentDashboard" asp-action="AvailableQuizzes">Available Quizzes</a>
                         <a asp-controller="StudentDashboard" asp-action="RecentAttempts">Recent Attempts</a>
                         <a asp-controller="StudentDashboard" asp-action="AllAttempts">All Attempts</a>
-                        <a asp-controller="StudentProfile" asp-action="ViewProfile" class="nav-link"> View Profile </a>
+                        <a asp-controller="StudentDashboard" asp-action="ViewProfile" class="nav-link"> View Profile </a>
                     }
                 }
             }

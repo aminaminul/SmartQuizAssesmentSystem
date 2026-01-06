@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
@@ -14,6 +16,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly IClassService _classService;
         private readonly IEducationMediumService _mediumService;
         private readonly ISubjectService _subjectService;
+        private readonly IProfileUpdateService _profileService;
         private readonly IInstructorDashboardService _dashboardService;
         private readonly UserManager<QuizSystemUser> _userManager;
         public InstructorDashboardController(
@@ -22,6 +25,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             IClassService classService,
             IEducationMediumService mediumService,
             ISubjectService subjectService,
+            IProfileUpdateService profileService,
             IInstructorDashboardService dashboardService,
             UserManager<QuizSystemUser> userManager)
         {
@@ -32,6 +36,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _subjectService = subjectService;
             _dashboardService = dashboardService;
             _userManager = userManager;
+            _profileService = profileService;
         }
 
         [HttpGet]
@@ -118,6 +123,57 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return NotFound();
 
             return View(subject);
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> ViewProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var vm = await _profileService.GetInstructorProfileForEditAsync(user.Id);
+            await PopulateInstructorDropdownsAsync(vm.EducationMediumId);
+            return View("ViewProfile", vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var vm = await _profileService.GetInstructorProfileForEditAsync(user.Id);
+            await PopulateInstructorDropdownsAsync(vm.EducationMediumId);
+            return View("UpdateProfile", vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfile(InstructorProfileUpdateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                await PopulateInstructorDropdownsAsync(model.EducationMediumId);
+                return View("UpdateProfile", model);
+            }
+
+            try
+            {
+                await _profileService.RequestInstructorProfileUpdateAsync(model);
+                TempData["SuccessMessage"] = "Profile update request submitted for admin approval.";
+                return RedirectToAction(nameof(ViewProfile));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateInstructorDropdownsAsync(model.EducationMediumId);
+                return View("UpdateProfile", model);
+            }
+        }
+        private async Task PopulateInstructorDropdownsAsync(long? selectedMediumId = null)
+        {
+            var mediums = await _mediumService.GetAllAsync();
+            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedMediumId);
         }
     }
 }
