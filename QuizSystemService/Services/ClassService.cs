@@ -26,7 +26,7 @@ namespace QuizSystemService.Services
         public async Task<bool> CreateAsync(ClassNameEnum className, long educationMediumId, QuizSystemUser currentUser)
         {
             if (await _repo.NameExistsInMediumAsync(className, educationMediumId))
-                throw new InvalidOperationException("This class already exists for the selected education medium.");
+                throw new InvalidOperationException("This Class Already Exists For The Selected Education Medium.");
 
             var cls = new Class
             {
@@ -34,24 +34,30 @@ namespace QuizSystemService.Services
                 EducationMediumId = educationMediumId,
                 Status = ModelStatus.Active,
                 IsApproved = false,
-                CreatedAt = DateTime.UtcNow
+                ApprovedAt = DateTime.UtcNow,
+                ApprovedBy = currentUser,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = currentUser,
+                ModifiedAt = DateTime.UtcNow,
+                
             };
 
             await _repo.AddAsync(cls);
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, ClassNameEnum className, long educationMediumId, ModelStatus status)
+        public async Task<bool> UpdateAsync(long id, ClassNameEnum className, long educationMediumId, ModelStatus status, QuizSystemUser currentUser)
         {
             var existing = await _repo.GetByIdAsync(id);
             if (existing == null) return false;
 
             if (await _repo.NameExistsInMediumAsync(className, educationMediumId, id))
-                throw new InvalidOperationException("This class already exists for the selected education medium.");
+                throw new InvalidOperationException("This Class Already Exists For The Selected Education Medium.");
 
             existing.ClassName = className;
             existing.EducationMediumId = educationMediumId;
             existing.Status = status;
+            existing.ModifiedBy = currentUser;
             existing.ModifiedAt = DateTime.UtcNow;
 
             await _repo.UpdateAsync(existing);
@@ -77,7 +83,8 @@ namespace QuizSystemService.Services
             if (existing == null) return false;
 
             existing.IsApproved = true;
-            existing.ApprovedAt = DateTime.UtcNow;
+            existing.ApprovedAt = DateTime.UtcNow; 
+            existing.ApprovedBy = currentUser;
             existing.Status = ModelStatus.Active;
 
             await _repo.UpdateAsync(existing);
@@ -91,6 +98,7 @@ namespace QuizSystemService.Services
 
             existing.IsApproved = false;
             existing.RejectedAt = DateTime.UtcNow;
+            existing.RejectedBy = currentUser;
             existing.Status = ModelStatus.InActive;
 
             await _repo.UpdateAsync(existing);

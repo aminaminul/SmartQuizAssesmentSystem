@@ -15,7 +15,7 @@
     }
     public enum EducationMediums : long
     {
-        Bengala,
+        Bengla,
         English,
     }
     public enum ClassNameEnum

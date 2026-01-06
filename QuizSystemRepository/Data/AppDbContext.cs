@@ -58,7 +58,13 @@ namespace QuizSystemRepository.Data
                 .WithMany()                         
                 .HasForeignKey(a => a.QuestionBankId)
                 .OnDelete(DeleteBehavior.Restrict);
+           
+
+            modelBuilder.Entity<Class>()
+                .Property(c => c.ClassName)
+                .HasConversion<string>();
         }
+
     }
 
 }

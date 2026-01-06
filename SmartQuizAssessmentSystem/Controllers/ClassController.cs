@@ -117,7 +117,15 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             try
             {
-                var ok = await _classService.UpdateAsync(id, className, educationMediumId, model.Status);
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                var ok = await _classService.UpdateAsync(
+                    id,
+                    className,
+                    educationMediumId,
+                    model.Status,
+                    currentUser!);
+
                 if (!ok) return NotFound();
 
                 return RedirectToAction(nameof(Index));
@@ -130,6 +138,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
         }
+
 
         // DELETE (GET)
         [HttpGet]
