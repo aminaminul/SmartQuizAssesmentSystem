@@ -170,6 +170,52 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View("UpdateProfile", model);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+            var model = new ChangePasswordViewModel
+            {
+                Email = user.Email
+            };
+
+            return View("ChangePassword", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View("ChangePassword", model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            if (!string.Equals(user.Email, model.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("Email", "Email does not match your account.");
+                return View("ChangePassword", model);
+            }
+
+            var result = await _userManager.ChangePasswordAsync(
+                user,
+                model.CurrentPassword,
+                model.NewPassword
+            );
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+
+                return View("ChangePassword", model);
+            }
+
+            TempData["SuccessMessage"] = "Password changed successfully.";
+            return RedirectToAction(nameof(ViewProfile));
+        }
         private async Task PopulateInstructorDropdownsAsync(long? selectedMediumId = null)
         {
             var mediums = await _mediumService.GetAllAsync();
