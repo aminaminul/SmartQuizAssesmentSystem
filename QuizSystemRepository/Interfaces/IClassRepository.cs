@@ -1,13 +1,16 @@
 ﻿using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
 
-public interface IClassRepository
+namespace QuizSystemModel.Interfaces
 {
-    Task<List<Class>> GetAllAsync(EducationMediums? educationMediumId = null);
-    Task<Class?> GetByIdAsync(long id, bool includeMedium = false);
-    Task<bool> NameExistsInMediumAsync(string name,EducationMediums educationMedium,long? excludeId = null);
-    Task<List<Class>> GetByMediumAsync(EducationMediums medium);
-    Task AddAsync(Class cls);
-    Task UpdateAsync(Class cls);
-    Task<List<Class>> GetPendingAsync();
+    public interface IClassRepository
+    {
+        Task<List<Class>> GetAllAsync(long? educationMediumId = null);
+        Task<Class?> GetByIdAsync(long id, bool includeMedium = false);
+        Task<bool> NameExistsInMediumAsync(ClassNameEnum className, long educationMediumId, long? excludeId = null);
+        Task<List<Class>> GetByMediumAsync(long mediumId);
+        Task AddAsync(Class cls);
+        Task UpdateAsync(Class cls);
+        Task<List<Class>> GetPendingAsync();
+    }
 }

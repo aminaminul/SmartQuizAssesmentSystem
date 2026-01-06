@@ -22,12 +22,13 @@ namespace QuizSystemRepository.Repositories
                 .ToListAsync();
         }
 
-        public Task<EducationMedium?> GetByIdAsync(EducationMediums id)
+        public Task<EducationMedium?> GetByIdAsync(long id)
         {
-            return _context.EducationMedium.FirstOrDefaultAsync(m => m.Id == id);
+            return _context.EducationMedium
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public Task<bool> NameExistsAsync(string name, EducationMediums? excludeId = null)
+        public Task<bool> NameExistsAsync(string name, long? excludeId = null)
         {
             var query = _context.EducationMedium
                 .Where(m => m.Name.ToLower() == name.ToLower());
@@ -37,7 +38,6 @@ namespace QuizSystemRepository.Repositories
 
             return query.AnyAsync();
         }
-
 
         public async Task AddAsync(EducationMedium medium)
         {

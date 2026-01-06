@@ -102,7 +102,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(mediums);
         }
 
-        public async Task<IActionResult> EducationMediumDetails(EducationMediums id)
+        public async Task<IActionResult> EducationMediumDetails(long id)
         {
             var medium = await _mediumService.GetByIdAsync(id);
             if (medium == null)

@@ -12,8 +12,8 @@ using QuizSystemRepository.Data;
 namespace QuizSystemRepository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260103171944_API")]
-    partial class API
+    [Migration("20260106100109_EClass")]
+    partial class EClass
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,6 +212,9 @@ namespace QuizSystemRepository.Migrations
                     b.Property<long?>("ApprovedById")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("ClassName")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -229,10 +232,6 @@ namespace QuizSystemRepository.Migrations
 
                     b.Property<long?>("ModifiedById")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RejectedAt")
                         .HasColumnType("datetime2");
@@ -374,6 +373,52 @@ namespace QuizSystemRepository.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Instructor");
+                });
+
+            modelBuilder.Entity("QuizSystemModel.Models.ProfileUpdateRequest", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AdminComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastAppliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NewDataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldDataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProfileUpdateRequests");
                 });
 
             modelBuilder.Entity("QuizSystemModel.Models.QuestionBank", b =>

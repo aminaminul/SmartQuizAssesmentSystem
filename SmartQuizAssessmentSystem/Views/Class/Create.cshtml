@@ -1,5 +1,4 @@
-﻿@model QuizSystemModel.Models.Class
-
+﻿@using QuizSystemModel.BusinessRules
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Create Class";
@@ -13,16 +12,20 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+        <label class="form-label">Education Medium</label>
+        <select name="educationMediumId"
+                class="form-select"
+                asp-items="ViewBag.EducationMediumId">
+            <option value="">Select Education Medium</option>
+        </select>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Education Medium</label>
-        <select name="educationMediumId" class="form-select"
-                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.EducationMediumId">
-            <option value="">Select Education Medium</option>
+        <label class="form-label">Class Name</label>
+        <select name="className"
+                class="form-select"
+                asp-items="ViewBag.ClassNames">
+            <option value="">Select Class</option>
         </select>
     </div>
 
@@ -31,7 +34,5 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

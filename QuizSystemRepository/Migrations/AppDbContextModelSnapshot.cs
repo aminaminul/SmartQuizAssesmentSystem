@@ -209,6 +209,9 @@ namespace QuizSystemRepository.Migrations
                     b.Property<long?>("ApprovedById")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("ClassName")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -226,10 +229,6 @@ namespace QuizSystemRepository.Migrations
 
                     b.Property<long?>("ModifiedById")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RejectedAt")
                         .HasColumnType("datetime2");

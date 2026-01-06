@@ -15,8 +15,19 @@
     }
     public enum EducationMediums : long
     {
-        Bengali = 1,
-        English = 2,
+        Bengala,
+        English,
+    }
+    public enum ClassNameEnum
+    {
+        One,
+        Two,
+        Three,
+        Four,
+        Five,
+        Six,
+        Seven,
+        Eight,
     }
 
 }

@@ -10,7 +10,7 @@ namespace QuizSystemModel.Models
     public class Class
     {
         public long Id { get; set; }
-        public string Name { get; set; }
+        public ClassNameEnum ClassName { get; set; }
         public QuizSystemUser? CreatedBy { get; set; }
         public QuizSystemUser? ModifiedBy { get; set; }
         public bool IsApproved { get; set; }
@@ -21,7 +21,7 @@ namespace QuizSystemModel.Models
         public DateTime? ApprovedAt { get; set; }
         public DateTime? RejectedAt { get; set; }
         public ModelStatus Status { get; set; }
-        public EducationMediums? EducationMediumId { get; set; }
+        public long? EducationMediumId { get; set; }
         public EducationMedium? EducationMedium { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public async Task<List<Class>> GetAllAsync(EducationMediums? educationMediumId = null)
+        public Task<List<Class>> GetAllAsync(long? educationMediumId = null)
         {
             var query = _context.Class
                 .Include(c => c.EducationMedium)
@@ -23,29 +23,26 @@ namespace QuizSystemRepository.Repositories
                 .AsQueryable();
 
             if (educationMediumId.HasValue)
-            {
                 query = query.Where(c => c.EducationMediumId == educationMediumId.Value);
-            }
 
-            return await query.ToListAsync();
+            return query.ToListAsync();
         }
-
 
         public Task<Class?> GetByIdAsync(long id, bool includeMedium = false)
         {
             var query = _context.Class.AsQueryable();
-
             if (includeMedium)
                 query = query.Include(c => c.EducationMedium);
 
             return query.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public Task<bool> NameExistsInMediumAsync(string name,EducationMediums educationMedium, long? excludeId = null)
+        public Task<bool> NameExistsInMediumAsync(ClassNameEnum className, long educationMediumId, long? excludeId = null)
         {
             var query = _context.Class
-                .Where(c => c.Name.ToLower() == name.ToLower()
-                            && c.EducationMediumId == educationMedium);
+                .Where(c => c.ClassName == className &&
+                            c.EducationMediumId == educationMediumId &&
+                            c.Status != ModelStatus.Deleted);
 
             if (excludeId.HasValue)
                 query = query.Where(c => c.Id != excludeId.Value);
@@ -53,15 +50,13 @@ namespace QuizSystemRepository.Repositories
             return query.AnyAsync();
         }
 
-
-        public Task<List<Class>> GetByMediumAsync(EducationMediums medium)
+        public Task<List<Class>> GetByMediumAsync(long mediumId)
         {
             return _context.Class
-                .Where(c => c.EducationMediumId == medium &&
+                .Where(c => c.EducationMediumId == mediumId &&
                             c.Status != ModelStatus.Deleted)
                 .ToListAsync();
         }
-
 
         public async Task AddAsync(Class cls)
         {
@@ -74,13 +69,12 @@ namespace QuizSystemRepository.Repositories
             _context.Class.Update(cls);
             await _context.SaveChangesAsync();
         }
-        public async Task<List<Class>> GetPendingAsync()
+
+        public Task<List<Class>> GetPendingAsync()
         {
-            return await _context.Class
-                .Where(c => !c.IsApproved
-                            && c.Status == ModelStatus.Active)
-                .OrderByDescending(c => c.CreatedAt)
-                .AsNoTracking()
+            return _context.Class
+                .Where(c => c.IsApproved == false &&
+                            c.Status != ModelStatus.Deleted)
                 .ToListAsync();
         }
     }

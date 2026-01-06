@@ -190,7 +190,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             return classes.Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
-                Text = c.Name
+                Text = c.ClassName.ToString()
+
             });
         }
 
