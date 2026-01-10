@@ -63,6 +63,8 @@ namespace QuizSystemRepository.Data
             modelBuilder.Entity<Class>()
                 .Property(c => c.ClassName)
                 .HasConversion<string>();
+
+ 
         }
 
     }

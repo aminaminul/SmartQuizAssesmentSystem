@@ -13,5 +13,6 @@ namespace QuizSystemService.Interfaces
         Task<List<Class>> GetPendingAsync();
         Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
         Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
+        Task<List<Class>> GetByMediumEnumAsync(EducationMediums medium);
     }
 }

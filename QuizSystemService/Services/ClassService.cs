@@ -104,5 +104,15 @@ namespace QuizSystemService.Services
             await _repo.UpdateAsync(existing);
             return true;
         }
+        public async Task<List<Class>> GetByMediumEnumAsync(EducationMediums medium)
+        {
+            var all = await _repo.GetAllAsync(null);
+
+            long mediumId = (long)medium; 
+            return all
+                .Where(c => c.EducationMediumId == mediumId)
+                .ToList();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿@model QuizSystemModel.Models.Subject
+﻿@using SmartQuizAssessmentSystem.ViewModels
+@model SubjectCreateViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,29 +9,40 @@
 <h2>Edit Subject</h2>
 
 <form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group">
+    <div class="form-group mb-2">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="ClassId">Class</label>
+    <div class="form-group mb-2">
+        <label asp-for="EducationMedium"></label>
+        <select asp-for="EducationMedium"
+                asp-items="Model.EducationMediumList"
+                class="form-control">
+            <option value="">Select Education Medium</option>
+        </select>
+        <span asp-validation-for="EducationMedium" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label asp-for="ClassId"></label>
         <select asp-for="ClassId"
-                asp-items="ViewBag.ClassId"
+                asp-items="Model.ClassList"
                 class="form-control">
             <option value="">Select Class</option>
         </select>
         <span asp-validation-for="ClassId" class="text-danger"></span>
     </div>
 
-    <div class="form-group mt-2">
-        <label asp-for="IsApproved"></label>
+    <div class="form-group mt-2 form-check">
         <input asp-for="IsApproved" class="form-check-input" />
+        <label asp-for="IsApproved" class="form-check-label"></label>
         <span asp-validation-for="IsApproved" class="text-danger"></span>
     </div>
 
@@ -48,7 +60,5 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

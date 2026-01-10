@@ -48,7 +48,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             await PopulateEducationMediumDropdownAsync(null);
             PopulateClassNameDropdown(null);
-            return View();
+            return View(new ClassCreateViewModel());
         }
 
         // CREATE (POST)
@@ -219,13 +219,10 @@ namespace SmartQuizAssessmentSystem.Controllers
         private async Task PopulateEducationMediumDropdownAsync(long? selectedId = null)
         {
             var mediums = await _mediumService.GetAllAsync();
+            if (!mediums.Any())
+                TempData["Warning"] = "No education mediums found (check DB/service).";
 
-            ViewBag.EducationMediumId = new SelectList(
-                mediums,
-                "Id",
-                "Name",
-                selectedId
-            );
+            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedId);
         }
 
         private void PopulateClassNameDropdown(ClassNameEnum? selected = null)

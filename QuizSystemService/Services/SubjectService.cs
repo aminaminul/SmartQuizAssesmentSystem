@@ -20,27 +20,27 @@ namespace QuizSystemService.Services
         public Task<Subject?> GetByIdAsync(long id, bool includeClass = false) =>
             _repo.GetByIdAsync(id, includeClass);
 
-        public async Task<bool> CreateAsync(Subject model, long? classId, QuizSystemUser currentUser)
+        public async Task<bool> CreateAsync(Subject model, QuizSystemUser currentUser)
         {
             if (string.IsNullOrWhiteSpace(model.Name))
-                throw new InvalidOperationException("Subject name is required.");
+                throw new InvalidOperationException("Subject Name Is Required.");
 
-            if (await _repo.NameExistsInClassAsync(model.Name, classId))
-                throw new InvalidOperationException("This subject already exists for the selected class.");
+            if (!model.ClassId.HasValue)
+                throw new InvalidOperationException("Class Is Required.");
+
+            if (await _repo.NameExistsInClassAsync(model.Name, model.ClassId, null))
+                throw new InvalidOperationException("This Subject Already Exists For The Selected Class.");
 
             model.CreatedAt = DateTime.UtcNow;
             model.Status = ModelStatus.Active;
             model.IsApproved = false;
             model.CreatedBy = currentUser;
 
-            if (classId.HasValue)
-                model.ClassId = classId.Value;
-
             await _repo.AddAsync(model);
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, Subject model, long? classId)
+        public async Task<bool> UpdateAsync(long id, Subject model, QuizSystemUser currentUser)
         {
             var existing = await _repo.GetByIdAsync(id);
             if (existing == null)
@@ -49,16 +49,18 @@ namespace QuizSystemService.Services
             if (string.IsNullOrWhiteSpace(model.Name))
                 throw new InvalidOperationException("Subject name is required.");
 
-            long? effectiveClassId = classId ?? existing.ClassId;
+            if (!model.ClassId.HasValue)
+                throw new InvalidOperationException("Class is required.");
 
-            if (await _repo.NameExistsInClassAsync(model.Name, effectiveClassId, id))
+            if (await _repo.NameExistsInClassAsync(model.Name, model.ClassId, id))
                 throw new InvalidOperationException("This subject already exists for the selected class.");
 
             existing.Name = model.Name;
             existing.IsApproved = model.IsApproved;
             existing.Status = model.Status;
+            existing.ClassId = model.ClassId;
             existing.ModifiedAt = DateTime.UtcNow;
-            existing.ClassId = effectiveClassId;
+            existing.ModifiedBy = currentUser;
 
             await _repo.UpdateAsync(existing);
             return true;

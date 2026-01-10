@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Models;
 using QuizSystemService.Interfaces;
+using SmartQuizAssessmentSystem.ViewModels;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -48,63 +50,105 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            await PopulateClassDropdownAsync();
-            return View(new Subject());
+            var vm = new SubjectCreateViewModel
+            {
+                EducationMediumList = GetEducationMediumSelectList(),
+                ClassList = Enumerable.Empty<SelectListItem>()
+            };
+            return View(vm);
         }
 
         // POST: Subject/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Subject model, long? classId)
+        public async Task<IActionResult> Create(SubjectCreateViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                await PopulateClassDropdownAsync(classId);
-                return View(model);
+                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.ClassList = await GetClassSelectListAsync(vm.EducationMedium, vm.ClassId);
+                return View(vm);
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
 
+            var subject = new Subject
+            {
+                Name = vm.Name,
+                ClassId = vm.ClassId,
+                IsApproved = vm.IsApproved,
+                Status = ModelStatus.Active
+            };
+
             try
             {
-                await _subjectService.CreateAsync(model, classId, currentUser!);
+                await _subjectService.CreateAsync(subject, currentUser!);
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateClassDropdownAsync(classId);
-                return View(model);
+                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.ClassList = await GetClassSelectListAsync(vm.EducationMedium, vm.ClassId);
+                return View(vm);
             }
         }
-
         // GET: Subject/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
             var subject = await _subjectService.GetByIdAsync(id, includeClass: true);
-            if (subject == null)
-                return NotFound();
+            if (subject == null) return NotFound();
 
-            await PopulateClassDropdownAsync(subject.ClassId);
-            return View(subject);
+            EducationMediums? medium = null;
+
+            if (subject.Class != null && subject.Class.EducationMediumId.HasValue)
+            {
+                medium = (EducationMediums)subject.Class.EducationMediumId.Value;
+            }
+
+            var vm = new SubjectCreateViewModel
+            {
+                Id = subject.Id,
+                Name = subject.Name,
+                ClassId = subject.ClassId,
+                IsApproved = subject.IsApproved,
+                EducationMedium = medium,
+                EducationMediumList = GetEducationMediumSelectList(),
+                ClassList = await GetClassSelectListAsync(medium, subject.ClassId)
+            };
+
+            return View(vm);
         }
 
-        // POST: Subject/Edit/5
+
+        // POST: Subject Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, Subject model, long? classId)
+        public async Task<IActionResult> Edit(long id, SubjectCreateViewModel vm)
         {
-            if (id != model.Id) return NotFound();
+            if (id != vm.Id) return NotFound();
+
             if (!ModelState.IsValid)
             {
-                await PopulateClassDropdownAsync(classId ?? model.ClassId);
-                return View(model);
+                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.ClassList = await GetClassSelectListAsync(vm.EducationMedium, vm.ClassId);
+                return View(vm);
             }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            var subject = new Subject
+            {
+                Id = vm.Id!.Value,
+                Name = vm.Name,
+                ClassId = vm.ClassId,
+                IsApproved = vm.IsApproved,
+                Status = ModelStatus.Active
+            };
 
             try
             {
-                var ok = await _subjectService.UpdateAsync(id, model, classId);
+                var ok = await _subjectService.UpdateAsync(id, subject, currentUser!);
                 if (!ok) return NotFound();
 
                 return RedirectToAction(nameof(Index));
@@ -112,10 +156,12 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateClassDropdownAsync(classId ?? model.ClassId);
-                return View(model);
+                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.ClassList = await GetClassSelectListAsync(vm.EducationMedium, vm.ClassId);
+                return View(vm);
             }
         }
+
 
         // GET: Subject/Delete/5
         [HttpGet]
@@ -142,7 +188,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Pending()
         {
             var pendingSubjects = await _subjectService.GetPendingAsync();
-            return View(pendingSubjects); // Views/Subject/Pending.cshtml
+            return View(pendingSubjects);
         }
 
         // Approve subject
@@ -180,5 +226,34 @@ namespace SmartQuizAssessmentSystem.Controllers
             var classes = await _classService.GetAllAsync();
             ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedId);
         }
+
+        private IEnumerable<SelectListItem> GetEducationMediumSelectList()
+        {
+            return Enum.GetValues(typeof(EducationMediums))
+                .Cast<EducationMediums>()
+                .Select(m => new SelectListItem
+                {
+                    Value = m.ToString(),
+                    Text = m.ToString()
+                });
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetClassSelectListAsync(
+            EducationMediums? selectedMedium,
+            long? selectedClassId)
+        {
+            if (!selectedMedium.HasValue)
+                return Enumerable.Empty<SelectListItem>();
+
+            var classes = await _classService.GetByMediumEnumAsync(selectedMedium.Value);
+
+            return classes.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.ClassName.ToString(),
+                Selected = selectedClassId.HasValue && selectedClassId.Value == c.Id
+            });
+        }
+
     }
 }
