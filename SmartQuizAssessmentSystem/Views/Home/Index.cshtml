@@ -1,8 +1,180 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_Public.cshtml";
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<style>
+    .hero-section {
+        border-radius: 18px;
+        background: linear-gradient(135deg, #fff3cd, #e3f2fd);
+        padding: 2rem 2.5rem;
+    }
+
+    .hero-title {
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .hero-subtext {
+        color: #495057;
+    }
+
+    .hero-btn-primary {
+        min-width: 190px;
+    }
+
+    .quick-card {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    }
+
+        .quick-card .card-header {
+            font-weight: 600;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+    .role-card {
+        border-radius: 16px;
+        border: none;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .role-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+        }
+    .stat-label {
+        color: #6c757d;
+    }
+
+    .stat-value {
+        font-weight: 600;
+        color: #212529;
+    }
+</style>
+
+<div class="container py-4">
+
+    <!-- Hero / Intro -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="hero-section mb-3">
+                <h1 class="h3 mb-2 hero-title">Welcome to Quiz Management System</h1>
+                <p class="mb-3 hero-subtext">
+                    Create and manage quizzes, organize classes and subjects, and let students attempt quizzes online with instant results.
+                </p>
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="AdminDashboard" asp-action="Dashboard"
+                           class="btn btn-primary hero-btn-primary me-2">
+                            Go to Admin Dashboard
+                        </a>
+                    }
+                    else if (User.IsInRole("Instructor"))
+                    {
+                        <a asp-controller="InstructorDashboard" asp-action="Dashboard"
+                           class="btn btn-primary hero-btn-primary me-2">
+                            Go to Instructor Dashboard
+                        </a>
+                    }
+                    else if (User.IsInRole("Student"))
+                    {
+                        <a asp-controller="StudentDashboard" asp-action="Dashboard"
+                           class="btn btn-primary hero-btn-primary me-2">
+                            Go to Student Dashboard
+                        </a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login"
+                       class="btn btn-primary hero-btn-primary me-2">
+                        Login
+                    </a>
+                    <a asp-controller="Account" asp-action="Register"
+                       class="btn btn-outline-secondary">
+                        Register
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card quick-card">
+                <div class="card-header">
+                    Quick stats
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <span class="stat-label">Classes:</span>
+                        <span class="stat-value">@ViewBag.ClassCount</span>
+                    </p>
+                    <p class="mb-2">
+                        <span class="stat-label">Subjects:</span>
+                        <span class="stat-value">@ViewBag.SubjectCount</span>
+                    </p>
+                    <p class="mb-0">
+                        <span class="stat-label">Students:</span>
+                        <span class="stat-value">@ViewBag.StudentCount</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role info blocks -->
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card h-100 role-card admin">
+                <div class="card-body">
+                    <div class="role-icon"></div>
+                    <h5 class="card-title">Admins</h5>
+                    <p class="card-text">
+                        Manage Users, Education Mediums, Classes, and Approve Content Before it Goes Live.
+                    </p>
+                    <a asp-controller="AdminDashboard" asp-action="Dashboard"
+                       class="btn btn-sm btn-outline-primary">
+                        Admin Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 role-card instructor">
+                <div class="card-body">
+                    <div class="role-icon"></div>
+                    <h5 class="card-title">Instructors</h5>
+                    <p class="card-text">
+                        Create Quizzes Tailored To Different Classes and Mediums.
+                    </p>
+                    <a asp-controller="InstructorDashboard" asp-action="Dashboard"
+                       class="btn btn-sm btn-outline-success">
+                        Instructor Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 role-card student">
+                <div class="card-body">
+                    <div class="role-icon"></div>
+                    <h5 class="card-title">Students</h5>
+                    <p class="card-text">
+                        Log In To See Available Quizzes, Attempt Them, And Track Your Performance Over Time.
+                    </p>
+                    <a asp-controller="StudentDashboard" asp-action="Dashboard"
+                       class="btn btn-sm btn-outline-warning">
+                        Student Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

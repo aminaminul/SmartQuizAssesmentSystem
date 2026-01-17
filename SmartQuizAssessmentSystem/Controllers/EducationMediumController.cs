@@ -22,7 +22,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        // LIST + classes for selected medium
         public async Task<IActionResult> Index(long? selectedMediumId)
         {
             var mediums = await _mediumService.GetAllAsync();
@@ -70,8 +69,6 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             var model = new EducationMedium
             {
-                // Id এখন long হলে, enum value কে long এ convert করো
-                Id = (long)enumId,
                 Name = enumId.ToString(),
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active,
@@ -99,7 +96,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             var medium = await _mediumService.GetByIdAsync(id);
             if (medium == null) return NotFound();
 
-            return View(medium);
+            return View(medium);  // DB থেকে আসা Name দেখাবে
         }
 
         // EDIT (POST)
@@ -107,27 +104,21 @@ namespace SmartQuizAssessmentSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, EducationMedium model)
         {
-            if (id != model.Id)
-                return NotFound();
+            if (id != model.Id) return NotFound();
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            try
-            {
-                var ok = await _mediumService.UpdateAsync(id, model);
-                if (!ok) return NotFound();
+            var currentUser = await _userManager.GetUserAsync(User);
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch (InvalidOperationException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View(model);
-            }
+            var ok = await _mediumService.UpdateAsync(id, model);
+            if (!ok) return NotFound();
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         // DELETE (GET)
         [HttpGet]
@@ -187,8 +178,8 @@ namespace SmartQuizAssessmentSystem.Controllers
                 .Cast<EducationMediums>()
                 .Select(m => new SelectListItem
                 {
-                    Value = ((long)m).ToString(),      // dropdown value
-                    Text = m.ToString(),              // dropdown text
+                    Value = ((long)m).ToString(),
+                    Text = m.ToString(),
                     Selected = selected.HasValue && selected.Value == m
                 })
                 .ToList();

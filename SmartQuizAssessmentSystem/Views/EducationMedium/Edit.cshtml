@@ -13,14 +13,6 @@
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <!-- Enum dropdown -->
-    <div class="mb-3">
-        <label class="form-label">Education Medium</label>
-        <select name="mediumEnumId" class="form-select" asp-items="ViewBag.MediumEnums">
-            <option value="">Select Education Medium</option>
-        </select>
-    </div>
-
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control" />

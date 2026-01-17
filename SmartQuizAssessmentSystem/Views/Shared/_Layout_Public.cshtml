@@ -1,72 +1,96 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using Microsoft.AspNetCore.Identity
+@using QuizSystemModel.Models
+@inject UserManager<QuizSystemUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] Quiz Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/account.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
 
     <style>
         body {
             background-color: #f4f6f9;
         }
 
-        .navbar-custom {
-            background-color: #ffffff;
-            border-bottom: 1px solid #ddd;
+        .navbar-brand span {
+            font-weight: 700;
         }
 
-        .hero {
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+        .footer {
+            border-top: 1px solid #ddd;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <!-- TOP NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Mind Check</a>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <span>Quiz Management System</span>
+                </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarPublic" aria-controls="navbarPublic"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain" aria-controls="navbarMain"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbarPublic">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-warning ms-2"
-                           asp-controller="Account" asp-action="Login">Login</a>
-                        <a class="btn btn-warning ms-2"
-                           asp-controller="Account" asp-action="Register">Register</a>
-                    </li>
-                </ul>
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="AdminDashboard" asp-action="Dashboard">Admin Dashboard</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Instructor"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="InstructorDashboard" asp-action="Dashboard">Instructor Dashboard</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Student"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="StudentDashboard" asp-action="Dashboard">Student Dashboard</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <partial name="_LoginPartial" />
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <!-- PAGE CONTENT -->
-    <div class="container hero">
+    <main class="container py-4">
         @RenderBody()
-    </div>
+    </main>
+
+    <footer class="footer bg-white">
+        <div class="container d-flex justify-content-between">
+            <span>&copy; @DateTime.Now.Year - Smart Quiz Assessment System</span>
+            <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacy</a>
+        </div>
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
