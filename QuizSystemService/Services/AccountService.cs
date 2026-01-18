@@ -24,7 +24,7 @@ namespace SmartQuizAssessmentSystem.Services
             _accountRepository = accountRepository;
         }
 
-        public async Task<IdentityResult> RegisterStudentAsync(StudentAddView model)
+        public async Task<IdentityResult> RegisterStudentAsync(StudentAddViewModel model)
         {
             const string defaultRoleName = "Student";
             var roleName = string.IsNullOrWhiteSpace(model.Role)

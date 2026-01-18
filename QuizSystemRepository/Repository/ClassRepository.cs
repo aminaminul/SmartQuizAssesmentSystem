@@ -15,46 +15,46 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public Task<List<Class>> GetAllAsync(long? educationMediumId = null)
+        public async Task<List<Class>> GetAllAsync(long? educationMediumId = null)
         {
             var query = _context.Class
                 .Include(c => c.EducationMedium)
-                .Where(c => c.Status != ModelStatus.Deleted)
-                .AsQueryable();
+                .Where(c => c.Status != ModelStatus.Deleted);
 
             if (educationMediumId.HasValue)
                 query = query.Where(c => c.EducationMediumId == educationMediumId.Value);
 
-            return query.ToListAsync();
+            return await query.OrderBy(c => c.Name).ToListAsync();
         }
 
-        public Task<Class?> GetByIdAsync(long id, bool includeMedium = false)
+        public async Task<Class?> GetByIdAsync(long id, bool includeMedium = false)
         {
             var query = _context.Class.AsQueryable();
             if (includeMedium)
                 query = query.Include(c => c.EducationMedium);
 
-            return query.FirstOrDefaultAsync(c => c.Id == id);
+            return await query.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public Task<bool> NameExistsInMediumAsync(ClassNameEnum className, long educationMediumId, long? excludeId = null)
+        public async Task<bool> NameExistsInMediumAsync(string className, long educationMediumId, long? excludeId = null)
         {
             var query = _context.Class
-                .Where(c => c.ClassName == className &&
+                .Where(c => c.Name == className &&
                             c.EducationMediumId == educationMediumId &&
                             c.Status != ModelStatus.Deleted);
 
             if (excludeId.HasValue)
                 query = query.Where(c => c.Id != excludeId.Value);
 
-            return query.AnyAsync();
+            return await query.AnyAsync();
         }
 
-        public Task<List<Class>> GetByMediumAsync(long mediumId)
+        public async Task<List<Class>> GetByMediumAsync(long mediumId)
         {
-            return _context.Class
+            return await _context.Class
                 .Where(c => c.EducationMediumId == mediumId &&
                             c.Status != ModelStatus.Deleted)
+                .OrderBy(c => c.Name)
                 .ToListAsync();
         }
 
@@ -70,11 +70,12 @@ namespace QuizSystemRepository.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<Class>> GetPendingAsync()
+        public async Task<List<Class>> GetPendingAsync()
         {
-            return _context.Class
-                .Where(c => c.IsApproved == false &&
+            return await _context.Class
+                .Where(c => !c.IsApproved &&
                             c.Status != ModelStatus.Deleted)
+                .OrderBy(c => c.CreatedAt)
                 .ToListAsync();
         }
     }

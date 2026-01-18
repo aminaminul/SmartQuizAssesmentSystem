@@ -1,45 +1,35 @@
-﻿@model IEnumerable<QuizSystemModel.Models.Student>
+﻿@model List<QuizSystemModel.Models.Student>
 
-@{
-
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Students";
-}
-
-<h4>Students</h4>
-
+<h2>Students</h2>
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New Student</a>
+    <a asp-action="Create" class="btn btn-primary">Add New Student</a>
 </p>
-
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Email Address</th>
+            <th>Name</th>
+            <th>Email</th>
             <th>Phone</th>
-            <th>Education Medium</th>
             <th>Class</th>
+            <th>Medium</th>
             <th>Status</th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var student in Model)
         {
             <tr>
-                <td>@item.FirstName</td>
-                <td>@item.LastName</td>
-                <td>@item.Email</td>
-                <td>@item.PhoneNumber</td>
-                <td>@item.EducationMedium?.Name</td>
-                <td>@item.Class?.ClassName</td>
-                <td>@item.Status</td>
+                <td>@student.FirstName @student.LastName</td>
+                <td>@student.Email</td>
+                <td>@student.PhoneNumber</td>
+                <td>@student.Class?.Name</td>
+                <td>@student.EducationMedium?.Name</td>
+                <td>@student.Status</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@student.Id" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
         }

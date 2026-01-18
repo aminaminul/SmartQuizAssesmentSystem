@@ -61,7 +61,7 @@ namespace QuizSystemRepository.Data
            
 
             modelBuilder.Entity<Class>()
-                .Property(c => c.ClassName)
+                .Property(c => c.Name)
                 .HasConversion<string>();
 
  

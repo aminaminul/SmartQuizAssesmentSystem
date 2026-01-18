@@ -24,18 +24,13 @@ namespace QuizSystemRepository.Repositories
                 .ToListAsync();
         }
 
-        public Task<Student?> GetByIdAsync(long id, bool includeUser = false)
+        public Task<Student?> GetByIdAsync(long id)
         {
-            IQueryable<Student> query = _context.Student
+            return _context.Student
                 .Include(s => s.EducationMedium)
-                .Include(s => s.Class);
-
-            if (includeUser)
-            {
-                query = query.Include(s => s.User);
-            }
-
-            return query.FirstOrDefaultAsync(s => s.Id == id);
+                .Include(s => s.Class)
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public Task<bool> EmailExistsAsync(string email, long? excludeId = null)
@@ -79,13 +74,20 @@ namespace QuizSystemRepository.Repositories
 
         public Task<List<EducationMedium>> GetEducationMediumsAsync()
         {
-            return _context.EducationMedium.ToListAsync();
+            return _context.EducationMedium
+                .Where(m => m.Status != ModelStatus.Deleted)
+                .OrderBy(m => m.Name)
+                .ToListAsync();
         }
 
         public Task<List<Class>> GetClassesAsync()
         {
-            return _context.Class.ToListAsync();
+            return _context.Class
+                .Where(c => c.Status != ModelStatus.Deleted)
+                .OrderBy(c => c.Name)
+                .ToListAsync();
         }
+
         public Task<Student?> GetByUserIdAsync(long userId)
         {
             return _context.Student

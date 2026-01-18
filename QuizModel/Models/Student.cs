@@ -24,7 +24,6 @@ namespace QuizSystemModel.Models
 
         public long? EducationMediumId { get; set; }
         public EducationMedium? EducationMedium { get; set; }
-        
         public long? ClassId { get; set; }
         public Class? Class { get; set; }
 

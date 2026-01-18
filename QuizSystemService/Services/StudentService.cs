@@ -23,26 +23,42 @@ namespace QuizSystemService.Services
             _roleManager = roleManager;
         }
 
-        public Task<List<Student>> GetAllAsync() => _repo.GetAllAsync();
-
-        public Task<Student?> GetByIdAsync(long id, bool includeUser = false) =>
-            _repo.GetByIdAsync(id, includeUser);
-
-        public Task<List<EducationMedium>> GetEducationMediumsAsync() =>
-            _repo.GetEducationMediumsAsync();
-
-        public Task<List<Class>> GetClassesAsync() =>
-            _repo.GetClassesAsync();
-
-        public async Task<bool> CreateAsync(StudentAddView model, QuizSystemUser currentUser)
+        public async Task<List<Student>> GetAllAsync()
         {
-            if (await _repo.EmailExistsAsync(model.Email!))
+            return await _repo.GetAllAsync();
+        }
+
+        public async Task<Student?> GetByIdAsync(long id)
+        {
+            return await _repo.GetByIdAsync(id);
+        }
+
+        public async Task<Student?> GetForEditAsync(long id)
+        {
+            return await _repo.GetByIdAsync(id);
+        }
+
+        public async Task<List<EducationMedium>> GetEducationMediumsAsync()
+        {
+            return await _repo.GetEducationMediumsAsync();
+        }
+
+        public async Task<List<Class>> GetClassesAsync()
+        {
+            return await _repo.GetClassesAsync();
+        }
+
+        public async Task<bool> CreateAsync(StudentAddViewModel model, QuizSystemUser currentUser)
+        {
+            // Email and Phone Verify
+            if (await _repo.EmailExistsAsync(model.Email))
                 throw new InvalidOperationException("This Email Is Already Used By Another Student.");
 
             if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
                 await _repo.PhoneExistsAsync(model.PhoneNumber))
                 throw new InvalidOperationException("This Phone Number Is Already Used By Another Student.");
 
+            // Identity User
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -52,18 +68,15 @@ namespace QuizSystemService.Services
                 PhoneNumber = model.PhoneNumber
             };
 
-            var userResult = await _userManager.CreateAsync(user, model.Password!);
+            var userResult = await _userManager.CreateAsync(user, model.Password);
             if (!userResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", userResult.Errors.Select(e => e.Description)));
 
-            var roleName = model.Role ?? "Student";
-            if (!await _roleManager.RoleExistsAsync(roleName))
-                await _roleManager.CreateAsync(new QuizSystemRole { Name = roleName });
-
-            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            var roleResult = await _userManager.AddToRoleAsync(user, "Student");
             if (!roleResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
 
+            // Student
             var student = new Student
             {
                 FirstName = model.FirstName,
@@ -71,11 +84,13 @@ namespace QuizSystemService.Services
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 EducationMediumId = model.EducationMediumId,
-                ClassId = model.ClassId,      // Class save
+                ClassId = model.ClassId,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active,
-                CreatedBy = currentUser
+                CreatedBy = currentUser,
+                ModifiedBy = currentUser,
+                ModifiedAt = DateTime.UtcNow
             };
 
             await _repo.AddAsync(student);
@@ -90,17 +105,18 @@ namespace QuizSystemService.Services
 
             if (!string.IsNullOrWhiteSpace(model.Email) &&
                 await _repo.EmailExistsAsync(model.Email, id))
-                throw new InvalidOperationException("This email is already used by another student.");
+                throw new InvalidOperationException("This Email Is Already Used By Another Student.");
 
             if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
                 await _repo.PhoneExistsAsync(model.PhoneNumber, id))
-                throw new InvalidOperationException("This phone number is already used by another student.");
+                throw new InvalidOperationException("This Phone Number Is Already Used By Another Student.");
 
             existing.FirstName = model.FirstName;
             existing.LastName = model.LastName;
             existing.Email = model.Email;
             existing.PhoneNumber = model.PhoneNumber;
             existing.Status = model.Status;
+            existing.ModifiedBy = model.User;
             existing.ModifiedAt = DateTime.UtcNow;
             existing.EducationMediumId = educationMediumId;
             existing.ClassId = classId;

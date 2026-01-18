@@ -21,42 +21,27 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = "Student")]
-        public IActionResult Dashboard()
-        {
-            return View();
-        }
-
+        // LIST
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var students = await _studentService.GetAllAsync();
-            return View(students);
+            return View(students ?? new List<Student>());
         }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Details(long id)
-        {
-            var student = await _studentService.GetByIdAsync(id, includeUser: true);
-            if (student == null)
-                return NotFound();
-
-            return View(student);
-        }
-
-        [HttpGet]
+        // CREATE (GET)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             await PopulateDropdownsAsync();
-            var vm = new StudentAddView { Role = "Student" };
-            return View(vm);
+            return View(new StudentAddViewModel());
         }
 
+        // CREATE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(StudentAddView model)
+        public async Task<IActionResult> Create(StudentAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -65,10 +50,14 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             try
             {
-                await _studentService.CreateAsync(model, currentUser!);
+                await _studentService.CreateAsync(model, currentUser);
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException ex)
@@ -79,11 +68,11 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        [HttpGet]
+        // EDIT (GET)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long id)
         {
-            var student = await _studentService.GetByIdAsync(id);
+            var student = await _studentService.GetForEditAsync(id);
             if (student == null)
                 return NotFound();
 
@@ -91,6 +80,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
+        // EDIT (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -121,7 +111,17 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        [HttpGet]
+        // DETAILS
+        public async Task<IActionResult> Details(long id)
+        {
+            var student = await _studentService.GetByIdAsync(id);
+            if (student == null)
+                return NotFound();
+
+            return View(student);
+        }
+
+        // DELETE (GET)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long id)
         {
@@ -132,26 +132,32 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
+        // DELETE (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            var ok = await _studentService.SoftDeleteAsync(id, currentUser!);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var ok = await _studentService.SoftDeleteAsync(id, currentUser);
             if (!ok)
                 return NotFound();
 
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task PopulateDropdownsAsync(long? educationMediumId = null, long? classId = null)
+        private async Task PopulateDropdownsAsync(long? selectedEducationMediumId = null, long? selectedClassId = null)
         {
-            var mediums = await _studentService.GetEducationMediumsAsync();
-            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", educationMediumId);
+            var educationMediums = await _studentService.GetEducationMediumsAsync() ?? new List<EducationMedium>();
+            var classes = await _studentService.GetClassesAsync() ?? new List<Class>();
 
-            var classes = await _studentService.GetClassesAsync();
-            ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
+            ViewBag.EducationMediumId = new SelectList(educationMediums.Any() ? educationMediums : new List<EducationMedium> { new EducationMedium { Id = 0, Name = "No Mediums Available" } }, "Id", "Name", selectedEducationMediumId);
+            ViewBag.ClassId = new SelectList(classes.Any() ? classes : new List<Class> { new Class { Id = 0, Name = "No Classes Available" } }, "Id", "Name", selectedClassId);
         }
     }
 }

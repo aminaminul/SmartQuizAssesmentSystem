@@ -34,7 +34,7 @@ else
             @foreach (var cls in Model)
             {
                 <tr>
-                    <td>@cls.ClassName</td>
+                    <td>@cls.Name</td>
                     <td>@cls.CreatedAt.ToLocalTime()</td>
                     <td>@(cls.IsApproved ? "Yes" : "No")</td>
                     <td class="d-flex gap-2">

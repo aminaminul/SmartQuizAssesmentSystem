@@ -92,7 +92,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> RegisterStudent()
         {
-            var model = new StudentAddView
+            var model = new StudentAddViewModel
             {
                 Role = "Student"
             };
@@ -103,7 +103,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterStudent(StudentAddView model)
+        public async Task<IActionResult> RegisterStudent(StudentAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -190,7 +190,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return classes.Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
-                Text = c.ClassName.ToString()
+                Text = c.Name.ToString()
 
             });
         }

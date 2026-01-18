@@ -1,7 +1,14 @@
-using QuizSystemModel.BusinessRules;
+using System.ComponentModel.DataAnnotations;
 
-public class ClassCreateViewModel
+namespace QuizSystemModel.ViewModels
 {
-    public long? EducationMediumId { get; set; }
-    public ClassNameEnum? ClassName { get; set; }
+    public class ClassCreateViewModel
+    {
+        [Required(ErrorMessage = "Please select a class")]
+        [Range(1, 12, ErrorMessage = "Please select a valid class (1-12)")]
+        public long ClassId { get; set; }
+
+        [Required(ErrorMessage = "Please select an education medium")]
+        public long EducationMediumId { get; set; }
+    }
 }

@@ -20,41 +20,42 @@ namespace QuizSystemService.Services
         public Task<Class?> GetByIdAsync(long id, bool includeMedium = false) =>
             _repo.GetByIdAsync(id, includeMedium);
 
-        public Task<List<Class>> GetPendingAsync() =>
-            _repo.GetPendingAsync();
+        public Task<List<Class>> GetPendingAsync() => _repo.GetPendingAsync();
 
-        public async Task<bool> CreateAsync(ClassNameEnum className, long educationMediumId, QuizSystemUser currentUser)
+        public async Task<bool> CreateAsync(long classId, long educationMediumId, QuizSystemUser currentUser)
         {
+            var className = GetClassNameById(classId);
+
             if (await _repo.NameExistsInMediumAsync(className, educationMediumId))
                 throw new InvalidOperationException("This Class Already Exists For The Selected Education Medium.");
 
             var cls = new Class
             {
-                ClassName = className,
+                Name = className,
                 EducationMediumId = educationMediumId,
-                Status = ModelStatus.Active,
+                Status = ModelStatus.Pending,
                 IsApproved = false,
-                ApprovedAt = DateTime.UtcNow,
-                ApprovedBy = currentUser,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = currentUser,
                 ModifiedAt = DateTime.UtcNow,
-                
+                ModifiedBy = currentUser
             };
 
             await _repo.AddAsync(cls);
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, ClassNameEnum className, long educationMediumId, ModelStatus status, QuizSystemUser currentUser)
+        public async Task<bool> UpdateAsync(long id, long classId, long educationMediumId, ModelStatus status, QuizSystemUser currentUser)
         {
             var existing = await _repo.GetByIdAsync(id);
             if (existing == null) return false;
 
+            var className = GetClassNameById(classId);
+
             if (await _repo.NameExistsInMediumAsync(className, educationMediumId, id))
                 throw new InvalidOperationException("This Class Already Exists For The Selected Education Medium.");
 
-            existing.ClassName = className;
+            existing.Name = className;
             existing.EducationMediumId = educationMediumId;
             existing.Status = status;
             existing.ModifiedBy = currentUser;
@@ -83,7 +84,7 @@ namespace QuizSystemService.Services
             if (existing == null) return false;
 
             existing.IsApproved = true;
-            existing.ApprovedAt = DateTime.UtcNow; 
+            existing.ApprovedAt = DateTime.UtcNow;
             existing.ApprovedBy = currentUser;
             existing.Status = ModelStatus.Active;
 
@@ -104,15 +105,25 @@ namespace QuizSystemService.Services
             await _repo.UpdateAsync(existing);
             return true;
         }
-        public async Task<List<Class>> GetByMediumEnumAsync(EducationMediums medium)
+
+        private static string GetClassNameById(long classId)
         {
-            var all = await _repo.GetAllAsync(null);
-
-            long mediumId = (long)medium; 
-            return all
-                .Where(c => c.EducationMediumId == mediumId)
-                .ToList();
+            return classId switch
+            {
+                1 => "Class 1",
+                2 => "Class 2",
+                3 => "Class 3",
+                4 => "Class 4",
+                5 => "Class 5",
+                6 => "Class 6",
+                7 => "Class 7",
+                8 => "Class 8",
+                9 => "Class 9",
+                10 => "Class 10",
+                11 => "Class 11",
+                12 => "Class 12",
+                _ => throw new ArgumentException($"Invalid Class ID: {classId}")
+            };
         }
-
     }
 }
