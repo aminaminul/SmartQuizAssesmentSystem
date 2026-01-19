@@ -63,6 +63,7 @@
                         <a asp-controller="ProfileApproval" asp-action="Pending" class="nav-link">
                             Profile Update Requests
                         </a>
+                        <a asp-controller="AdminDashboard" asp-action="Profile">My Profile</a>
                     }
                     else if (User.IsInRole("Instructor"))
                     {
@@ -99,7 +100,12 @@
             <div class="topbar d-flex justify-content-between align-items-center">
                 @if (User.IsInRole("Admin"))
                 {
-                    <input class="form-control w-25" placeholder="Search..." />
+                    <form asp-controller="AdminDashboard" asp-action="Search" method="get" class="w-25">
+                        <div class="input-group">
+                            <input name="query" class="form-control" placeholder="Search..." value="@ViewBag.SearchQuery" />
+                            <button class="btn btn-warning" type="submit">Search</button>
+                        </div>
+                    </form>
                 }
 
                 <partial name="_LoginPartial" />

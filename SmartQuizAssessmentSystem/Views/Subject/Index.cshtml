@@ -16,9 +16,8 @@
         <tr>
             <th>Name</th>
             <th>Class</th>
-            <th>Approved</th>
-            <th>Status</th>
             <th>Created At</th>
+            <th style="width: 200px;">Approve Status</th>
             <th style="width: 200px;"></th>
         </tr>
     </thead>
@@ -28,13 +27,43 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Class?.Name</td>
-                <td>@item.IsApproved</td>
-                <td>@item.Status</td>
                 <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    @if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.Active)
+                    {
+                        <span class="badge bg-success text-white">Approved</span>
+                    }
+                    else if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                    {
+                        <span class="badge bg-danger text-white">Rejected</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">@item.Status</span>
+                    }
+                </td>
+                <td>
+                    <div class="d-flex gap-1 justify-content-end">
+                            <form asp-controller="Subject" asp-action="Approve" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                            </form>
+                            <form asp-controller="Subject" asp-action="Reject" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                <button type="submit" class="btn btn-sm btn-warning">Reject</button>
+                            </form>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
                 </td>
             </tr>
         }

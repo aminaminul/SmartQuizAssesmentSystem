@@ -18,13 +18,20 @@ namespace QuizSystemRepository.Repositories
         public Task<List<Quiz>> GetAllAsync()
         {
             return _context.Quiz
+                .Include(q => q.Subject)
+                .Include(q => q.Class)
+                .Include(q => q.EducationMedium)
                 .Where(q => q.Status != ModelStatus.Deleted)
                 .ToListAsync();
         }
 
         public Task<Quiz?> GetByIdAsync(long id, bool includeQuestions = false)
         {
-            var query = _context.Quiz.AsQueryable();
+            var query = _context.Quiz
+                .Include(q => q.Subject)
+                .Include(q => q.Class)
+                .Include(q => q.EducationMedium)
+                .AsQueryable();
 
             if (includeQuestions)
                 query = query.Include(q => q.Questions);
@@ -52,9 +59,17 @@ namespace QuizSystemRepository.Repositories
 
         public async Task<List<Quiz>> GetAvailableForStudentAsync(long studentUserId, DateTime now)
         {
+            var student = await _context.Student
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.UserId == studentUserId);
+
+            if (student == null) return new List<Quiz>();
+
             return await _context.Quiz
                 .Where(q => q.IsApproved
                             && q.Status == ModelStatus.Active
+                            && q.EducationMediumId == student.EducationMediumId
+                            && q.ClassId == student.ClassId
                             && (q.StartAt == null || q.StartAt <= now)
                             && (q.EndAt == null || q.EndAt >= now))
                 .AsNoTracking()

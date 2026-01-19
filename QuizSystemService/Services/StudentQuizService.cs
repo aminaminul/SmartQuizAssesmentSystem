@@ -10,15 +10,18 @@ namespace QuizSystemService.Services
         private readonly IQuizRepository _quizRepository;
         private readonly IQuizAttemptRepository _attemptRepository;
         private readonly IAttemptedQuizAnswerRepository _answerRepository;
+        private readonly IAccountRepository _accountRepository;
 
         public StudentQuizService(
             IQuizRepository quizRepository,
             IQuizAttemptRepository attemptRepository,
-            IAttemptedQuizAnswerRepository answerRepository)
+            IAttemptedQuizAnswerRepository answerRepository,
+            IAccountRepository accountRepository)
         {
             _quizRepository = quizRepository;
             _attemptRepository = attemptRepository;
             _answerRepository = answerRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task<List<Quiz>> GetAvailableQuizzesAsync(long studentUserId)
@@ -32,6 +35,11 @@ namespace QuizSystemService.Services
             var quiz = await _quizRepository.GetByIdWithQuestionsAsync(quizId);
             if (quiz == null)
                 throw new Exception("Quiz Not Found");
+
+            // Verify student belongs to this quiz's class/medium
+            var student = await _accountRepository.GetStudentByUserIdAsync(studentUserId);
+            if (student == null || student.EducationMediumId != quiz.EducationMediumId || student.ClassId != quiz.ClassId)
+                throw new Exception("You are not authorized to attempt this quiz.");
 
             var attempt = new QuizAttempt
             {

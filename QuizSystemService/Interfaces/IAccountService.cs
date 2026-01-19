@@ -7,5 +7,6 @@ namespace QuizSystemService.Interfaces
     {
         Task<IdentityResult> RegisterStudentAsync(StudentAddViewModel model);
         Task<IdentityResult> RegisterInstructorAsync(InstructorAddViewModel model);
+        Task<bool> IsUserApprovedAsync(long userId);
     }
 }

@@ -12,7 +12,7 @@
             <th>Phone</th>
             <th>Class</th>
             <th>Medium</th>
-            <th>Status</th>
+            <th>Approve Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -25,7 +25,24 @@
                 <td>@student.PhoneNumber</td>
                 <td>@student.Class?.Name</td>
                 <td>@student.EducationMedium?.Name</td>
-                <td>@student.Status</td>
+                <td>
+                    @if (student.Status == QuizSystemModel.BusinessRules.ModelStatus.Active)
+                    {
+                        <span class="badge bg-success text-white">Approved</span>
+                    }
+                    else if (student.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (student.Status == QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                    {
+                        <span class="badge bg-danger text-white">Rejected</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">@student.Status</span>
+                    }
+                </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">Details</a>
                     <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning btn-sm">Edit</a>

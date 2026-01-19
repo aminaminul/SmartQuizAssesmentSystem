@@ -140,13 +140,37 @@ namespace SmartQuizAssessmentSystem.Services
                 HscGrade = model.HscGrade,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
+                Status = ModelStatus.Pending,
                 EducationMediumId = model.EducationMediumId
             };
 
             await _accountRepository.AddInstructorAsync(instructor);
 
             return IdentityResult.Success;
+        }
+
+        public async Task<bool> IsUserApprovedAsync(long userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains("Admin")) return true;
+
+            if (roles.Contains("Instructor"))
+            {
+                var instructor = await _accountRepository.GetInstructorByUserIdAsync(userId);
+                return instructor != null && instructor.Status == ModelStatus.Active;
+            }
+
+            if (roles.Contains("Student"))
+            {
+                var student = await _accountRepository.GetStudentByUserIdAsync(userId);
+                // For now students are active once registered, or we check status if we add pending status to them too.
+                return student != null && student.Status == ModelStatus.Active;
+            }
+
+            return false;
         }
 
         private async Task<IdentityResult> EnsureRoleExistsAsync(string roleName)

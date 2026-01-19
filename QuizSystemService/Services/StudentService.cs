@@ -43,9 +43,9 @@ namespace QuizSystemService.Services
             return await _repo.GetEducationMediumsAsync();
         }
 
-        public async Task<List<Class>> GetClassesAsync()
+        public async Task<List<Class>> GetClassesAsync(long? mediumId = null)
         {
-            return await _repo.GetClassesAsync();
+            return await _repo.GetClassesAsync(mediumId);
         }
 
         public async Task<bool> CreateAsync(StudentAddViewModel model, QuizSystemUser currentUser)

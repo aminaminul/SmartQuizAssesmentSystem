@@ -13,6 +13,6 @@ namespace QuizSystemService.Interfaces
         Task<bool> UpdateAsync(long id, Student model, long? educationMediumId, long? classId);
         Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser);
         Task<List<EducationMedium>> GetEducationMediumsAsync();
-        Task<List<Class>> GetClassesAsync();
+        Task<List<Class>> GetClassesAsync(long? mediumId = null);
     }
 }

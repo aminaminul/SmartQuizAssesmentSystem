@@ -19,9 +19,8 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Approved</th>
             <th>Created At</th>
-            <th>Status</th>
+            <th>Approve Status</th>
             <th></th>
         </tr>
     </thead>
@@ -33,9 +32,25 @@
 
             <tr>
                 <td>@m.Name</td>
-                <td>@(m.IsApproved ? "Yes" : "No")</td>
                 <td>@m.CreatedAt.ToString("g")</td>
-                <td>@m.Status</td>
+                <td>
+                    @if (m.Status == ModelStatus.Active)
+                    {
+                        <span class="badge bg-success text-white">Approved</span>
+                    }
+                    else if (m.Status == ModelStatus.Pending)
+                    {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    }
+                    else if (m.Status == ModelStatus.InActive)
+                    {
+                        <span class="badge bg-danger text-white">Rejected</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">@m.Status</span>
+                    }
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@idLong" class="btn btn-sm btn-primary">Edit</a>
                     <a asp-action="Delete" asp-route-id="@idLong" class="btn btn-sm btn-danger">Delete</a>
@@ -93,9 +108,8 @@
             <thead>
                 <tr>
                     <th>Class Name</th>
-                    <th>Approved</th>
                     <th>Created At</th>
-                    <th>Status</th>
+                    <th>Approve Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,9 +117,25 @@
                 {
                     <tr>
                         <td>@c.Name</td>
-                        <td>@(c.IsApproved ? "Yes" : "No")</td>
                         <td>@c.CreatedAt.ToString("g")</td>
-                        <td>@c.Status</td>
+                        <td>
+                            @if (c.Status == ModelStatus.Active)
+                            {
+                                <span class="badge bg-success text-white">Approved</span>
+                            }
+                            else if (c.Status == ModelStatus.Pending)
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (c.Status == ModelStatus.InActive)
+                            {
+                                <span class="badge bg-danger text-white">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@c.Status</span>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>

@@ -74,9 +74,30 @@
         </form>
 
         @section Scripts {
-            @{
-                await Html.RenderPartialAsync("_ValidationScriptsPartial");
-            }
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+            <script>
+                $(document).ready(function () {
+                    $('#EducationMediumId').change(function () {
+                        var mediumId = $(this).val();
+                        var $classSelect = $('#ClassId');
+
+                        $classSelect.empty();
+                        $classSelect.append('<option value="">Select Class</option>');
+
+                        if (mediumId) {
+                            $.getJSON('/Account/GetClassesByMedium', { mediumId: mediumId }, function (data) {
+                                $.each(data, function (index, item) {
+                                    $classSelect.append($('<option/>', {
+                                        value: item.id,
+                                        text: item.name
+                                    }));
+                                });
+                            });
+                        }
+                    });
+                });
+            </script>
         }
     </div>
 </div>

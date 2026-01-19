@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
+using QuizSystemModel.BusinessRules;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -68,8 +69,14 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         private async Task PopulateDropdownsAsync(long? selectedClassId = null, long? selectedMediumId = null)
         {
-            var classItems = Enumerable.Range(1, 12)
-                .Select(i => new SelectListItem { Value = i.ToString(), Text = $"Class {i}", Selected = selectedClassId == i })
+            var classItems = Enum.GetValues(typeof(ClassNameEnum))
+                .Cast<ClassNameEnum>()
+                .Select(e => new SelectListItem 
+                { 
+                    Value = ((int)e).ToString(), 
+                    Text = e.ToString(), 
+                    Selected = selectedClassId == (int)e 
+                })
                 .ToList();
             ViewBag.ClassId = classItems;
 

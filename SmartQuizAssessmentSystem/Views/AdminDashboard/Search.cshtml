@@ -1,0 +1,128 @@
+@model QuizSystemModel.ViewModels.GlobalSearchViewModel
+
+@{
+    ViewData["Title"] = "Search Results";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Search Results for "@Model.Query"</h2>
+    <hr />
+
+    @if (!Model.Instructors.Any() && !Model.Students.Any() && !Model.Quizzes.Any() && !Model.Subjects.Any())
+    {
+        <div class="alert alert-info">
+            No results found for "@Model.Query".
+        </div>
+    }
+    else
+    {
+        @if (Model.Instructors.Any())
+        {
+            <h4>Instructors</h4>
+            <table class="table table-hover table-sm mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var i in Model.Instructors)
+                    {
+                        <tr>
+                            <td>@i.FirstName @i.LastName</td>
+                            <td>@i.Email</td>
+                            <td>@i.Status</td>
+                            <td class="text-end">
+                                <a asp-controller="Instructor" asp-action="Details" asp-route-id="@i.Id" class="btn btn-sm btn-outline-info">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (Model.Students.Any())
+        {
+            <h4>Students</h4>
+            <table class="table table-hover table-sm mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Class</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.Students)
+                    {
+                        <tr>
+                            <td>@s.FirstName @s.LastName</td>
+                            <td>@s.Email</td>
+                            <td>@s.Class?.Name</td>
+                            <td class="text-end">
+                                <a asp-controller="Student" asp-action="Details" asp-route-id="@s.Id" class="btn btn-sm btn-outline-info">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (Model.Quizzes.Any())
+        {
+            <h4>Quizzes</h4>
+            <table class="table table-hover table-sm mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Marks</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var q in Model.Quizzes)
+                    {
+                        <tr>
+                            <td>@q.Name</td>
+                            <td>@q.TotalMarks</td>
+                            <td class="text-end">
+                                <a asp-controller="Quiz" asp-action="Details" asp-route-id="@q.Id" class="btn btn-sm btn-outline-info">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (Model.Subjects.Any())
+        {
+            <h4>Subjects</h4>
+            <table class="table table-hover table-sm mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sub in Model.Subjects)
+                    {
+                        <tr>
+                            <td>@sub.Name</td>
+                            <td class="text-end">
+                                <a asp-controller="Subject" asp-action="Details" asp-route-id="@sub.Id" class="btn btn-sm btn-outline-info">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    <a asp-action="Dashboard" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>

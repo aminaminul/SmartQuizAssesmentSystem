@@ -14,17 +14,34 @@ namespace SmartQuizAssessmentSystem.Controllers
     {
         private readonly ISubjectService _subjectService;
         private readonly IClassService _classService;
+        private readonly IEducationMediumService _mediumService;
         private readonly UserManager<QuizSystemUser> _userManager;
 
         public SubjectController(
             ISubjectService subjectService,
             IClassService classService,
+            IEducationMediumService mediumService,
             UserManager<QuizSystemUser> userManager)
         {
             _subjectService = subjectService;
             _classService = classService;
+            _mediumService = mediumService;
             _userManager = userManager;
         }
+
+        // ... existing methods ...
+
+        private async Task<IEnumerable<SelectListItem>> GetEducationMediumSelectListAsync()
+        {
+            var mediums = await _mediumService.GetAllAsync();
+            return mediums.Select(m => new SelectListItem
+            {
+                Value = m.Id.ToString(),
+                Text = m.Name
+            });
+        }
+
+
 
         // GET: Subject/Index
         public async Task<IActionResult> Index(long? classId)
@@ -44,26 +61,26 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(subject);
         }
 
-        // GET: Subject/Create ✅ SINGLE ViewModel
+        // GET: Subject/Create
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             var vm = new SubjectViewModel
             {
-                EducationMediumList = GetEducationMediumSelectList()
+                EducationMediumList = await GetEducationMediumSelectListAsync()
             };
             await PopulateClassListAsync(vm);
             return View(vm);
         }
 
-        // POST: Subject/Create ✅ SINGLE ViewModel
+        // POST: Subject/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SubjectViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.EducationMediumList = await GetEducationMediumSelectListAsync();
                 await PopulateClassListAsync(vm);
                 return View(vm);
             }
@@ -77,7 +94,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 {
                     Name = vm.Name,
                     ClassId = vm.ClassId,
-                    IsApproved = vm.IsApproved,
+                    IsApproved = false,
                     Status = ModelStatus.Pending,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = currentUser
@@ -90,13 +107,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.EducationMediumList = await GetEducationMediumSelectListAsync();
                 await PopulateClassListAsync(vm);
                 return View(vm);
             }
         }
 
-        // GET: Subject/Edit/5 ✅ SINGLE ViewModel
+        // GET: Subject/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
@@ -114,7 +131,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 IsApproved = subject.IsApproved,
                 EducationMediumId = cls.EducationMediumId,
                 Status = subject.Status,
-                EducationMediumList = GetEducationMediumSelectList(),
+                EducationMediumList = await GetEducationMediumSelectListAsync(),
                 Class = cls
             };
 
@@ -122,7 +139,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(vm);
         }
 
-        // POST: Subject/Edit/5 ✅ SINGLE ViewModel
+        // POST: Subject/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SubjectViewModel vm)
@@ -131,7 +148,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (!ModelState.IsValid)
             {
-                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.EducationMediumList = await GetEducationMediumSelectListAsync();
                 await PopulateClassListAsync(vm);
                 return View(vm);
             }
@@ -159,7 +176,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                vm.EducationMediumList = GetEducationMediumSelectList();
+                vm.EducationMediumList = await GetEducationMediumSelectListAsync();
                 await PopulateClassListAsync(vm);
                 return View(vm);
             }
@@ -200,7 +217,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         // Approve subject
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(long id)
+        public async Task<IActionResult> Approve(long id, string? returnUrl = null)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -209,13 +226,17 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (!ok) return NotFound();
 
             TempData["SuccessMessage"] = "Subject approved successfully.";
+            
+            if (!string.IsNullOrEmpty(returnUrl))
+                return LocalRedirect(returnUrl);
+                
             return RedirectToAction(nameof(Pending));
         }
 
         // Reject subject
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(long id)
+        public async Task<IActionResult> Reject(long id, string? returnUrl = null)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -224,32 +245,25 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (!ok) return NotFound();
 
             TempData["SuccessMessage"] = "Subject rejected.";
+            
+            if (!string.IsNullOrEmpty(returnUrl))
+                return LocalRedirect(returnUrl);
+
             return RedirectToAction(nameof(Pending));
         }
 
 
-        private IEnumerable<SelectListItem> GetEducationMediumSelectList()
-        {
-            return Enum.GetValues<EducationMediums>()
-                .Select(m => new SelectListItem
-                {
-                    Value = ((long)m).ToString(),
-                    Text = m.ToString()
-                });
-        }
+
 
         private async Task PopulateClassListAsync(SubjectViewModel vm)
         {
-            if (vm.EducationMediumId.HasValue)
+            var classes = await _classService.GetAllAsync(vm.EducationMediumId);
+            vm.ClassList = classes.Select(c => new SelectListItem
             {
-                var classes = await _classService.GetAllAsync(vm.EducationMediumId);
-                vm.ClassList = classes.Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name,
-                    Selected = vm.ClassId == c.Id
-                });
-            }
+                Value = c.Id.ToString(),
+                Text = c.Name,
+                Selected = vm.ClassId == c.Id
+            });
         }
     }
 }

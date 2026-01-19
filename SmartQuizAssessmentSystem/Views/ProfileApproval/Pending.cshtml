@@ -20,8 +20,8 @@ else
                 <th>User Id</th>
                 <th>Role</th>
                 <th>Requested At</th>
-                <th>Status</th>
                 <th>Admin Comment</th>
+                <th>Approve Status</th>
                 <th></th>
             </tr>
         </thead>
@@ -32,8 +32,25 @@ else
                     <td>@r.UserId</td>
                     <td>@r.Role</td>
                     <td>@r.RequestedAt.ToLocalTime()</td>
-                    <td>@r.Status</td>
                     <td>@r.AdminComment</td>
+                    <td>
+                        @if (r.Status == QuizSystemModel.BusinessRules.ProfileUpdateStatus.Approved)
+                        {
+                            <span class="badge bg-success text-white">Approved</span>
+                        }
+                        else if (r.Status == QuizSystemModel.BusinessRules.ProfileUpdateStatus.Pending)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (r.Status == QuizSystemModel.BusinessRules.ProfileUpdateStatus.Rejected)
+                        {
+                            <span class="badge bg-danger text-white">Rejected</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@r.Status</span>
+                        }
+                    </td>
                     <td class="d-flex gap-2">
                         <form asp-controller="ProfileApproval"
                               asp-action="Approve"

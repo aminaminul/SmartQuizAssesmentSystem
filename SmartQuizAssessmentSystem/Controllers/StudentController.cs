@@ -154,7 +154,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         private async Task PopulateDropdownsAsync(long? selectedEducationMediumId = null, long? selectedClassId = null)
         {
             var educationMediums = await _studentService.GetEducationMediumsAsync() ?? new List<EducationMedium>();
-            var classes = await _studentService.GetClassesAsync() ?? new List<Class>();
+            var classes = await _studentService.GetClassesAsync(selectedEducationMediumId) ?? new List<Class>();
 
             ViewBag.EducationMediumId = new SelectList(educationMediums.Any() ? educationMediums : new List<EducationMedium> { new EducationMedium { Id = 0, Name = "No Mediums Available" } }, "Id", "Name", selectedEducationMediumId);
             ViewBag.ClassId = new SelectList(classes.Any() ? classes : new List<Class> { new Class { Id = 0, Name = "No Classes Available" } }, "Id", "Name", selectedClassId);

@@ -12,11 +12,22 @@ namespace SmartQuizAssessmentSystem.Controllers
     {
         private readonly IQuizService _quizService;
         private readonly UserManager<QuizSystemUser> _userManager;
+        private readonly IEducationMediumService _mediumService;
+        private readonly IClassService _classService;
+        private readonly ISubjectService _subjectService;
 
-        public QuizController(IQuizService quizService, UserManager<QuizSystemUser> userManager)
+        public QuizController(
+            IQuizService quizService, 
+            UserManager<QuizSystemUser> userManager,
+            IEducationMediumService mediumService,
+            IClassService classService,
+            ISubjectService subjectService)
         {
             _quizService = quizService;
             _userManager = userManager;
+            _mediumService = mediumService;
+            _classService = classService;
+            _subjectService = subjectService;
         }
 
         public async Task<IActionResult> Index()
@@ -33,8 +44,9 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await PopulateDropdownsAsync();
             return View(new QuizViewModel());
         }
 
@@ -43,7 +55,10 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Create(QuizViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
+            }
 
             var currentUser = await _userManager.GetUserAsync(User);
 
@@ -55,6 +70,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
         }
@@ -64,6 +80,8 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             var vm = await _quizService.GetForEditAsync(id);
             if (vm == null) return NotFound();
+
+            await PopulateDropdownsAsync(vm.EducationMediumId, vm.ClassId);
             return View(vm);
         }
 
@@ -72,7 +90,11 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Edit(long id, QuizViewModel model)
         {
             if (id != model.Id) return NotFound();
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                return View(model);
+            }
 
             var currentUser = await _userManager.GetUserAsync(User);
 
@@ -85,6 +107,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
         }
@@ -132,6 +155,52 @@ namespace SmartQuizAssessmentSystem.Controllers
             var ok = await _quizService.RejectAsync(id, currentUser!);
             if (!ok) return NotFound();
             return RedirectToAction(nameof(Index));
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetClasses(long? mediumId)
+        {
+            var classes = (mediumId.HasValue && mediumId.Value > 0)
+                ? await _classService.GetAllAsync(mediumId.Value)
+                : await _classService.GetAllAsync(null);
+
+            return Json(classes.Select(c => new { id = c.Id, name = c.Name }));
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetSubjects(long? classId)
+        {
+            var subjects = (classId.HasValue && classId.Value > 0)
+                ? await _subjectService.GetAllAsync(classId.Value)
+                : await _subjectService.GetAllAsync(null);
+
+            return Json(subjects.Select(s => new { id = s.Id, name = s.Name }));
+        }
+
+        private async Task PopulateDropdownsAsync(long? mediumId = null, long? classId = null)
+        {
+            var mediums = await _mediumService.GetAllAsync();
+            ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(mediums, "Id", "Name", mediumId);
+
+            if (mediumId.HasValue)
+            {
+                var classes = await _classService.GetAllAsync(mediumId.Value);
+                ViewBag.ClassId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(classes, "Id", "Name", classId);
+            }
+            else
+            {
+                ViewBag.ClassId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<Class>(), "Id", "Name");
+            }
+
+            if (classId.HasValue && classId.Value > 0)
+            {
+                var subjects = await _subjectService.GetAllAsync(classId.Value);
+                ViewBag.SubjectId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(subjects, "Id", "Name");
+            }
+            else
+            {
+                var allSubjects = await _subjectService.GetAllAsync();
+                ViewBag.SubjectId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(allSubjects, "Id", "Name");
+            }
         }
     }
 }

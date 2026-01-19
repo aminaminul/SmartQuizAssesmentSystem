@@ -27,7 +27,14 @@ namespace QuizSystemModel.Models
         public TimeSpan? Duration { get; set; }
         public int TotalMarks { get; set; }
         public decimal RequiredPassPercentage { get; set; }
-        public string Subject { get; set; }
+        public long? SubjectId { get; set; }
+        public virtual Subject? Subject { get; set; }
+
+        public long? ClassId { get; set; }
+        public virtual Class? Class { get; set; }
+
+        public long? EducationMediumId { get; set; }
+        public virtual EducationMedium? EducationMedium { get; set; }
         public ICollection<QuestionBank> Questions { get; set; } = new List<QuestionBank>();
     }
 }

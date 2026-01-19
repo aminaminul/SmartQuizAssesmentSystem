@@ -49,5 +49,17 @@ namespace QuizSystemRepository.Repositories
             return await _context.Instructor
                 .AnyAsync(i => i.PhoneNumber != null && i.PhoneNumber == phone);
         }
+
+        public async Task<Student?> GetStudentByUserIdAsync(long userId)
+        {
+            return await _context.Student
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+        }
+
+        public async Task<Instructor?> GetInstructorByUserIdAsync(long userId)
+        {
+            return await _context.Instructor
+                .FirstOrDefaultAsync(i => i.UserId == userId);
+        }
     }
 }

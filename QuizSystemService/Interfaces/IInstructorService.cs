@@ -11,6 +11,8 @@ namespace QuizSystemService.Interfaces
         Task<bool> CreateAsync(InstructorAddViewModel model, QuizSystemUser currentUser);
         Task<bool> UpdateAsync(long id, Instructor model, long? educationMediumId);
         Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser);
+        Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
+        Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
         Task<List<EducationMedium>> GetEducationMediumsAsync();
     }
 }

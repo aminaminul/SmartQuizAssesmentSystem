@@ -31,10 +31,12 @@ namespace QuizSystemModel.ViewModels
 
         [Required]
         public long? EducationMediumId { get; set; }
+        public EducationMedium? EducationMedium { get; set; }
 
         [Required]
         public long? ClassId { get; set; }
-        
+        public Class? Class { get; set; }
+
         [Required]
         public string? Role { get; set; }
     }

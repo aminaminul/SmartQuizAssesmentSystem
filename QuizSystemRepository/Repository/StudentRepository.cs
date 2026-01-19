@@ -80,10 +80,17 @@ namespace QuizSystemRepository.Repositories
                 .ToListAsync();
         }
 
-        public Task<List<Class>> GetClassesAsync()
+        public Task<List<Class>> GetClassesAsync(long? mediumId = null)
         {
-            return _context.Class
-                .Where(c => c.Status != ModelStatus.Deleted)
+            var query = _context.Class
+                .Where(c => c.Status != ModelStatus.Deleted);
+
+            if (mediumId.HasValue)
+            {
+                query = query.Where(c => c.EducationMediumId == mediumId.Value);
+            }
+
+            return query
                 .OrderBy(c => c.Name)
                 .ToListAsync();
         }

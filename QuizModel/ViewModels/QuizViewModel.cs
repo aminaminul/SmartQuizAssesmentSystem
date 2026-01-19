@@ -10,7 +10,16 @@ namespace QuizSystemModel.ViewModels
         public string Name { get; set; } = null!;
 
         [Required]
-        public string Subject { get; set; } = null!;
+        [Display(Name = "Subject")]
+        public long? SubjectId { get; set; }
+
+        [Required]
+        [Display(Name = "Class")]
+        public long? ClassId { get; set; }
+
+        [Required]
+        [Display(Name = "Education Medium")]
+        public long? EducationMediumId { get; set; }
 
         [Required]
         public string Description { get; set; } = null!;

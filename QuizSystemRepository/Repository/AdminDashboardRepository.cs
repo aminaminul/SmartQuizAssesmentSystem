@@ -83,6 +83,37 @@ namespace QuizSystemRepository.Repositories
             return count;
         }
 
+        public async Task<List<Instructor>> SearchInstructorsAsync(string query)
+        {
+            return await _context.Instructor
+                .Where(i => i.FirstName!.Contains(query) || i.LastName!.Contains(query) || i.Email!.Contains(query))
+                .Take(20)
+                .ToListAsync();
+        }
+
+        public async Task<List<Student>> SearchStudentsAsync(string query)
+        {
+            return await _context.Student
+                .Where(s => s.FirstName!.Contains(query) || s.LastName!.Contains(query) || s.Email!.Contains(query))
+                .Take(20)
+                .ToListAsync();
+        }
+
+        public async Task<List<Quiz>> SearchQuizzesAsync(string query)
+        {
+            return await _context.Quiz
+                .Where(q => q.Name.Contains(query) || q.Description.Contains(query))
+                .Take(20)
+                .ToListAsync();
+        }
+
+        public async Task<List<Subject>> SearchSubjectsAsync(string query)
+        {
+            return await _context.Subject
+                .Where(s => s.Name.Contains(query))
+                .Take(20)
+                .ToListAsync();
+        }
     }
 
 }

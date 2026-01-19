@@ -1,10 +1,9 @@
 ﻿@model QuizSystemModel.ViewModels.StudentAddViewModel
 
 <h2>Add New Student</h2>
-
 <form asp-action="Create" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
-
+    <input type="hidden" asp-for="Role" value="Student" />
     <div class="form-group">
         <label asp-for="FirstName"></label>
         <input asp-for="FirstName" class="form-control" />
@@ -56,3 +55,30 @@
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $('#EducationMediumId').change(function () {
+                var mediumId = $(this).val();
+                var $classSelect = $('#ClassId');
+
+                $classSelect.empty();
+                $classSelect.append('<option value="">Select Class</option>');
+
+                if (mediumId) {
+                    $.getJSON('/Account/GetClassesByMedium', { mediumId: mediumId }, function (data) {
+                        $.each(data, function (index, item) {
+                            $classSelect.append($('<option/>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

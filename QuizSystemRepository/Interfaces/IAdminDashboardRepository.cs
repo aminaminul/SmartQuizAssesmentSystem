@@ -11,6 +11,11 @@
         Task<long> GetEducationMediumCountAsync();
         Task<long> GetPendingClassCountAsync();
         Task<long> GetPendingSubjectCountAsync();
+
+        Task<List<Models.Instructor>> SearchInstructorsAsync(string query);
+        Task<List<Models.Student>> SearchStudentsAsync(string query);
+        Task<List<Models.Quiz>> SearchQuizzesAsync(string query);
+        Task<List<Models.Subject>> SearchSubjectsAsync(string query);
     }
 
 }

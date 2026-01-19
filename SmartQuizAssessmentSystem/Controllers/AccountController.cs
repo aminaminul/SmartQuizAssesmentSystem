@@ -195,12 +195,24 @@ namespace SmartQuizAssessmentSystem.Controllers
             });
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetClassesByMedium(long? mediumId)
+        {
+            // If 0 is passed, treat it as null to return all, or depending on requirement. 
+            // In Repository, GetAllAsync(null) returns all. GetAllAsync(0) might return none.
+            // If the JS sends 0 for "All", we should probably treat 0 as null here.
+            if (mediumId == 0) mediumId = null;
+
+            var classes = await _classService.GetAllAsync(mediumId);
+            return Json(classes.Select(c => new { id = c.Id, name = c.Name }));
+        }
+
         private async Task PopulateMediumAndClassDropdownsAsync(long? mediumId = null, long? classId = null)
         {
             var mediums = await _mediumService.GetAllAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);
 
-            var classes = await _classService.GetAllAsync();
+            var classes = await _classService.GetAllAsync(mediumId);
             ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
         }
     }

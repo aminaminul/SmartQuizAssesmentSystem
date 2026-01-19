@@ -30,7 +30,9 @@ namespace QuizSystemService.Services
             {
                 Id = quiz.Id,
                 Name = quiz.Name,
-                Subject = quiz.Subject,
+                SubjectId = quiz.SubjectId,
+                ClassId = quiz.ClassId,
+                EducationMediumId = quiz.EducationMediumId,
                 Description = quiz.Description,
                 StartAt = quiz.StartAt,
                 EndAt = quiz.EndAt,
@@ -48,7 +50,9 @@ namespace QuizSystemService.Services
             var quiz = new Quiz
             {
                 Name = model.Name,
-                Subject = model.Subject,
+                SubjectId = model.SubjectId,
+                ClassId = model.ClassId,
+                EducationMediumId = model.EducationMediumId,
                 Description = model.Description,
                 StartAt = model.StartAt,
                 EndAt = model.EndAt,
@@ -76,7 +80,9 @@ namespace QuizSystemService.Services
                 throw new InvalidOperationException("Quiz name is required.");
 
             quiz.Name = model.Name;
-            quiz.Subject = model.Subject;
+            quiz.SubjectId = model.SubjectId;
+            quiz.ClassId = model.ClassId;
+            quiz.EducationMediumId = model.EducationMediumId;
             quiz.Description = model.Description;
             quiz.StartAt = model.StartAt;
             quiz.EndAt = model.EndAt;

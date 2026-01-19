@@ -17,19 +17,35 @@
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Subject" class="form-label"></label>
-        <select asp-for="Subject" class="form-select">
-            <option>English</option>
-            <option>Bangla</option>
-            <option>Math</option>
-        </select>
-        <span asp-validation-for="Subject" class="text-danger"></span>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="EducationMediumId" class="form-label"></label>
+            <select asp-for="EducationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId" id="mediumSelect">
+                <option value="">Select Education Medium</option>
+            </select>
+            <span asp-validation-for="EducationMediumId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="ClassId" class="form-label"></label>
+            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId" id="classSelect">
+                <option value="">Select Class</option>
+            </select>
+            <span asp-validation-for="ClassId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="SubjectId" class="form-label"></label>
+            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId" id="subjectSelect">
+                <option value="">Select Subject</option>
+            </select>
+            <span asp-validation-for="SubjectId" class="text-danger"></span>
+        </div>
     </div>
 
     <div class="mb-3">
         <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
@@ -43,8 +59,8 @@
             <input asp-for="EndAt" type="datetime-local" class="form-control" />
         </div>
         <div class="col-md-4">
-            <label class="form-label">Duration (minutes)</label>
-            <input type="number" class="form-control" name="durationMinutes" />
+            <label asp-for="DurationMinutes" class="form-label">Duration (minutes)</label>
+            <input asp-for="DurationMinutes" type="number" class="form-control" />
         </div>
     </div>
 
@@ -61,10 +77,40 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary">Update Quiz</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#mediumSelect').change(function () {
+                var mediumId = $(this).val();
+                $('#classSelect').empty().append('<option value="">Select Class</option>');
+                $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
+                if (mediumId) {
+                    $.getJSON('@Url.Action("GetClasses", "Quiz")', { mediumId: mediumId }, function (data) {
+                        $.each(data, function (i, item) {
+                            $('#classSelect').append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            $('#classSelect').change(function () {
+                var classId = $(this).val();
+                $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
+                if (classId) {
+                    $.getJSON('@Url.Action("GetSubjects", "Quiz")', { classId: classId }, function (data) {
+                        $.each(data, function (i, item) {
+                            $('#subjectSelect').append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+    </script>
 }

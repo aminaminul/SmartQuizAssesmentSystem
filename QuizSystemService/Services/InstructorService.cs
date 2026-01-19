@@ -84,7 +84,7 @@ namespace QuizSystemService.Services
                 EducationMediumId = model.EducationMediumId,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
+                Status = ModelStatus.Pending,
                 CreatedBy = currentUser,
                 ModifiedBy= currentUser,
                 ModifiedAt= DateTime.UtcNow
@@ -92,6 +92,32 @@ namespace QuizSystemService.Services
             };
 
             await _repo.AddAsync(instructor);
+            return true;
+        }
+
+        public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
+        {
+            var instructor = await _repo.GetByIdAsync(id);
+            if (instructor == null) return false;
+
+            instructor.Status = ModelStatus.Active;
+            instructor.ModifiedBy = currentUser;
+            instructor.ModifiedAt = DateTime.UtcNow;
+
+            await _repo.UpdateAsync(instructor);
+            return true;
+        }
+
+        public async Task<bool> RejectAsync(long id, QuizSystemUser currentUser)
+        {
+            var instructor = await _repo.GetByIdAsync(id);
+            if (instructor == null) return false;
+
+            instructor.Status = ModelStatus.InActive;
+            instructor.ModifiedBy = currentUser;
+            instructor.ModifiedAt = DateTime.UtcNow;
+
+            await _repo.UpdateAsync(instructor);
             return true;
         }
 

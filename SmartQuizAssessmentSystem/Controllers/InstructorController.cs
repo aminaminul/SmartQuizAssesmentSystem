@@ -137,6 +137,40 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // APPROVE (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _instructorService.ApproveAsync(id, currentUser);
+            if (ok)
+                TempData["SuccessMessage"] = "Instructor approved successfully.";
+            else
+                TempData["ErrorMessage"] = "Failed to approve instructor.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // REJECT (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reject(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _instructorService.RejectAsync(id, currentUser);
+            if (ok)
+                TempData["SuccessMessage"] = "Instructor rejected.";
+            else
+                TempData["ErrorMessage"] = "Failed to reject instructor.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private async Task PopulateEducationMediumDropdownAsync(long? selectedId = null)
         {
             var mediums = await _instructorService.GetEducationMediumsAsync();

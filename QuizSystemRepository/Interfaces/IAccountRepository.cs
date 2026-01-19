@@ -12,5 +12,8 @@ namespace QuizSystemModel.Interfaces
 
         Task<bool> InstructorEmailExistsAsync(string email);
         Task<bool> InstructorPhoneExistsAsync(string phone);
+
+        Task<Student?> GetStudentByUserIdAsync(long userId);
+        Task<Instructor?> GetInstructorByUserIdAsync(long userId);
     }
 }

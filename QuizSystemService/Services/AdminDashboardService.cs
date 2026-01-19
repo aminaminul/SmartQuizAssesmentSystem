@@ -39,5 +39,20 @@ namespace QuizSystemService.Services
                 PendingSubjects = pendingSubjects
             };
         }
+
+        public async Task<GlobalSearchViewModel> SearchAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return new GlobalSearchViewModel();
+
+            return new GlobalSearchViewModel
+            {
+                Query = query,
+                Instructors = await _repo.SearchInstructorsAsync(query),
+                Students = await _repo.SearchStudentsAsync(query),
+                Quizzes = await _repo.SearchQuizzesAsync(query),
+                Subjects = await _repo.SearchSubjectsAsync(query)
+            };
+        }
     }
 }

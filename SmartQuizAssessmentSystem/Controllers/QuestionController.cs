@@ -47,7 +47,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             var vm = new QuestionViewModel
             {
                 QuizId = quizId,
-                Subject = subject ?? quiz.Subject
+                Subject = subject ?? quiz.Subject?.Name ?? ""
             };
 
             return View(vm);

@@ -20,17 +20,17 @@
     </div>
 
     <div class="form-group mb-2">
-        <label asp-for="EducationMedium"></label>
-        <select asp-for="EducationMedium"
+        <label asp-for="EducationMediumId">Education Medium</label>
+        <select asp-for="EducationMediumId"
                 asp-items="Model.EducationMediumList"
                 class="form-control">
             <option value="">Select Education Medium</option>
         </select>
-        <span asp-validation-for="EducationMedium" class="text-danger"></span>
+        <span asp-validation-for="EducationMediumId" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-2">
-        <label asp-for="ClassId"></label>
+        <label asp-for="Class"></label>
         <select asp-for="ClassId"
                 asp-items="Model.ClassList"
                 class="form-control">
@@ -39,11 +39,7 @@
         <span asp-validation-for="ClassId" class="text-danger"></span>
     </div>
 
-    <div class="form-group mb-2 form-check">
-        <input asp-for="IsApproved" class="form-check-input" />
-        <label asp-for="IsApproved" class="form-check-label"></label>
-        <span asp-validation-for="IsApproved" class="text-danger"></span>
-    </div>
+
 
     <button type="submit" class="btn btn-primary mt-2">Create</button>
     <a asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
@@ -51,4 +47,45 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            $('#EducationMediumId').change(function () {
+                var mediumId = $(this).val();
+                var $classSelect = $('#ClassId');
+
+                // Clear current options
+                $classSelect.empty();
+                $classSelect.append('<option value="">Select Class</option>');
+
+                // Always fetch classes, either filtered by medium or all if medium is empty
+                // But typically for better UX we might want filtering.
+                // Reusing AccountController's API or we can hit ClassController if it has one.
+                // We previously added Account/GetClassesByMedium.
+                
+                if (mediumId) {
+                     $.getJSON('/Account/GetClassesByMedium', { mediumId: mediumId }, function (data) {
+                        $.each(data, function (index, item) {
+                            $classSelect.append($('<option/>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+                    });
+                } else {
+                     // Optionally load all classes if no medium selected? 
+                     // Or just leave empty to force medium selection first.
+                     // Given the controller logic (GetAllAsync(null) returns all), let's try to fetch all if cleared.
+                     $.getJSON('/Account/GetClassesByMedium', { mediumId: 0 }, function (data) { 
+                        $.each(data, function (index, item) {
+                            $classSelect.append($('<option/>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
 }
