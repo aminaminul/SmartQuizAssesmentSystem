@@ -69,7 +69,7 @@
               "RelativeDocumentMoniker": "..\\QuizSystemRepository\\Migrations\\20260119222729_Quiz.cs",
               "ToolTip": "C:\\Users\\AMIN\\OneDrive\\Desktop\\Practicum\\Final Year Project\\SmartQuizAssesmentSystem\\QuizSystemRepository\\Migrations\\20260119222729_Quiz.cs",
               "RelativeToolTip": "..\\QuizSystemRepository\\Migrations\\20260119222729_Quiz.cs",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAYwHcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-19T22:27:30.25Z",
               "EditorCaption": ""
@@ -84,8 +84,7 @@
               "RelativeToolTip": "..\\QuizSystemRepository\\Interfaces\\IAccountRepository.cs",
               "ViewState": "AgIAAA0AAAAAAAAAAIA7wBMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T21:21:02.553Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T21:21:02.553Z"
             },
             {
               "$type": "Document",
@@ -97,8 +96,7 @@
               "RelativeToolTip": "Views\\AdminDashboard\\Profile.cshtml",
               "ViewState": "AgIAACcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-19T21:05:28.925Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T21:05:28.925Z"
             },
             {
               "$type": "Document",
@@ -110,8 +108,7 @@
               "RelativeToolTip": "Views\\Subject\\Create.cshtml",
               "ViewState": "AgIAAAwAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-19T20:40:06.698Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T20:40:06.698Z"
             },
             {
               "$type": "Document",
@@ -123,8 +120,7 @@
               "RelativeToolTip": "Controllers\\SubjectController.cs",
               "ViewState": "AgIAAPEAAAAAAAAAAAAAAAkBAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T19:49:23.387Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T19:49:23.387Z"
             },
             {
               "$type": "Document",
@@ -136,8 +132,7 @@
               "RelativeToolTip": "Controllers\\ClassController.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAAAAAYAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T19:30:49.995Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T19:30:49.995Z"
             },
             {
               "$type": "Document",
@@ -149,8 +144,7 @@
               "RelativeToolTip": "..\\QuizModel\\BusinessRules\\ModelRules.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T19:24:39.312Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T19:24:39.312Z"
             },
             {
               "$type": "Document",
@@ -162,8 +156,7 @@
               "RelativeToolTip": "Views\\Student\\Create.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-19T19:04:53.578Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T19:04:53.578Z"
             },
             {
               "$type": "Document",
@@ -175,8 +168,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-19T18:53:12.421Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T18:53:12.421Z"
             }
           ]
         }
