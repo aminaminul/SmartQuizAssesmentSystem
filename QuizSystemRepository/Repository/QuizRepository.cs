@@ -90,5 +90,15 @@ namespace QuizSystemRepository.Repositories
                 .ToListAsync();
         }
 
+        public Task<List<Quiz>> GetByClassAsync(long classId)
+        {
+            return _context.Quiz
+                .Include(q => q.Subject)
+                .Include(q => q.Class)
+                .Include(q => q.EducationMedium)
+                .Where(q => q.ClassId == classId && q.Status != ModelStatus.Deleted)
+                .ToListAsync();
+        }
+
     }
 }

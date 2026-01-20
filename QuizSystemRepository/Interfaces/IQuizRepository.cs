@@ -12,5 +12,6 @@ namespace QuizSystemModel.Interfaces
         Task<List<Quiz>> GetPendingAsync();
         Task<List<Quiz>> GetAvailableForStudentAsync(long studentUserId, DateTime now);
         Task<Quiz?> GetByIdWithQuestionsAsync(long quizId);
+        Task<List<Quiz>> GetByClassAsync(long classId);
     }
 }

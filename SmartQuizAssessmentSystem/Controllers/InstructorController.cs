@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
+using QuizSystemModel.Interfaces; // If needed, but standard interfaces are usually in QuizSystemService.Interfaces
+// Or check where IClassService is located. Typically QuizSystemService.Interfaces.
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -12,13 +14,16 @@ namespace SmartQuizAssessmentSystem.Controllers
     {
         private readonly IInstructorService _instructorService;
         private readonly UserManager<QuizSystemUser> _userManager;
+        private readonly IClassService _classService;
 
         public InstructorController(
             IInstructorService instructorService,
-            UserManager<QuizSystemUser> userManager)
+            UserManager<QuizSystemUser> userManager,
+            IClassService classService)
         {
             _instructorService = instructorService;
             _userManager = userManager;
+            _classService = classService;
         }
 
         // LIST
@@ -32,7 +37,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         // CREATE (GET)
         public async Task<IActionResult> Create()
         {
-            await PopulateEducationMediumDropdownAsync();
+            await PopulateDropdownsAsync();
             return View(new InstructorAddViewModel());
         }
 
@@ -43,7 +48,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await PopulateEducationMediumDropdownAsync(model.EducationMediumId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
 
@@ -58,7 +63,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             {
                 // any business error from service (email/phone duplicate, identity errors) 
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateEducationMediumDropdownAsync(model.EducationMediumId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
         }
@@ -70,27 +75,27 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (instructor == null)
                 return NotFound();
 
-            await PopulateEducationMediumDropdownAsync(instructor.EducationMediumId);
+            await PopulateDropdownsAsync(instructor.EducationMediumId, instructor.ClassId);
             return View(instructor);
         }
 
         // EDIT (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, Instructor model, long? educationMediumId)
+        public async Task<IActionResult> Edit(long id, Instructor model, long? educationMediumId, long? classId)
         {
             if (id != model.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
             {
-                await PopulateEducationMediumDropdownAsync(educationMediumId);
+                await PopulateDropdownsAsync(educationMediumId, classId);
                 return View(model);
             }
 
             try
             {
-                var ok = await _instructorService.UpdateAsync(id, model, educationMediumId);
+                var ok = await _instructorService.UpdateAsync(id, model, educationMediumId, classId);
                 if (!ok)
                     return NotFound();
 
@@ -99,7 +104,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateEducationMediumDropdownAsync(educationMediumId);
+                await PopulateDropdownsAsync(educationMediumId, classId);
                 return View(model);
             }
         }
@@ -171,10 +176,20 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task PopulateEducationMediumDropdownAsync(long? selectedId = null)
+        [HttpGet]
+        public async Task<JsonResult> GetClassesByMedium(long? mediumId)
+        {
+             var classes = await _classService.GetAllAsync(mediumId);
+             return Json(classes.Select(c => new { id = c.Id, name = c.Name }));
+        }
+
+        private async Task PopulateDropdownsAsync(long? selectedMediumId = null, long? selectedClassId = null)
         {
             var mediums = await _instructorService.GetEducationMediumsAsync();
-            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedId);
+            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedMediumId);
+
+            var classes = await _classService.GetAllAsync(selectedMediumId);
+            ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedClassId);
         }
     }
 }

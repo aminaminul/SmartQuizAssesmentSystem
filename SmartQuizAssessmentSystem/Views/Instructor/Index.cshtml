@@ -22,6 +22,7 @@
             <th>HSC Year</th>
             <th>HSC Grade</th>
             <th>Education Medium</th>
+            <th>Class</th>
             <th>Approve Status</th>
             <th></th>
         </tr>
@@ -38,6 +39,7 @@
                 <td>@item.HscPassingYear</td>
                 <td>@item.HscGrade</td>
                 <td>@item.EducationMedium?.Name</td>
+                <td>@item.Class?.Name</td>
                 <td>
                     @if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.Active)
                     {

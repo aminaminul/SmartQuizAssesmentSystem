@@ -44,5 +44,6 @@ namespace QuizSystemModel.ViewModels
 
         public string? Role { get; set; }
         public long? EducationMediumId { get; set; }
+        public long? ClassId { get; set; }
     }
 }

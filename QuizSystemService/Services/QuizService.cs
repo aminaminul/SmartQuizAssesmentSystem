@@ -10,13 +10,34 @@ namespace QuizSystemService.Services
     public class QuizService : IQuizService
     {
         private readonly IQuizRepository _repo;
+        private readonly IInstructorRepository _instructorRepo;
 
-        public QuizService(IQuizRepository repo)
+        public QuizService(IQuizRepository repo, IInstructorRepository instructorRepo)
         {
             _repo = repo;
+            _instructorRepo = instructorRepo;
         }
 
-        public Task<List<Quiz>> GetAllAsync() => _repo.GetAllAsync();
+        public async Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null) 
+        {
+            if (currentUser != null)
+            {
+                var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
+                if (instructor != null)
+                {
+                    if (instructor.ClassId.HasValue)
+                    {
+                        return await _repo.GetByClassAsync(instructor.ClassId.Value);
+                    }
+                    else
+                    {
+                        // Instructor has no class assigned => See nothing
+                        return new List<Quiz>();
+                    }
+                }
+            }
+            return await _repo.GetAllAsync(); 
+        }
 
         public Task<Quiz?> GetEntityAsync(long id, bool includeQuestions = false) =>
             _repo.GetByIdAsync(id, includeQuestions);
@@ -46,6 +67,24 @@ namespace QuizSystemService.Services
         {
             if (string.IsNullOrWhiteSpace(model.Name))
                 throw new InvalidOperationException("Quiz name is required.");
+
+            var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
+            if (instructor != null)
+            {
+                if (!instructor.ClassId.HasValue)
+                    throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
+
+                // Enforce Instructor Restrictions
+                if (model.ClassId != instructor.ClassId)
+                    throw new InvalidOperationException("You can only create quizzes for your assigned class.");
+                
+                // If instructor is restricted to a class, ensure Medium matches too (usually implicit)
+                if (instructor.EducationMediumId.HasValue && model.EducationMediumId != instructor.EducationMediumId)
+                     throw new InvalidOperationException("You can only create quizzes for your assigned education medium.");
+                
+                 // Force unapproved for instructors
+                 // (Though logic below sets IsApproved = false anyway, explicit check doesn't hurt)
+            }
 
             var quiz = new Quiz
             {
@@ -79,6 +118,30 @@ namespace QuizSystemService.Services
             if (string.IsNullOrWhiteSpace(model.Name))
                 throw new InvalidOperationException("Quiz name is required.");
 
+            var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
+            if (instructor != null)
+            {
+                 if (!instructor.ClassId.HasValue)
+                    throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
+
+                 if (quiz.ClassId != instructor.ClassId)
+                    throw new InvalidOperationException("You cannot edit quizzes outside your assigned class.");
+                 
+                 // If changing class?
+                 if (model.ClassId != instructor.ClassId)
+                     throw new InvalidOperationException("You cannot move a quiz to another class.");
+
+                 // If instructor edits, it might need re-approval?
+                 // Current logic doesn't automatically un-approve on edit, but requirement says "Admin Approve lagbe"
+                 // If an already approved quiz is edited, should it become pending? Usually yes.
+                 if (quiz.IsApproved)
+                 {
+                     quiz.IsApproved = false;
+                     quiz.ApprovedAt = null;
+                     quiz.ApprovedBy = null;
+                 }
+            }
+
             quiz.Name = model.Name;
             quiz.SubjectId = model.SubjectId;
             quiz.ClassId = model.ClassId;
@@ -103,6 +166,16 @@ namespace QuizSystemService.Services
         {
             var quiz = await _repo.GetByIdAsync(id);
             if (quiz == null) return false;
+
+            var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
+            if (instructor != null)
+            {
+                if (!instructor.ClassId.HasValue)
+                    throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
+
+                if (quiz.ClassId != instructor.ClassId)
+                    throw new InvalidOperationException("You cannot delete quizzes outside your assigned class.");
+            }
 
             quiz.Status = ModelStatus.Deleted;
             quiz.ModifiedAt = DateTime.UtcNow;

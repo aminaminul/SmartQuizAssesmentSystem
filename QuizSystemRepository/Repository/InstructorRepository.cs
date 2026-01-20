@@ -19,6 +19,7 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.Instructor
                 .Include(i => i.EducationMedium)
+                .Include(i => i.Class)
                 .Where(i => i.Status != ModelStatus.Deleted)
                 .ToListAsync();
         }
@@ -27,6 +28,7 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.Instructor
                 .Include(i => i.EducationMedium)
+                .Include(i => i.Class)
                 .Include(i => i.User)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
@@ -74,10 +76,17 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.EducationMedium.ToListAsync();
         }
+
+        public Task<List<Class>> GetClassesAsync()
+        {
+            return _context.Class.ToListAsync();
+        }
         public Task<Instructor?> GetByUserIdAsync(long userId)
         {
             return _context.Instructor
                 .Include(i => i.User)
+                .Include(i => i.Class)
+                .Include(i => i.EducationMedium)
                 .FirstOrDefaultAsync(i => i.UserId == userId);
         }
     }

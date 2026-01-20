@@ -43,6 +43,16 @@ namespace QuizSystemService.Services
             return await _repo.GetEducationMediumsAsync();
         }
 
+        public async Task<List<Class>> GetClassesAsync()
+        {
+            return await _repo.GetClassesAsync();
+        }
+
+        public async Task<Instructor?> GetByUserIdAsync(long userId)
+        {
+            return await _repo.GetByUserIdAsync(userId);
+        }
+
         public async Task<bool> CreateAsync(InstructorAddViewModel model, QuizSystemUser currentUser)
         {
             // Email and Phone Verify
@@ -82,6 +92,7 @@ namespace QuizSystemService.Services
                 HscPassingYear = model.HscPassingYear,
                 HscGrade = model.HscGrade,
                 EducationMediumId = model.EducationMediumId,
+                ClassId = model.ClassId,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Pending,
@@ -121,7 +132,7 @@ namespace QuizSystemService.Services
             return true;
         }
 
-        public async Task<bool> UpdateAsync(long id, Instructor model, long? educationMediumId)
+        public async Task<bool> UpdateAsync(long id, Instructor model, long? educationMediumId, long? classId)
         {
             var existing = await _repo.GetByIdAsync(id);
             if (existing == null)
@@ -146,6 +157,7 @@ namespace QuizSystemService.Services
             existing.ModifiedBy = model.User;
             existing.ModifiedAt = DateTime.UtcNow;
             existing.EducationMediumId = educationMediumId;
+            existing.ClassId = classId;
 
             await _repo.UpdateAsync(existing);
             return true;

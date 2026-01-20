@@ -64,6 +64,14 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Class</label>
+        <select name="classId" class="form-select"
+                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.ClassId">
+            <option value="">Select Class</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="Status" class="form-label"></label>
         <select asp-for="Status" class="form-select"
                 asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
@@ -79,4 +87,34 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var mediumDropdown = $('select[name="educationMediumId"]');
+            var classDropdown = $('select[name="classId"]');
+
+            mediumDropdown.change(function () {
+                var mediumId = $(this).val();
+                classDropdown.empty();
+                classDropdown.append('<option value="">Select Class</option>');
+
+                if (mediumId) {
+                    $.ajax({
+                        url: '@Url.Action("GetClassesByMedium", "Instructor")',
+                        type: 'GET',
+                        data: { mediumId: mediumId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                classDropdown.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 }

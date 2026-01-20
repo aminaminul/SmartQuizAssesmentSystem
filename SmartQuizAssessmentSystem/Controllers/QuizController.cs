@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -15,24 +16,28 @@ namespace SmartQuizAssessmentSystem.Controllers
         private readonly IEducationMediumService _mediumService;
         private readonly IClassService _classService;
         private readonly ISubjectService _subjectService;
+        private readonly IInstructorService _instructorService;
 
         public QuizController(
             IQuizService quizService, 
             UserManager<QuizSystemUser> userManager,
             IEducationMediumService mediumService,
             IClassService classService,
-            ISubjectService subjectService)
+            ISubjectService subjectService,
+            IInstructorService instructorService)
         {
             _quizService = quizService;
             _userManager = userManager;
             _mediumService = mediumService;
             _classService = classService;
             _subjectService = subjectService;
+            _instructorService = instructorService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var quizzes = await _quizService.GetAllAsync();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var quizzes = await _quizService.GetAllAsync(currentUser);
             return View(quizzes);
         }
 
@@ -178,28 +183,47 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         private async Task PopulateDropdownsAsync(long? mediumId = null, long? classId = null)
         {
-            var mediums = await _mediumService.GetAllAsync();
-            ViewBag.EducationMediumId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(mediums, "Id", "Name", mediumId);
+            var currentUser = await _userManager.GetUserAsync(User);
+            var instructor = await _instructorService.GetByUserIdAsync(currentUser.Id);
 
-            if (mediumId.HasValue)
+            if (instructor != null && instructor.ClassId.HasValue)
             {
-                var classes = await _classService.GetAllAsync(mediumId.Value);
-                ViewBag.ClassId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(classes, "Id", "Name", classId);
+                // Instructor is restricted to their assigned class and medium
+                mediumId = instructor.EducationMediumId;
+                classId = instructor.ClassId;
+
+                var medium = await _mediumService.GetByIdAsync(mediumId.Value);
+                ViewBag.EducationMediumId = new SelectList(new[] { medium }, "Id", "Name", mediumId);
+
+                var cls = await _classService.GetByIdAsync(classId.Value);
+                ViewBag.ClassId = new SelectList(new[] { cls }, "Id", "Name", classId);
             }
             else
             {
-                ViewBag.ClassId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<Class>(), "Id", "Name");
+                // Admin or unassigned instructor (though unassigned shouldn't create quizzes normally)
+                var mediums = await _mediumService.GetAllAsync();
+                ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);
+
+                if (mediumId.HasValue)
+                {
+                    var classes = await _classService.GetAllAsync(mediumId.Value);
+                    ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
+                }
+                else
+                {
+                    ViewBag.ClassId = new SelectList(Enumerable.Empty<Class>(), "Id", "Name");
+                }
             }
 
             if (classId.HasValue && classId.Value > 0)
             {
                 var subjects = await _subjectService.GetAllAsync(classId.Value);
-                ViewBag.SubjectId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(subjects, "Id", "Name");
+                ViewBag.SubjectId = new SelectList(subjects, "Id", "Name");
             }
             else
             {
                 var allSubjects = await _subjectService.GetAllAsync();
-                ViewBag.SubjectId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(allSubjects, "Id", "Name");
+                ViewBag.SubjectId = new SelectList(allSubjects, "Id", "Name");
             }
         }
     }
