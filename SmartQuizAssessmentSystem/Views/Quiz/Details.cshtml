@@ -29,7 +29,23 @@
     <strong>Pass %:</strong> @Model.RequiredPassPercentage
 </div>
 <div class="mb-3">
-    <strong>Approved:</strong> @(Model.IsApproved ? "Yes" : "No")
+    <strong>Status:</strong>
+    @if (Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active)
+    {
+        <span class="badge bg-success text-white">Approved</span>
+    }
+    else if (Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+    {
+        <span class="badge bg-warning text-dark">Pending</span>
+    }
+    else if (Model.Status == QuizSystemModel.BusinessRules.ModelStatus.InActive)
+    {
+        <span class="badge bg-danger text-white">Rejected</span>
+    }
+    else
+    {
+        <span class="badge bg-secondary">@Model.Status</span>
+    }
 </div>
 <h4>Questions</h4>
 <p>

@@ -67,6 +67,39 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Pending()
+        {
+            var pending = await _classService.GetPendingAsync();
+            return View(pending);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(long id, string redirect = "Index")
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _classService.ApproveAsync(id, currentUser);
+            if (!ok) return NotFound();
+
+            return RedirectToAction(redirect);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reject(long id, string redirect = "Index")
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _classService.RejectAsync(id, currentUser);
+            if (!ok) return NotFound();
+
+            return RedirectToAction(redirect);
+        }
+
         private async Task PopulateDropdownsAsync(long? selectedClassId = null, long? selectedMediumId = null)
         {
             var classItems = Enum.GetValues(typeof(ClassNameEnum))

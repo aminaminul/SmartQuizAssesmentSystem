@@ -99,6 +99,8 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.Student
                 .Include(s => s.User)
+                .Include(s => s.Class)
+                .Include(s => s.EducationMedium)
                 .FirstOrDefaultAsync(s => s.UserId == userId);
         }
     }

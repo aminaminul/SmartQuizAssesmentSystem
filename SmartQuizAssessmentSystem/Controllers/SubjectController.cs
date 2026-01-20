@@ -217,7 +217,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(long id, string? returnUrl = null)
+        public async Task<IActionResult> Approve(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -227,16 +227,13 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             TempData["SuccessMessage"] = "Subject approved successfully.";
             
-            if (!string.IsNullOrEmpty(returnUrl))
-                return LocalRedirect(returnUrl);
-                
-            return RedirectToAction(nameof(Pending));
+            return RedirectToAction(redirect);
         }
 
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(long id, string? returnUrl = null)
+        public async Task<IActionResult> Reject(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -246,10 +243,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             TempData["SuccessMessage"] = "Subject rejected.";
             
-            if (!string.IsNullOrEmpty(returnUrl))
-                return LocalRedirect(returnUrl);
-
-            return RedirectToAction(nameof(Pending));
+            return RedirectToAction(redirect);
         }
 
 

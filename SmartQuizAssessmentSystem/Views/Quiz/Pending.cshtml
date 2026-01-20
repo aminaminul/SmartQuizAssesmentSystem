@@ -28,7 +28,8 @@ else
                 <th>Subject</th>
                 <th>Created At</th>
                 <th>Total Marks</th>
-                <th></th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -40,15 +41,30 @@ else
                     <td>@quiz.CreatedAt.ToLocalTime()</td>
                     <td>@quiz.TotalMarks</td>
                     <td>
-                        <form asp-controller="Quiz"
-                              asp-action="Approve"
-                              method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@quiz.Id" />
-                            <button type="submit" class="btn btn-success btn-sm">
-                                Approve
-                            </button>
-                        </form>
+                        @if (quiz.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (quiz.Status == QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                        {
+                            <span class="badge bg-danger">Rejected</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <form asp-controller="Quiz" asp-action="Approve" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@quiz.Id" />
+                                <input type="hidden" name="redirect" value="Pending" />
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form asp-controller="Quiz" asp-action="Reject" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@quiz.Id" />
+                                <input type="hidden" name="redirect" value="Pending" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             }

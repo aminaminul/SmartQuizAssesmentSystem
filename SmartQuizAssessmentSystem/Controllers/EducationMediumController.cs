@@ -71,7 +71,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             {
                 Name = enumId.ToString(),
                 CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
+                Status = ModelStatus.Pending,
                 IsApproved = false,
                 CreatedBy = currentUser
             };
@@ -143,10 +143,17 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Pending()
+        {
+            var pending = await _mediumService.GetPendingAsync();
+            return View(pending);
+        }
+
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(long id)
+        public async Task<IActionResult> Approve(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -155,13 +162,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             var ok = await _mediumService.ApproveAsync(id, currentUser);
             if (!ok) return NotFound();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(redirect);
         }
 
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(long id)
+        public async Task<IActionResult> Reject(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -170,7 +177,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             var ok = await _mediumService.RejectAsync(id, currentUser);
             if (!ok) return NotFound();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(redirect);
         }
         private void PopulateMediumEnumDropdown(EducationMediums? selected = null)
         {

@@ -29,15 +29,17 @@ namespace QuizSystemModel.ViewModels
         [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "Invalid Phone Number")]
         public string PhoneNumber { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Education Medium is required")]
+        [Display(Name = "Education Medium")]
         public long? EducationMediumId { get; set; }
         public EducationMedium? EducationMedium { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Class is required")]
+        [Display(Name = "Class")]
         public long? ClassId { get; set; }
         public Class? Class { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Role is required")]
         public string? Role { get; set; }
     }
 }

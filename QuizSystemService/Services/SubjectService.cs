@@ -32,7 +32,7 @@ namespace QuizSystemService.Services
                 throw new InvalidOperationException("This Subject Already Exists For The Selected Class.");
 
             model.CreatedAt = DateTime.UtcNow;
-            model.Status = ModelStatus.Active;
+            model.Status = ModelStatus.Pending;
             model.IsApproved = false;
             model.CreatedBy = currentUser;
 
@@ -86,6 +86,7 @@ namespace QuizSystemService.Services
             if (entity == null) return false;
 
             entity.IsApproved = true;
+            entity.Status = ModelStatus.Active;
             entity.ApprovedAt = DateTime.UtcNow;
             entity.ApprovedBy = currentUser;
             entity.RejectedAt = null;
@@ -101,6 +102,7 @@ namespace QuizSystemService.Services
             if (entity == null) return false;
 
             entity.IsApproved = false;
+            entity.Status = ModelStatus.InActive;
             entity.RejectedAt = DateTime.UtcNow;
             entity.RejectedBy = currentUser;
             entity.ApprovedAt = null;

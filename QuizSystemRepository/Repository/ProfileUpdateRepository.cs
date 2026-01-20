@@ -46,7 +46,7 @@ namespace QuizSystemRepository.Repositories
         public Task<List<ProfileUpdateRequest>> GetPendingRequestsAsync()
         {
             return _context.ProfileUpdateRequests
-                .Where(r => r.Status == ProfileUpdateStatus.Pending)
+                .Where(r => r.Status == ProfileUpdateStatus.Pending || r.Status == ProfileUpdateStatus.Rejected)
                 .OrderBy(r => r.RequestedAt)
                 .ToListAsync();
         }

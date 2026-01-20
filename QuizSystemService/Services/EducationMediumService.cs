@@ -92,5 +92,10 @@ namespace QuizSystemService.Services
             await _repo.UpdateAsync(existing);
             return true;
         }
+
+        public Task<List<EducationMedium>> GetPendingAsync()
+        {
+            return _repo.GetPendingAsync();
+        }
     }
 }

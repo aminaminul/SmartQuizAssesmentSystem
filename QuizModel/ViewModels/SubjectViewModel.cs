@@ -14,8 +14,11 @@ namespace SmartQuizAssessmentSystem.ViewModels
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Class is required")]
+        [Display(Name = "Class")]
         public long ClassId { get; set; }
 
+        [Required(ErrorMessage = "Education Medium is required")]
+        [Display(Name = "Education Medium")]
         public long? EducationMediumId { get; set; }
 
         public bool IsApproved { get; set; }

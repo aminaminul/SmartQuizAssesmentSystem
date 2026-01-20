@@ -38,7 +38,7 @@ namespace QuizSystemRepository.Repositories
 
         public async Task<long> GetPendingQuizCountAsync()
         {
-            var query = _context.Quiz.Where(q => !q.IsApproved);
+            var query = _context.Quiz.Where(q => q.Status == ModelStatus.Pending || q.Status == ModelStatus.InActive);
             var count = await query.LongCountAsync();
             return count;
         }
@@ -68,7 +68,7 @@ namespace QuizSystemRepository.Repositories
         public async Task<long> GetPendingClassCountAsync()
         {
             var query = _context.Class
-                .Where(c => !c.IsApproved && c.Status == ModelStatus.Active);
+                .Where(c => c.Status == ModelStatus.Pending || c.Status == ModelStatus.InActive);
 
             var count = await query.LongCountAsync();
             return count;
@@ -77,10 +77,31 @@ namespace QuizSystemRepository.Repositories
         public async Task<long> GetPendingSubjectCountAsync()
         {
             var query = _context.Subject
-                .Where(s => !s.IsApproved && s.Status == ModelStatus.Active);
+                .Where(s => s.Status == ModelStatus.Pending || s.Status == ModelStatus.InActive);
 
             var count = await query.LongCountAsync();
             return count;
+        }
+
+        public async Task<long> GetPendingInstructorCountAsync()
+        {
+            return await _context.Instructor
+                .Where(i => i.Status == ModelStatus.Pending || i.Status == ModelStatus.InActive)
+                .LongCountAsync();
+        }
+
+        public async Task<long> GetPendingEducationMediumCountAsync()
+        {
+            return await _context.EducationMedium
+                .Where(m => m.Status == ModelStatus.Pending || m.Status == ModelStatus.InActive)
+                .LongCountAsync();
+        }
+
+        public async Task<long> GetPendingProfileUpdateCountAsync()
+        {
+            return await _context.ProfileUpdateRequests
+                .Where(p => p.Status == ProfileUpdateStatus.Pending || p.Status == ProfileUpdateStatus.Rejected)
+                .LongCountAsync();
         }
 
         public async Task<List<Instructor>> SearchInstructorsAsync(string query)

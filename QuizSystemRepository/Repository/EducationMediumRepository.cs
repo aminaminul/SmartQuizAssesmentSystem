@@ -56,5 +56,13 @@ namespace QuizSystemRepository.Repositories
             _context.EducationMedium.Remove(medium);
             await _context.SaveChangesAsync();
         }
+
+        public Task<List<EducationMedium>> GetPendingAsync()
+        {
+            return _context.EducationMedium
+                .Where(m => m.Status == ModelStatus.Pending || m.Status == ModelStatus.InActive)
+                .OrderByDescending(m => m.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

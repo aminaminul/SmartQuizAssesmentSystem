@@ -144,22 +144,22 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(long id)
+        public async Task<IActionResult> Approve(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var ok = await _quizService.ApproveAsync(id, currentUser!);
             if (!ok) return NotFound();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(redirect);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(long id)
+        public async Task<IActionResult> Reject(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var ok = await _quizService.RejectAsync(id, currentUser!);
             if (!ok) return NotFound();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(redirect);
         }
         [HttpGet]
         public async Task<JsonResult> GetClasses(long? mediumId)

@@ -12,5 +12,6 @@ namespace QuizSystemService.Interfaces
         Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
         Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
         Task<List<Class>> GetClassesByMediumAsync(long mediumId);
+        Task<List<EducationMedium>> GetPendingAsync();
     }
 }

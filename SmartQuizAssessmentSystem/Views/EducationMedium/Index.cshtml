@@ -9,11 +9,13 @@
     var classes = (IEnumerable<Class>)ViewBag.Classes;
 }
 
-<h4>Education Mediums</h4>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Education Medium</a>
-</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>Education Mediums</h4>
+    <div class="d-flex gap-2">
+        <a asp-action="Pending" class="btn btn-warning btn-sm">Pending Approvals</a>
+        <a asp-action="Create" class="btn btn-primary btn-sm">Create New Education Medium</a>
+    </div>
+</div>
 
 <table class="table table-striped mb-4">
     <thead>

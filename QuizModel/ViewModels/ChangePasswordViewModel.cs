@@ -22,7 +22,7 @@ namespace QuizSystemModel.ViewModels
         [Required(ErrorMessage = "Confirm Password is required.")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm New Password")]
-        [Compare("ConfirmNewPassword", ErrorMessage = "Password does not match.")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmNewPassword { get; set; }
 
     }

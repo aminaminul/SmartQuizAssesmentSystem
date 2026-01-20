@@ -12,6 +12,9 @@
         public long TotalEducationMediums { get; set; }
         public long PendingClasses { get; set; }
         public long PendingSubjects { get; set; }
+        public long PendingInstructors { get; set; }
+        public long PendingEducationMediums { get; set; }
+        public long PendingProfileUpdates { get; set; }
     }
 
 }

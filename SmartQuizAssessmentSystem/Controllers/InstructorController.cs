@@ -142,10 +142,18 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Pending()
+        {
+            var pendingInstructors = await _instructorService.GetPendingAsync();
+            return View(pendingInstructors);
+        }
+
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(long id)
+        public async Task<IActionResult> Approve(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -156,13 +164,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             else
                 TempData["ErrorMessage"] = "Failed to approve instructor.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(redirect);
         }
 
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(long id)
+        public async Task<IActionResult> Reject(long id, string redirect = "Index")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -173,7 +181,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             else
                 TempData["ErrorMessage"] = "Failed to reject instructor.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(redirect);
         }
 
         [HttpGet]

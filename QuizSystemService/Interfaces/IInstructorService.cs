@@ -16,5 +16,6 @@ namespace QuizSystemService.Interfaces
         Task<List<EducationMedium>> GetEducationMediumsAsync();
         Task<List<Class>> GetClassesAsync();
         Task<Instructor?> GetByUserIdAsync(long userId);
+        Task<List<Instructor>> GetPendingAsync();
     }
 }

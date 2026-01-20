@@ -89,5 +89,14 @@ namespace QuizSystemRepository.Repositories
                 .Include(i => i.EducationMedium)
                 .FirstOrDefaultAsync(i => i.UserId == userId);
         }
+        public Task<List<Instructor>> GetPendingAsync()
+        {
+            return _context.Instructor
+                .Include(i => i.EducationMedium)
+                .Include(i => i.Class)
+                .Where(i => i.Status == ModelStatus.Pending || i.Status == ModelStatus.InActive)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

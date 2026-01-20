@@ -31,12 +31,15 @@ namespace QuizSystemService.Services
                 TotalStudents = students,
                 TotalUsers = instructors + students,
                 TotalQuizzes = quizzes,
-                PendingQuizzes = pending,
                 TotalClasses = classes,
                 TotalSubjects = subjects,
                 TotalEducationMediums = mediums,
                 PendingClasses = pendingClasses,
-                PendingSubjects = pendingSubjects
+                PendingSubjects = pendingSubjects,
+                PendingQuizzes = pending,
+                PendingInstructors = await _repo.GetPendingInstructorCountAsync(),
+                PendingEducationMediums = await _repo.GetPendingEducationMediumCountAsync(),
+                PendingProfileUpdates = await _repo.GetPendingProfileUpdateCountAsync()
             };
         }
 

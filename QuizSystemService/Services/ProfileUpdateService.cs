@@ -51,7 +51,10 @@ namespace QuizSystemService.Services
                 HscPassingInstitute = instructor.HscPassingInstrutute ?? "",
                 HscPassingYear = instructor.HscPassingYear,
                 HscGrade = instructor.HscGrade ?? "",
-                EducationMediumId = instructor.EducationMediumId
+                EducationMediumId = instructor.EducationMediumId,
+                EducationMediumName = instructor.EducationMedium?.Name,
+                ClassId = instructor.ClassId,
+                ClassName = instructor.Class?.Name
             };
         }
 
@@ -72,7 +75,9 @@ namespace QuizSystemService.Services
                 Email = student.Email ?? user.Email!,
                 PhoneNumber = student.PhoneNumber ?? user.PhoneNumber!,
                 EducationMediumId = student.EducationMediumId,
-                ClassId = student.ClassId
+                EducationMediumName = student.EducationMedium?.Name,
+                ClassId = student.ClassId,
+                ClassName = student.Class?.Name
             };
         }
 
@@ -196,6 +201,7 @@ namespace QuizSystemService.Services
             instructor.HscPassingYear = vm.HscPassingYear;
             instructor.HscGrade = vm.HscGrade;
             instructor.EducationMediumId = vm.EducationMediumId;
+            instructor.ClassId = vm.ClassId;
             instructor.ModifiedAt = DateTime.UtcNow;
 
             await _instructorRepo.UpdateAsync(instructor);

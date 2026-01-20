@@ -73,7 +73,7 @@ namespace QuizSystemRepository.Repositories
         public async Task<List<Class>> GetPendingAsync()
         {
             return await _context.Class
-                .Where(c => !c.IsApproved &&
+                .Where(c => (c.Status == ModelStatus.Pending || c.Status == ModelStatus.InActive) &&
                             c.Status != ModelStatus.Deleted)
                 .OrderBy(c => c.CreatedAt)
                 .ToListAsync();

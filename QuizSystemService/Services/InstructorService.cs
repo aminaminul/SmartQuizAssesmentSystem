@@ -176,5 +176,9 @@ namespace QuizSystemService.Services
             await _repo.UpdateAsync(instructor);
             return true;
         }
+        public async Task<List<Instructor>> GetPendingAsync()
+        {
+            return await _repo.GetPendingAsync();
+        }
     }
 }

@@ -121,4 +121,120 @@
         </div>
     </div>
 </div>
+
+<hr class="my-5" />
+
+<h2 class="mb-4">Pending Approvals</h2>
+
+<div class="row mb-4">
+    @* Pending Instructors *@
+    <div class="col-md-4 d-flex mb-4">
+        <div class="card text-white bg-dark shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Instructors</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingInstructors</p>
+                <p class="card-text mb-3 small">
+                    New instructor registrations and rejected profiles awaiting review.
+                </p>
+                <a asp-controller="Instructor"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Approvals
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* Pending Quizzes *@
+    <div class="col-md-4 d-flex mb-4">
+        <div class="card text-white bg-dark shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Quizzes</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingQuizzes</p>
+                <p class="card-text mb-3 small">
+                    New quizzes submitted for review and rejected quizzes.
+                </p>
+                <a asp-controller="Quiz"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Approvals
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* Pending Education Mediums *@
+    <div class="col-md-4 d-flex mb-4">
+        <div class="card text-white bg-dark shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Edu Mediums</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingEducationMediums</p>
+                <p class="card-text mb-3 small">
+                    New education mediums and rejected requests.
+                </p>
+                <a asp-controller="EducationMedium"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Approvals
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    @* Pending Classes *@
+    <div class="col-md-4 d-flex mb-4">
+        <div class="card text-white bg-dark shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Classes</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingClasses</p>
+                <p class="card-text mb-3 small">
+                    New classes and rejected class assignments.
+                </p>
+                <a asp-controller="Class"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Approvals
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* Pending Subjects *@
+    <div class="col-md-4 d-flex mb-4">
+        <div class="card text-white bg-dark shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Pending Subjects</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingSubjects</p>
+                <p class="card-text mb-3 small">
+                    New subjects and rejected subject requests.
+                </p>
+                <a asp-controller="Subject"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Approvals
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* Pending Profile Updates *@
+    <div class="col-md-4 d-flex mb-4">
+        <div class="card text-white bg-dark shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Profile Updates</h5>
+                <p class="card-text display-6 mb-2">@Model.PendingProfileUpdates</p>
+                <p class="card-text mb-3 small">
+                    User profile change requests and rejected updates.
+                </p>
+                <a asp-controller="ProfileApproval"
+                   asp-action="Pending"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    Manage Approvals
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 </div>

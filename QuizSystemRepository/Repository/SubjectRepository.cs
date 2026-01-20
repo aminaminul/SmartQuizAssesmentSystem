@@ -69,8 +69,8 @@ namespace QuizSystemRepository.Repositories
         public async Task<List<Subject>> GetPendingAsync()
         {
             return await _context.Subject
-                .Where(s => !s.IsApproved
-                            && s.Status == ModelStatus.Active)
+                .Include(s => s.Class)
+                .Where(s => s.Status == ModelStatus.Pending || s.Status == ModelStatus.InActive)
                 .OrderByDescending(s => s.CreatedAt)
                 .AsNoTracking()
                 .ToListAsync();

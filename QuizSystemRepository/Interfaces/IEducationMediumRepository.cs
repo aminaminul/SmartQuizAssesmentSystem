@@ -10,5 +10,6 @@ namespace QuizSystemModel.Interfaces
         Task AddAsync(EducationMedium medium);
         Task UpdateAsync(EducationMedium medium);
         Task DeleteAsync(EducationMedium medium);
+        Task<List<EducationMedium>> GetPendingAsync();
     }
 }

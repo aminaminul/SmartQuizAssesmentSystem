@@ -85,7 +85,7 @@ namespace QuizSystemRepository.Repositories
         public Task<List<Quiz>> GetPendingAsync()
         {
             return _context.Quiz
-                .Where(q => !q.IsApproved)
+                .Where(q => (q.Status == ModelStatus.Pending || q.Status == ModelStatus.InActive) && q.Status != ModelStatus.Deleted)
                 .OrderByDescending(q => q.CreatedAt)
                 .ToListAsync();
         }

@@ -5,11 +5,13 @@
     ViewData["Title"] = "Subjects";
 }
 
-<h2>Subjects</h2>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Subject</a>
-</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>Subjects</h4>
+    <div class="d-flex gap-2">
+        <a asp-action="Pending" class="btn btn-warning btn-sm">Pending Approvals</a>
+        <a asp-action="Create" class="btn btn-primary btn-sm">Create New Subject</a>
+    </div>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -51,13 +53,13 @@
                             <form asp-controller="Subject" asp-action="Approve" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                <input type="hidden" name="redirect" value="Index" />
                                 <button type="submit" class="btn btn-sm btn-success">Approve</button>
                             </form>
                             <form asp-controller="Subject" asp-action="Reject" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                <input type="hidden" name="redirect" value="Index" />
                                 <button type="submit" class="btn btn-sm btn-warning">Reject</button>
                             </form>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>

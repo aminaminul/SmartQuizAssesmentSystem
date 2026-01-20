@@ -5,11 +5,13 @@
     ViewData["Title"] = "Classes";
 }
 
-<h4>Classes</h4>
-
-<p>
-    <a asp-action="Create" class="btn btn-success">Create New Class</a>
-</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>Classes</h4>
+    <div class="d-flex gap-2">
+        <a asp-action="Pending" class="btn btn-warning btn-sm">Pending Approvals</a>
+        <a asp-action="Create" class="btn btn-primary btn-sm">Create New Class</a>
+    </div>
+</div>
 
 <table class="table table-striped">
     <thead>

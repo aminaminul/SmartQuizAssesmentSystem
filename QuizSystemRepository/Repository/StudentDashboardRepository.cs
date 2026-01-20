@@ -26,6 +26,7 @@ namespace QuizSystemRepository.Repositories
             return await _context.Quiz
                 .Where(q => q.Status == ModelStatus.Active
                             && q.IsApproved
+                            && q.Questions.Any(ques => ques.Status == ModelStatus.Active)
                             && q.EducationMediumId == student.EducationMediumId
                             && q.ClassId == student.ClassId
                             && (q.StartAt == null || q.StartAt <= now)

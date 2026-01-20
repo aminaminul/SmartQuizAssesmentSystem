@@ -103,7 +103,7 @@ namespace QuizSystemService.Services
                 NegativeMarking = model.NegativeMarking,
                 RequiredPassPercentage = model.RequiredPassPercentage,
                 CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
+                Status = ModelStatus.Pending,
                 IsApproved = false,
                 CreatedBy = currentUser
             };
@@ -129,16 +129,13 @@ namespace QuizSystemService.Services
                  if (quiz.ClassId != instructor.ClassId)
                     throw new InvalidOperationException("You cannot edit quizzes outside your assigned class.");
                  
-                 
                  if (model.ClassId != instructor.ClassId)
                      throw new InvalidOperationException("You cannot move a quiz to another class.");
 
-                 
-                 
-                 
-                 if (quiz.IsApproved)
+                 if (quiz.IsApproved || quiz.Status == ModelStatus.Active)
                  {
                      quiz.IsApproved = false;
+                     quiz.Status = ModelStatus.Pending;
                      quiz.ApprovedAt = null;
                      quiz.ApprovedBy = null;
                  }
@@ -157,7 +154,6 @@ namespace QuizSystemService.Services
             quiz.TotalMarks = model.TotalMarks;
             quiz.NegativeMarking = model.NegativeMarking;
             quiz.RequiredPassPercentage = model.RequiredPassPercentage;
-            quiz.Status = quiz.Status; 
             quiz.ModifiedAt = DateTime.UtcNow;
             quiz.ModifiedBy = currentUser;
 
@@ -198,6 +194,7 @@ namespace QuizSystemService.Services
             if (quiz == null) return false;
 
             quiz.IsApproved = true;
+            quiz.Status = ModelStatus.Active;
             quiz.ApprovedAt = DateTime.UtcNow;
             quiz.ApprovedBy = currentUser;
             quiz.RejectedAt = null;
@@ -213,6 +210,7 @@ namespace QuizSystemService.Services
             if (quiz == null) return false;
 
             quiz.IsApproved = false;
+            quiz.Status = ModelStatus.InActive;
             quiz.RejectedAt = DateTime.UtcNow;
             quiz.RejectedBy = currentUser;
             quiz.ApprovedAt = null;

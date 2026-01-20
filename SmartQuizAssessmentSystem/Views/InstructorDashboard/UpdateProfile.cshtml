@@ -65,6 +65,16 @@
         <span asp-validation-for="EducationMediumId" class="text-danger"></span>
     </div>
 
+    <div class="mb-3">
+        <label asp-for="ClassId" class="form-label"></label>
+        <select asp-for="ClassId"
+                asp-items="ViewBag.ClassId"
+                class="form-select">
+            <option value="">-- Select Class --</option>
+        </select>
+        <span asp-validation-for="ClassId" class="text-danger"></span>
+    </div>
+
     <button type="submit" class="btn btn-primary">Submit Request</button>
     <a asp-action="ViewProfile" class="btn btn-secondary ms-2">Cancel</a>
 </form>

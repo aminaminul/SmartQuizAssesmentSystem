@@ -133,7 +133,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (user == null) return Unauthorized();
 
             var vm = await _profileService.GetInstructorProfileForEditAsync(user.Id);
-            await PopulateInstructorDropdownsAsync(vm.EducationMediumId);
+            await PopulateInstructorDropdownsAsync(vm.EducationMediumId, vm.ClassId);
             return View("ViewProfile", vm);
         }
 
@@ -144,7 +144,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (user == null) return Unauthorized();
 
             var vm = await _profileService.GetInstructorProfileForEditAsync(user.Id);
-            await PopulateInstructorDropdownsAsync(vm.EducationMediumId);
+            await PopulateInstructorDropdownsAsync(vm.EducationMediumId, vm.ClassId);
             return View("UpdateProfile", vm);
         }
 
@@ -154,7 +154,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await PopulateInstructorDropdownsAsync(model.EducationMediumId);
+                await PopulateInstructorDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View("UpdateProfile", model);
             }
 
@@ -167,7 +167,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateInstructorDropdownsAsync(model.EducationMediumId);
+                await PopulateInstructorDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View("UpdateProfile", model);
             }
         }
@@ -217,10 +217,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             TempData["SuccessMessage"] = "Password changed successfully.";
             return RedirectToAction(nameof(ViewProfile));
         }
-        private async Task PopulateInstructorDropdownsAsync(long? selectedMediumId = null)
+        private async Task PopulateInstructorDropdownsAsync(long? selectedMediumId = null, long? selectedClassId = null)
         {
             var mediums = await _mediumService.GetAllAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedMediumId);
+
+            var classes = await _classService.GetAllAsync(selectedMediumId);
+            ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedClassId);
         }
     }
 }
