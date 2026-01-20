@@ -38,6 +38,10 @@ namespace QuizSystemModel.ViewModels
         [Range(1, 1000)]
         public int TotalMarks { get; set; }
 
+        [Display(Name = "Negative Marking")]
+        [Range(0, 100)]
+        public decimal NegativeMarking { get; set; }
+
         [Display(Name = "Required Pass Percentage")]
         [Range(0, 100)]
         public decimal RequiredPassPercentage { get; set; }

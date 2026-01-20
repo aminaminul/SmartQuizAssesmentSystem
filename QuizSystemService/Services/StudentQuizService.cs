@@ -36,7 +36,7 @@ namespace QuizSystemService.Services
             if (quiz == null)
                 throw new Exception("Quiz Not Found");
 
-            // Verify student belongs to this quiz's class/medium
+            
             var student = await _accountRepository.GetStudentByUserIdAsync(studentUserId);
             if (student == null || student.EducationMediumId != quiz.EducationMediumId || student.ClassId != quiz.ClassId)
                 throw new Exception("You are not authorized to attempt this quiz.");

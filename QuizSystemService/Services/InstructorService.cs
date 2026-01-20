@@ -55,7 +55,7 @@ namespace QuizSystemService.Services
 
         public async Task<bool> CreateAsync(InstructorAddViewModel model, QuizSystemUser currentUser)
         {
-            // Email and Phone Verify
+            
             if (await _repo.EmailExistsAsync(model.Email))
                 throw new InvalidOperationException("This Email Is Already Used By Another Instructor.");
 
@@ -63,7 +63,7 @@ namespace QuizSystemService.Services
                 await _repo.PhoneExistsAsync(model.PhoneNumber))
                 throw new InvalidOperationException("This Phone Number Is Already Used By Another Instructor.");
 
-            // Identity User
+            
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -81,7 +81,7 @@ namespace QuizSystemService.Services
             if (!roleResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
 
-            // Instructor
+            
             var instructor = new Instructor
             {
                 FirstName = model.FirstName,

@@ -24,35 +24,35 @@ namespace QuizSystemRepository.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Quiz -> QuestionBank
+            
             modelBuilder.Entity<QuestionBank>()
                 .HasOne(qb => qb.Quiz)
                 .WithMany(q => q.Questions)
                 .HasForeignKey(qb => qb.QuizId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // QuizAttempt -> Quiz
+            
             modelBuilder.Entity<QuizAttempt>()
                 .HasOne(qa => qa.Quiz)
                 .WithMany()                        
                 .HasForeignKey(qa => qa.QuizId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // QuizAttempt -> StudentUser
+            
             modelBuilder.Entity<QuizAttempt>()
                 .HasOne(qa => qa.StudentUser)
                 .WithMany()                        
                 .HasForeignKey(qa => qa.StudentUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // AttemptedQuizAnswer -> QuizAttempt
+            
             modelBuilder.Entity<AttemptedQuizAnswer>()
                 .HasOne(a => a.QuizAttempt)
                 .WithMany(qa => qa.Answers)
                 .HasForeignKey(a => a.QuizAttemptId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // AttemptedQuizAnswer -> QuestionBank
+            
             modelBuilder.Entity<AttemptedQuizAnswer>()
                 .HasOne(a => a.QuestionBank)
                 .WithMany()                         

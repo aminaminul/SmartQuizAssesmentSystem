@@ -4,10 +4,10 @@
 
 namespace QuizSystemRepository.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class Changmodel : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
@@ -16,7 +16,7 @@ namespace QuizSystemRepository.Migrations
                 newName: "Name");
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(

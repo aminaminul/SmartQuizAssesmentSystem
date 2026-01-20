@@ -4,10 +4,10 @@
 
 namespace QuizSystemRepository.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class Class : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
@@ -19,7 +19,7 @@ namespace QuizSystemRepository.Migrations
                 oldType: "int");
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(

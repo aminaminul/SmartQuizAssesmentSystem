@@ -188,7 +188,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (instructor != null && instructor.ClassId.HasValue)
             {
-                // Instructor is restricted to their assigned class and medium
+                
                 mediumId = instructor.EducationMediumId;
                 classId = instructor.ClassId;
 
@@ -200,7 +200,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
             else
             {
-                // Admin or unassigned instructor (though unassigned shouldn't create quizzes normally)
+                
                 var mediums = await _mediumService.GetAllAsync();
                 ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);
 

@@ -15,6 +15,14 @@
     <a asp-action="Index" asp-route-quizId="@quiz.Id" asp-route-subject="Bangla" class="btn btn-sm @(subject == "Bangla" ? "btn-primary" : "btn-outline-primary")">Bangla</a>
     <a asp-action="Index" asp-route-quizId="@quiz.Id" asp-route-subject="Math" class="btn btn-sm @(subject == "Math" ? "btn-primary" : "btn-outline-primary")">Math</a>
 </div>
+<div class="alert alert-info py-2">
+    <div class="row">
+        <div class="col-md-3"><strong>Quiz Total Marks:</strong> @quiz?.TotalMarks</div>
+        <div class="col-md-3"><strong>Questions Added:</strong> @Model.Count()</div>
+        <div class="col-md-3"><strong>Marks Assigned:</strong> <span class="@(Model.Sum(x => x.Marks) > quiz?.TotalMarks ? "text-danger" : "")">@Model.Sum(x => x.Marks)</span></div>
+        <div class="col-md-3"><strong>Negative Marking:</strong> @quiz?.NegativeMarking</div>
+    </div>
+</div>
 
 <p>
     <a asp-action="Create" asp-route-quizId="@quiz.Id" asp-route-subject="@subject" class="btn btn-primary">

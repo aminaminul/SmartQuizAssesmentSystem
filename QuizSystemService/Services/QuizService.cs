@@ -31,7 +31,7 @@ namespace QuizSystemService.Services
                     }
                     else
                     {
-                        // Instructor has no class assigned => See nothing
+                        
                         return new List<Quiz>();
                     }
                 }
@@ -59,6 +59,7 @@ namespace QuizSystemService.Services
                 EndAt = quiz.EndAt,
                 DurationMinutes = quiz.Duration.HasValue ? (int?)quiz.Duration.Value.TotalMinutes : null,
                 TotalMarks = quiz.TotalMarks,
+                NegativeMarking = quiz.NegativeMarking,
                 RequiredPassPercentage = quiz.RequiredPassPercentage
             };
         }
@@ -74,16 +75,16 @@ namespace QuizSystemService.Services
                 if (!instructor.ClassId.HasValue)
                     throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
 
-                // Enforce Instructor Restrictions
+                
                 if (model.ClassId != instructor.ClassId)
                     throw new InvalidOperationException("You can only create quizzes for your assigned class.");
                 
-                // If instructor is restricted to a class, ensure Medium matches too (usually implicit)
+                
                 if (instructor.EducationMediumId.HasValue && model.EducationMediumId != instructor.EducationMediumId)
                      throw new InvalidOperationException("You can only create quizzes for your assigned education medium.");
                 
-                 // Force unapproved for instructors
-                 // (Though logic below sets IsApproved = false anyway, explicit check doesn't hurt)
+                 
+                 
             }
 
             var quiz = new Quiz
@@ -99,6 +100,7 @@ namespace QuizSystemService.Services
                     ? TimeSpan.FromMinutes(model.DurationMinutes.Value)
                     : null,
                 TotalMarks = model.TotalMarks,
+                NegativeMarking = model.NegativeMarking,
                 RequiredPassPercentage = model.RequiredPassPercentage,
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active,
@@ -127,13 +129,13 @@ namespace QuizSystemService.Services
                  if (quiz.ClassId != instructor.ClassId)
                     throw new InvalidOperationException("You cannot edit quizzes outside your assigned class.");
                  
-                 // If changing class?
+                 
                  if (model.ClassId != instructor.ClassId)
                      throw new InvalidOperationException("You cannot move a quiz to another class.");
 
-                 // If instructor edits, it might need re-approval?
-                 // Current logic doesn't automatically un-approve on edit, but requirement says "Admin Approve lagbe"
-                 // If an already approved quiz is edited, should it become pending? Usually yes.
+                 
+                 
+                 
                  if (quiz.IsApproved)
                  {
                      quiz.IsApproved = false;
@@ -153,8 +155,9 @@ namespace QuizSystemService.Services
                 ? TimeSpan.FromMinutes(model.DurationMinutes.Value)
                 : null;
             quiz.TotalMarks = model.TotalMarks;
+            quiz.NegativeMarking = model.NegativeMarking;
             quiz.RequiredPassPercentage = model.RequiredPassPercentage;
-            quiz.Status = quiz.Status; // if editable, set from model
+            quiz.Status = quiz.Status; 
             quiz.ModifiedAt = DateTime.UtcNow;
             quiz.ModifiedBy = currentUser;
 

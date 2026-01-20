@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace QuizSystemRepository.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class EClass : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -782,7 +782,7 @@ namespace QuizSystemRepository.Migrations
                 column: "RejectedById");
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

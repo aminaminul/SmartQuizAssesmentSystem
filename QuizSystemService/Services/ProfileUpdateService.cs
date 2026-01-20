@@ -30,7 +30,7 @@ namespace QuizSystemService.Services
             _studentRepo = studentRepo;
         }
 
-        // Get Profile For Edit
+        
 
         public async Task<InstructorProfileUpdateViewModel> GetInstructorProfileForEditAsync(long userId)
         {
@@ -76,7 +76,7 @@ namespace QuizSystemService.Services
             };
         }
 
-        // ----------- Request update (3 month gap) -----------
+        
 
         public async Task RequestInstructorProfileUpdateAsync(InstructorProfileUpdateViewModel model)
         {
@@ -127,7 +127,7 @@ namespace QuizSystemService.Services
                 throw new InvalidOperationException("You already have a pending profile update request.");
         }
 
-        //Admin Approval
+        
 
         public Task<List<ProfileUpdateRequest>> GetPendingRequestsAsync()
         {
@@ -171,7 +171,7 @@ namespace QuizSystemService.Services
             await _profileRepo.UpdateAsync(request);
         }
 
-        // Apply changes to User + Student/Instructor 
+        
 
         private async Task ApplyInstructorUpdateAsync(InstructorProfileUpdateViewModel vm)
         {

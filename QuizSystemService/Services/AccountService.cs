@@ -1,4 +1,4 @@
-﻿// SmartQuizAssessmentSystem/Services/AccountService.cs
+﻿
 using Microsoft.AspNetCore.Identity;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
@@ -31,7 +31,7 @@ namespace SmartQuizAssessmentSystem.Services
                 ? defaultRoleName
                 : model.Role!;
 
-            // duplicate checks against Student table
+            
             if (await _accountRepository.StudentEmailExistsAsync(model.Email!))
                 return IdentityResult.Failed(new IdentityError
                 {
@@ -76,7 +76,7 @@ namespace SmartQuizAssessmentSystem.Services
                 PhoneNumber = model.PhoneNumber!,
                 UserId = user.Id,
                 EducationMediumId = model.EducationMediumId,
-                ClassId = model.ClassId,           // IMPORTANT: Class set here
+                ClassId = model.ClassId,           
                 CreatedAt = DateTime.UtcNow,
                 Status = ModelStatus.Active
             };
@@ -166,7 +166,7 @@ namespace SmartQuizAssessmentSystem.Services
             if (roles.Contains("Student"))
             {
                 var student = await _accountRepository.GetStudentByUserIdAsync(userId);
-                // For now students are active once registered, or we check status if we add pending status to them too.
+                
                 return student != null && student.Status == ModelStatus.Active;
             }
 

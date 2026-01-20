@@ -33,7 +33,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             ViewBag.Subject = subject;
 
             var questions = await _questionService.GetByQuizAsync(quizId, subject);
-            return View(questions); // entity list
+            return View(questions); 
         }
 
         [HttpGet]

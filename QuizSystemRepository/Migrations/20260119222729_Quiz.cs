@@ -4,10 +4,10 @@
 
 namespace QuizSystemRepository.Migrations
 {
-    /// <inheritdoc />
+    
     public partial class Quiz : Migration
     {
-        /// <inheritdoc />
+        
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
@@ -69,7 +69,7 @@ namespace QuizSystemRepository.Migrations
                 principalColumn: "Id");
         }
 
-        /// <inheritdoc />
+        
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

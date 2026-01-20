@@ -29,7 +29,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        // ... existing methods ...
+        
 
         private async Task<IEnumerable<SelectListItem>> GetEducationMediumSelectListAsync()
         {
@@ -43,7 +43,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
 
 
-        // GET: Subject/Index
+        
         public async Task<IActionResult> Index(long? classId)
         {
             var subjects = await _subjectService.GetAllAsync(classId);
@@ -53,7 +53,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(subjects ?? new List<Subject>());
         }
 
-        // GET: Subject/Details/5
+        
         public async Task<IActionResult> Details(long id)
         {
             var subject = await _subjectService.GetByIdAsync(id, includeClass: true);
@@ -61,7 +61,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(subject);
         }
 
-        // GET: Subject/Create
+        
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -73,7 +73,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(vm);
         }
 
-        // POST: Subject/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SubjectViewModel vm)
@@ -113,7 +113,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // GET: Subject/Edit/5
+        
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
@@ -139,7 +139,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(vm);
         }
 
-        // POST: Subject/Edit/5
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SubjectViewModel vm)
@@ -182,7 +182,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // GET: Subject/Delete/5
+        
         [HttpGet]
         public async Task<IActionResult> Delete(long id)
         {
@@ -191,7 +191,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(subject);
         }
 
-        // POST: Subject/Delete/5
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -206,7 +206,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Pending list
+        
         [HttpGet]
         public async Task<IActionResult> Pending()
         {
@@ -214,7 +214,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(pendingSubjects ?? new List<Subject>());
         }
 
-        // Approve subject
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id, string? returnUrl = null)
@@ -233,7 +233,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Pending));
         }
 
-        // Reject subject
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id, string? returnUrl = null)

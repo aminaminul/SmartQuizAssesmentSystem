@@ -63,12 +63,17 @@
     </div>
 
     <div class="row mb-3">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label asp-for="TotalMarks" class="form-label"></label>
             <input asp-for="TotalMarks" class="form-control" />
             <span asp-validation-for="TotalMarks" class="text-danger"></span>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <label asp-for="NegativeMarking" class="form-label"></label>
+            <input asp-for="NegativeMarking" class="form-control" />
+            <span asp-validation-for="NegativeMarking" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
             <label asp-for="RequiredPassPercentage" class="form-label"></label>
             <input asp-for="RequiredPassPercentage" class="form-control" />
             <span asp-validation-for="RequiredPassPercentage" class="text-danger"></span>

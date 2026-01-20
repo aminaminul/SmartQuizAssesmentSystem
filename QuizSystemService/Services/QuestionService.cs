@@ -50,6 +50,14 @@ namespace QuizSystemService.Services
             if (quiz == null)
                 throw new InvalidOperationException("Quiz not found.");
 
+            if (quiz.NegativeMarking > model.Marks)
+                throw new InvalidOperationException($"Negative marking ({quiz.NegativeMarking}) cannot be greater than the Question Mark ({model.Marks}).");
+
+            var currentQuestions = await _repo.GetByQuizAsync(model.QuizId);
+            var currentTotal = currentQuestions.Sum(q => q.Marks);
+            if (currentTotal + model.Marks > quiz.TotalMarks)
+                throw new InvalidOperationException($"Total marks of questions ({currentTotal + model.Marks}) cannot exceed Quiz total marks ({quiz.TotalMarks}). Current total: {currentTotal}");
+
             if (string.IsNullOrWhiteSpace(model.QuestionText))
                 throw new InvalidOperationException("Question text is required.");
 
@@ -79,6 +87,17 @@ namespace QuizSystemService.Services
         {
             var q = await _repo.GetByIdAsync(id);
             if (q == null) return false;
+
+            var quiz = await _quizRepo.GetByIdAsync(model.QuizId);
+            if (quiz == null) throw new InvalidOperationException("Quiz not found.");
+
+            if (quiz.NegativeMarking > model.Marks)
+                throw new InvalidOperationException($"Negative marking ({quiz.NegativeMarking}) cannot be greater than the Question Mark ({model.Marks}).");
+
+            var currentQuestions = await _repo.GetByQuizAsync(model.QuizId);
+            var otherTotal = currentQuestions.Where(x => x.Id != id).Sum(x => x.Marks);
+            if (otherTotal + model.Marks > quiz.TotalMarks)
+                throw new InvalidOperationException($"Total marks of questions ({otherTotal + model.Marks}) cannot exceed Quiz total marks ({quiz.TotalMarks}). Other questions total: {otherTotal}");
 
             if (string.IsNullOrWhiteSpace(model.QuestionText))
                 throw new InvalidOperationException("Question text is required.");

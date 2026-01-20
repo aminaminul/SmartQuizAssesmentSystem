@@ -1,4 +1,4 @@
-﻿// SmartQuizAssessmentSystem/Controllers/AccountController.cs
+﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -30,7 +30,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _classService = classService;
         }
 
-        // LOGIN
+        
 
         [HttpGet]
         public IActionResult Login()
@@ -79,7 +79,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // REGISTER SELECTOR
+        
 
         [HttpGet]
         public IActionResult Register()
@@ -87,7 +87,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View();
         }
 
-        // STUDENT REGISTER
+        
 
         [HttpGet]
         public async Task<IActionResult> RegisterStudent()
@@ -125,7 +125,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // INSTRUCTOR REGISTER
+        
 
         [HttpGet]
         public async Task<IActionResult> RegisterInstructor()
@@ -162,7 +162,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // LOGOUT
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -172,7 +172,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // Dropdown helpers
+        
 
         private async Task<IEnumerable<SelectListItem>> GetMediumSelectListAsync()
         {
@@ -198,9 +198,9 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<JsonResult> GetClassesByMedium(long? mediumId)
         {
-            // If 0 is passed, treat it as null to return all, or depending on requirement. 
-            // In Repository, GetAllAsync(null) returns all. GetAllAsync(0) might return none.
-            // If the JS sends 0 for "All", we should probably treat 0 as null here.
+            
+            
+            
             if (mediumId == 0) mediumId = null;
 
             var classes = await _classService.GetAllAsync(mediumId);

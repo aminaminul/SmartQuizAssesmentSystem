@@ -17,7 +17,7 @@ builder.Services.AddControllersWithViews();
 var conn = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlServer(conn));
 
-// Identity
+
 builder.Services.AddIdentity<QuizSystemUser, QuizSystemRole>(options =>
 {
     options.Password.RequiredLength = 8;

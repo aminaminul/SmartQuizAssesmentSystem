@@ -21,7 +21,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        // LIST
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -29,7 +29,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(students ?? new List<Student>());
         }
 
-        // CREATE (GET)
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
@@ -37,7 +37,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(new StudentAddViewModel());
         }
 
-        // CREATE (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -68,7 +68,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // EDIT (GET)
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long id)
         {
@@ -80,7 +80,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        // EDIT (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -111,7 +111,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // DETAILS
+        
         public async Task<IActionResult> Details(long id)
         {
             var student = await _studentService.GetByIdAsync(id);
@@ -121,7 +121,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        // DELETE (GET)
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long id)
         {
@@ -132,7 +132,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        // DELETE (POST)
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

@@ -38,7 +38,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View();
         }
 
-        // GET
+        
         [HttpGet]
         public IActionResult Create()
         {
@@ -46,7 +46,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(new EducationMedium());
         }
 
-        // POST
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(long? mediumEnumId)
@@ -89,17 +89,17 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // EDIT (GET)
+        
         [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
             var medium = await _mediumService.GetByIdAsync(id);
             if (medium == null) return NotFound();
 
-            return View(medium);  // DB থেকে আসা Name দেখাবে
+            return View(medium);  
         }
 
-        // EDIT (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, EducationMedium model)
@@ -120,7 +120,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
 
-        // DELETE (GET)
+        
         [HttpGet]
         public async Task<IActionResult> Delete(long id)
         {
@@ -131,7 +131,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(medium);
         }
 
-        // DELETE (POST)
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -143,7 +143,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // APPROVE
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id)
@@ -158,7 +158,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // REJECT
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id)

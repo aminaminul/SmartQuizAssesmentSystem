@@ -88,6 +88,7 @@
         <label asp-for="Marks" class="form-label"></label>
         <input asp-for="Marks" class="form-control" />
         <span asp-validation-for="Marks" class="text-danger"></span>
+        <small class="text-muted"> Quiz Total: @quiz?.TotalMarks. Negative Marking: @quiz?.NegativeMarking. (Question Mark must be >= @quiz?.NegativeMarking)</small>
     </div>
 
     <button type="submit" class="btn btn-primary">Save</button>

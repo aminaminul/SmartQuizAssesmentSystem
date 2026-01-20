@@ -36,7 +36,7 @@ namespace QuizSystemModel.ViewModels
 
         [Required]
         [Display(Name = "Right Option")]
-        public string RightOption { get; set; } = null!; // A/B/C/D
+        public string RightOption { get; set; } = null!; 
 
         [Range(1, 100)]
         public int Marks { get; set; }

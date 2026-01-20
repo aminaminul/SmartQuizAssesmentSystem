@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
-using QuizSystemModel.Interfaces; // If needed, but standard interfaces are usually in QuizSystemService.Interfaces
-// Or check where IClassService is located. Typically QuizSystemService.Interfaces.
+using QuizSystemModel.Interfaces; 
+
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
@@ -26,7 +26,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             _classService = classService;
         }
 
-        // LIST
+        
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -34,14 +34,14 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(instructors);
         }
 
-        // CREATE (GET)
+        
         public async Task<IActionResult> Create()
         {
             await PopulateDropdownsAsync();
             return View(new InstructorAddViewModel());
         }
 
-        // CREATE (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InstructorAddViewModel model)
@@ -61,14 +61,14 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // any business error from service (email/phone duplicate, identity errors) 
+                
                 ModelState.AddModelError(string.Empty, ex.Message);
                 await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
         }
 
-        // EDIT (GET)
+        
         public async Task<IActionResult> Edit(long id)
         {
             var instructor = await _instructorService.GetForEditAsync(id);
@@ -79,7 +79,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(instructor);
         }
 
-        // EDIT (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, Instructor model, long? educationMediumId, long? classId)
@@ -109,7 +109,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
         }
 
-        // DETAILS
+        
         public async Task<IActionResult> Details(long id)
         {
             var instructor = await _instructorService.GetByIdAsync(id);
@@ -119,7 +119,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(instructor);
         }
 
-        // DELETE (GET)
+        
         public async Task<IActionResult> Delete(long id)
         {
             var instructor = await _instructorService.GetByIdAsync(id);
@@ -129,7 +129,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(instructor);
         }
 
-        // DELETE (POST)
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -142,7 +142,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // APPROVE (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id)
@@ -159,7 +159,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // REJECT (POST)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id)

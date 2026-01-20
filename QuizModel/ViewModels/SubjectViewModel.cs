@@ -25,7 +25,7 @@ namespace SmartQuizAssessmentSystem.ViewModels
         public IEnumerable<SelectListItem> EducationMediumList { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> ClassList { get; set; } = new List<SelectListItem>();
 
-        // Navigation properties for display
+        
         public Class? Class { get; set; }
         public EducationMedium? EducationMedium { get; set; }
     }
