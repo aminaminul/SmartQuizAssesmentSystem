@@ -6,7 +6,7 @@ namespace QuizSystemService.Interfaces
 {
     public interface IStudentService
     {
-        Task<List<Student>> GetAllAsync();
+        Task<List<Student>> GetAllAsync(long? classId = null);
         Task<Student?> GetByIdAsync(long id);
         Task<Student?> GetForEditAsync(long id);
         Task<bool> CreateAsync(StudentAddViewModel model, QuizSystemUser currentUser);

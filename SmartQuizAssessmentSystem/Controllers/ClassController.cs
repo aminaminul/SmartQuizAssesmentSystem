@@ -68,6 +68,92 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Details(long id)
+        {
+            var cls = await _classService.GetByIdAsync(id, true);
+            if (cls == null) return NotFound();
+            return View(cls);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(long id)
+        {
+            var cls = await _classService.GetByIdAsync(id, true);
+            if (cls == null) return NotFound();
+
+            // Try to find the enum value for the class name
+            long classId = 0;
+            if (Enum.TryParse<ClassNameEnum>(cls.Name, out var classEnum))
+            {
+                classId = (long)classEnum;
+            }
+
+            var model = new ClassEditViewModel
+            {
+                Id = cls.Id,
+                ClassId = classId,
+                EducationMediumId = cls.EducationMediumId ?? 0,
+                Status = cls.Status
+            };
+
+            await PopulateDropdownsAsync(model.ClassId, model.EducationMediumId);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(long id, ClassEditViewModel model)
+        {
+            if (id != model.Id) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync(model.ClassId, model.EducationMediumId);
+                return View(model);
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            try
+            {
+                var ok = await _classService.UpdateAsync(id, model.ClassId, model.EducationMediumId, model.Status, currentUser);
+                if (!ok) return NotFound();
+
+                TempData["SuccessMessage"] = "Class updated successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateDropdownsAsync(model.ClassId, model.EducationMediumId);
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(long id)
+        {
+            var cls = await _classService.GetByIdAsync(id, true);
+            if (cls == null) return NotFound();
+            return View(cls);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(long id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var ok = await _classService.SoftDeleteAsync(id, currentUser);
+            if (!ok) return NotFound();
+
+            TempData["SuccessMessage"] = "Class deleted successfully.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Pending()
         {
             var pending = await _classService.GetPendingAsync();

@@ -1,0 +1,94 @@
+@model IEnumerable<QuizSystemModel.Models.Instructor>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Pending Instructor Approvals";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>Pending Instructor Approvals</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">All Instructors</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <p class="text-muted mb-0">No pending instructor registration requests found.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Instructor Name</th>
+                            <th>Email Address</th>
+                            <th>Phone</th>
+                            <th>Academic Info</th>
+                            <th>Applied At</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">@item.FirstName @item.LastName</div>
+                                </td>
+                                <td>@item.Email</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>
+                                    <div class="small text-muted">@item.EducationMedium?.Name</div>
+                                    <div class="small">@item.Class?.Name</div>
+                                </td>
+                                <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>
+                                    @if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                    else if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                                    {
+                                        <span class="badge bg-danger">Rejected</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <form asp-action="Approve" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="redirect" value="Pending" />
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form asp-action="Reject" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="redirect" value="Pending" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                                        </form>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">Details</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

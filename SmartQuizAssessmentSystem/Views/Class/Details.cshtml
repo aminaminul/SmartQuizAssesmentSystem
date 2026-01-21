@@ -12,7 +12,7 @@
     <dd class="col-sm-10">@Model.Name</dd>
 
     <dt class="col-sm-2">Education Medium</dt>
-    <dd class="col-sm-10">@Model.EducationMediumId</dd>
+    <dd class="col-sm-10">@Model.EducationMedium?.Name</dd>
 
     <dt class="col-sm-2">Approved</dt>
     <dd class="col-sm-10">@(Model.IsApproved ? "Yes" : "No")</dd>

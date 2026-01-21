@@ -23,9 +23,18 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(long? classId)
         {
-            var students = await _studentService.GetAllAsync();
+            var students = await _studentService.GetAllAsync(classId);
+            ViewBag.SelectedClassId = classId;
+            
+            if (classId.HasValue)
+            {
+                var classes = await _studentService.GetClassesAsync();
+                var cls = classes.FirstOrDefault(c => c.Id == classId.Value);
+                ViewBag.ClassName = cls?.Name;
+            }
+
             return View(students ?? new List<Student>());
         }
 
@@ -123,12 +132,13 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(long id, long? classId)
         {
             var student = await _studentService.GetByIdAsync(id);
             if (student == null)
                 return NotFound();
 
+            ViewBag.SelectedClassId = classId;
             return View(student);
         }
 
@@ -136,7 +146,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        public async Task<IActionResult> DeleteConfirmed(long id, long? classId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -147,6 +157,11 @@ namespace SmartQuizAssessmentSystem.Controllers
             var ok = await _studentService.SoftDeleteAsync(id, currentUser);
             if (!ok)
                 return NotFound();
+
+            if (classId.HasValue)
+            {
+                return RedirectToAction(nameof(Index), new { classId = classId.Value });
+            }
 
             return RedirectToAction(nameof(Index));
         }

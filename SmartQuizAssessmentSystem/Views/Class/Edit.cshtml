@@ -1,4 +1,5 @@
-﻿@model QuizSystemModel.Models.Class
+﻿@model QuizSystemModel.ViewModels.ClassEditViewModel
+@using QuizSystemModel.BusinessRules
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,23 +15,29 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+        <label class="form-label">Education Medium</label>
+        <select asp-for="EducationMediumId"
+                class="form-select"
+                asp-items="ViewBag.EducationMediumId">
+            <option value="">Select Education Medium</option>
+        </select>
+        <span asp-validation-for="EducationMediumId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Education Medium</label>
-        <select name="educationMediumId" class="form-select"
-                asp-items="(SelectList)ViewBag.EducationMediumId">
-            <option value=""> Select Education Medium </option>
+        <label class="form-label">Class Name</label>
+        <select asp-for="ClassId"
+                class="form-select"
+                asp-items="ViewBag.ClassId">
+            <option value="">Select Class</option>
         </select>
+        <span asp-validation-for="ClassId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Status" class="form-label"></label>
         <select asp-for="Status" class="form-select"
-                asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
+                asp-items="Html.GetEnumSelectList<ModelStatus>()">
         </select>
         <span asp-validation-for="Status" class="text-danger"></span>
     </div>
@@ -40,7 +47,5 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

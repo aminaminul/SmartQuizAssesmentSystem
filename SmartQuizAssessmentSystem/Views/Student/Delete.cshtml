@@ -1,0 +1,53 @@
+@model QuizSystemModel.Models.Student
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Delete Student";
+}
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-danger text-white py-3">
+            <h4 class="mb-0">Delete Student</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="text-danger mb-4">Are you sure you want to delete this student?</h5>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Full Name</dt>
+                        <dd class="col-sm-8">@Model.FirstName @Model.LastName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.Email</dd>
+
+                        <dt class="col-sm-4">Phone Number</dt>
+                        <dd class="col-sm-8">@Model.PhoneNumber</dd>
+
+                        <dt class="col-sm-4">Class</dt>
+                        <dd class="col-sm-8">@Model.Class?.Name</dd>
+
+                        <dt class="col-sm-4">Education Medium</dt>
+                        <dd class="col-sm-8">@Model.EducationMedium?.Name</dd>
+
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active ? "bg-success" : "bg-warning")">
+                                @Model.Status
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" name="classId" value="@ViewBag.SelectedClassId" />
+                <button type="submit" class="btn btn-danger px-4">Delete</button>
+                <a asp-action="Index" asp-route-classId="@ViewBag.SelectedClassId" class="btn btn-outline-secondary px-4 ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

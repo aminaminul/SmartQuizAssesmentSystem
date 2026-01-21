@@ -1,0 +1,76 @@
+@using QuizSystemModel.Models
+@using QuizSystemModel.BusinessRules
+@model IEnumerable<EducationMedium>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Pending Education Medium Approvals";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>Pending Education Medium Approvals</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">All Mediums</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <p class="text-muted mb-0">No pending education medium requests found.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>
+                                    @if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                    else if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                                    {
+                                        <span class="badge bg-danger">Rejected</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <form asp-action="Approve" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="redirect" value="Pending" />
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form asp-action="Reject" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="redirect" value="Pending" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
