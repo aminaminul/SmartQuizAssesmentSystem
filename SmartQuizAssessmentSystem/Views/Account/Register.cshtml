@@ -5,30 +5,30 @@
 
 <div class="account-container">
     <div class="account-box">
-        <h2 class="text-center mb-4">Register</h2>
-        <p class="text-center">Select How You Want To Register.</p>
+        <h2 class="text-center mb-2">Register</h2>
+        <p class="text-center text-muted mb-4">Select How You Want To Register.</p>
 
         <a asp-controller="Account" asp-action="RegisterStudent"
-           class="btn btn-success w-100 p-2 mb-2">
+           class="btn btn-success w-100 p-3 mb-3 btn-hover-effect d-flex align-items-center justify-content-center">
+            <i class="fas fa-user-graduate me-2 fa-lg"></i>
             Register as Student
         </a>
 
         <a asp-controller="Account" asp-action="RegisterInstructor"
-           class="btn btn-secondary w-100">
+           class="btn btn-secondary w-100 p-3 btn-hover-effect d-flex align-items-center justify-content-center">
+            <i class="fas fa-chalkboard-teacher me-2 fa-lg"></i>
             Register as Instructor
         </a>
 
-        <p class="text-center mt-3">
-            Already have an account?
-            <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
-                Login
-            </a>
-        </p>
-
-        <div class="text-center">
-            <a asp-controller="Home" asp-action="Index"
-               class="text-decoration-none mt-3">
-                Back
+        <div class="text-center mt-4">
+            <p class="mb-2">
+                Already have an account?
+                <a asp-controller="Account" asp-action="Login" class="text-primary fw-bold text-decoration-none">
+                    Login
+                </a>
+            </p>
+            <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none small">
+                <i class="fas fa-arrow-left me-1"></i> Back to Home
             </a>
         </div>
     </div>

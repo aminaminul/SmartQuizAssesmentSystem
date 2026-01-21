@@ -2,125 +2,256 @@
 @using QuizSystemModel.Models
 @inject UserManager<QuizSystemUser> UserManager
 
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string IsActive(string controller, string action = null)
+    {
+        bool active = string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase) && 
+                      (action == null || string.Equals(action, currentAction, StringComparison.OrdinalIgnoreCase));
+        return active ? "active" : "";
+    }
+}
+
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewData["Title"] Quiz Management System</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quiz Management System</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/account.css" />
 
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .sidebar {
-            width: 230px;
-            min-height: 100vh;
-            background: #ffffff;
-            border-right: 1px solid #ddd;
+            width: 260px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            background: #111111; /* Solid black */
+            color: #ffffff;
+            transition: all 0.3s;
+            z-index: 1000;
+            flex-shrink: 0;
+            overflow-y: auto;
         }
 
-            .sidebar a {
-                padding: 10px 15px;
-                display: block;
-                color: #333;
-                text-decoration: none;
-            }
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #222;
+        }
 
-                .sidebar a:hover, .sidebar .active {
-                    background: #ffc107;
-                    color: #000;
-                    border-radius: 6px;
-                }
+        .sidebar-header h5 {
+            color: #ffc107;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            padding: 1.5rem 0.75rem;
+        }
+
+        .sidebar a {
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+            border-radius: 8px;
+        }
+
+        .sidebar a i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .sidebar a.active {
+            background: #ffc107;
+            color: #000000;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+        }
+
+        .sidebar a.active i {
+            color: #000000;
+        }
+
+        .section-label {
+            padding: 1.5rem 1.2rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #6c757d;
+            letter-spacing: 1.5px;
+        }
 
         .topbar {
-            background: #fff;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
+            background: #ffffff;
+            padding: 0.75rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .content-area {
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        /* custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #333;
         }
     </style>
 </head>
 <body>
     <div class="d-flex">
-        <div class="sidebar p-3">
-            @{
-                if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    if (User.IsInRole("Admin"))
+        <!-- Sidebar -->
+        <div class="sidebar shadow">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="sidebar-header">
+                    @if (User.IsInRole("Admin"))
                     {
-                        <h5 class="text-center mb-4">ADMIN</h5>
-
-                        <a asp-controller="AdminDashboard" asp-action="Dashboard" class="active">Dashboard</a>
-                        <a asp-controller="Quiz" asp-action="Index">Manage Quiz</a>
-                        <a asp-controller="Instructor" asp-action="Index">Instructors</a>
-                        <a asp-controller="Student" asp-action="Index">Students</a>
-                        <a asp-controller="EducationMedium" asp-action="Index">Education Medium</a>
-                        <a asp-controller="Class" asp-action="Index">Classes</a>
-                        <a asp-controller="Subject" asp-action="Index">Subjects</a>
-                        <a asp-controller="ProfileApproval" asp-action="Pending" class="nav-link">
-                            Profile Update Requests
-                        </a>
-                        <a asp-controller="AdminDashboard" asp-action="Profile">My Profile</a>
+                        <h5><i class="fas fa-user-shield me-2"></i>Admin</h5>
                     }
                     else if (User.IsInRole("Instructor"))
                     {
-                        <h5 class="text-center mb-4">INSTRUCTOR</h5>
+                        <h5><i class="fas fa-chalkboard-teacher me-2"></i>Instructor</h5>
+                    }
+                    else if (User.IsInRole("Student"))
+                    {
+                        <h5><i class="fas fa-user-graduate me-2"></i>Student</h5>
+                    }
+                </div>
 
-                        <a asp-controller="InstructorDashboard" asp-action="Dashboard" class="active">Dashboard</a>
-                        <a asp-controller="Quiz" asp-action="Index">Manage Quiz</a>
-                        <a asp-controller="InstructorDashboard" asp-action="Instructors">Instructors</a>
-                        <a asp-controller="InstructorDashboard" asp-action="Students">Students</a>
-                        <a asp-controller="InstructorDashboard" asp-action="EducationMediums">Education Medium</a>
-                        <a asp-controller="InstructorDashboard" asp-action="Classes">Classes</a>
-                        <a asp-controller="InstructorDashboard" asp-action="Subjects">Subjects</a>
+                <div class="sidebar-nav">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="AdminDashboard" asp-action="Dashboard" class="@IsActive("AdminDashboard", "Dashboard")">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                        <a asp-controller="Quiz" asp-action="Index" class="@IsActive("Quiz")">
+                            <i class="fas fa-tasks"></i> Manage Quiz
+                        </a>
+                        <a asp-controller="Instructor" asp-action="Index" class="@IsActive("Instructor")">
+                            <i class="fas fa-chalkboard-teacher"></i> Instructors
+                        </a>
+                        <a asp-controller="Student" asp-action="Index" class="@IsActive("Student")">
+                            <i class="fas fa-user-graduate"></i> Students
+                        </a>
+                        <a asp-controller="EducationMedium" asp-action="Index" class="@IsActive("EducationMedium")">
+                            <i class="fas fa-book"></i> Education Medium
+                        </a>
+                        <a asp-controller="Class" asp-action="Index" class="@IsActive("Class")">
+                            <i class="fas fa-graduation-cap"></i> Classes
+                        </a>
+                        <a asp-controller="Subject" asp-action="Index" class="@IsActive("Subject")">
+                            <i class="fas fa-book-open"></i> Subjects
+                        </a>
+                        <a asp-controller="ProfileApproval" asp-action="Pending" class="@IsActive("ProfileApproval")">
+                            <i class="fas fa-user-check"></i> Profile Updates
+                        </a>
+                        <a asp-controller="AdminDashboard" asp-action="Profile" class="@IsActive("AdminDashboard", "Profile")">
+                            <i class="fas fa-user-circle"></i> My Profile
+                        </a>
+                    }
+                    else if (User.IsInRole("Instructor"))
+                    {
+                        <a asp-controller="InstructorDashboard" asp-action="Dashboard" class="@IsActive("InstructorDashboard", "Dashboard")">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                        <a asp-controller="Quiz" asp-action="Index" class="@IsActive("Quiz")">
+                            <i class="fas fa-tasks"></i> Manage Quiz
+                        </a>
+                        <a asp-controller="InstructorDashboard" asp-action="Instructors" class="@IsActive("InstructorDashboard", "Instructors")">
+                            <i class="fas fa-chalkboard-teacher"></i> Instructors
+                        </a>
+                        <a asp-controller="InstructorDashboard" asp-action="Students" class="@IsActive("InstructorDashboard", "Students")">
+                            <i class="fas fa-user-graduate"></i> Students
+                        </a>
+                        <a asp-controller="InstructorDashboard" asp-action="EducationMediums" class="@IsActive("InstructorDashboard", "EducationMediums")">
+                            <i class="fas fa-book"></i> Mediums
+                        </a>
+                        <a asp-controller="InstructorDashboard" asp-action="Classes" class="@IsActive("InstructorDashboard", "Classes")">
+                            <i class="fas fa-graduation-cap"></i> Classes
+                        </a>
+                        <a asp-controller="InstructorDashboard" asp-action="Subjects" class="@IsActive("InstructorDashboard", "Subjects")">
+                            <i class="fas fa-book-open"></i> Subjects
+                        </a>
                         
-                        <div class="mt-4 ms-2 mb-2">
-                            <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Assigned Classes</small>
-                        </div>
-                        <a asp-controller="InstructorDashboard" asp-action="MyClassStudents">
-                            <i class="fas fa-users-cog me-2"></i> View Students
+                        <div class="section-label">Assigned Management</div>
+                        <a asp-controller="InstructorDashboard" asp-action="MyClassStudents" class="@IsActive("InstructorDashboard", "MyClassStudents")">
+                            <i class="fas fa-users-cog"></i> My Class Students
                         </a>
 
-                        <a asp-controller="InstructorDashboard" asp-action="ViewProfile" class="nav-link">
-                            View Profile
+                        <a asp-controller="InstructorDashboard" asp-action="ViewProfile" class="@IsActive("InstructorDashboard", "ViewProfile")">
+                            <i class="fas fa-user-circle"></i> View Profile
                         </a>
                     }
                     else if (User.IsInRole("Student"))
                     {
-                        <h5 class="text-center mb-4">STUDENT</h5>
-
-                        <a asp-controller="StudentDashboard" asp-action="Dashboard" class="active">Dashboard</a>
-                        <a asp-controller="StudentDashboard" asp-action="AvailableQuizzes">Available Quizzes</a>
-                        <a asp-controller="StudentDashboard" asp-action="RecentAttempts">Recent Attempts</a>
-                        <a asp-controller="StudentDashboard" asp-action="ViewProfile" class="nav-link">
-                            View Profile
+                        <a asp-controller="StudentDashboard" asp-action="Dashboard" class="@IsActive("StudentDashboard", "Dashboard")">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                        <a asp-controller="StudentDashboard" asp-action="AvailableQuizzes" class="@IsActive("StudentDashboard", "AvailableQuizzes")">
+                            <i class="fas fa-pencil-alt"></i> Available Quizzes
+                        </a>
+                        <a asp-controller="StudentDashboard" asp-action="RecentAttempts" class="@IsActive("StudentDashboard", "RecentAttempts")">
+                            <i class="fas fa-history"></i> Recent Attempts
+                        </a>
+                        <a asp-controller="StudentDashboard" asp-action="ViewProfile" class="@IsActive("StudentDashboard", "ViewProfile")">
+                            <i class="fas fa-user-circle"></i> View Profile
                         </a>
                     }
-                }
+                </div>
             }
         </div>
 
-        <div class="flex-grow-1">
+        <!-- Main Content -->
+        <div class="flex-grow-1 d-flex flex-column" style="overflow-x: hidden;">
             <div class="topbar d-flex justify-content-between align-items-center">
-                @if (User.IsInRole("Admin"))
-                {
-                    <form asp-controller="AdminDashboard" asp-action="Search" method="get" class="w-25">
-                        <div class="input-group">
-                            <input name="query" class="form-control" placeholder="Search..." value="@ViewBag.SearchQuery" />
-                            <button class="btn btn-warning" type="submit">Search</button>
-                        </div>
-                    </form>
-                }
+                <div class="d-flex align-items-center">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form asp-controller="AdminDashboard" asp-action="Search" method="get" class="d-flex ms-2">
+                            <div class="input-group">
+                                <input name="query" class="form-control form-control-sm border-end-0" placeholder="Global search..." value="@ViewBag.SearchQuery" />
+                                <button class="btn btn-sm btn-outline-secondary border-start-0" type="submit">
+                                    <i class="fas fa-search text-muted"></i>
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
 
                 <partial name="_LoginPartial" />
             </div>
 
-            <div class="p-4">
+            <main role="main" class="content-area">
                 @RenderBody()
-            </div>
+            </main>
         </div>
     </div>
 

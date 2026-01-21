@@ -8,13 +8,23 @@
 
 <h4>Questions - @quiz?.Name</h4>
 
-<div class="mb-3">
-    <strong>Filter by subject:</strong>
-    <a asp-action="Index" asp-route-quizId="@quiz.Id" class="btn btn-sm @(string.IsNullOrEmpty(subject) ? "btn-primary" : "btn-outline-primary")">All</a>
-    <a asp-action="Index" asp-route-quizId="@quiz.Id" asp-route-subject="English" class="btn btn-sm @(subject == "English" ? "btn-primary" : "btn-outline-primary")">English</a>
-    <a asp-action="Index" asp-route-quizId="@quiz.Id" asp-route-subject="Bangla" class="btn btn-sm @(subject == "Bangla" ? "btn-primary" : "btn-outline-primary")">Bangla</a>
-    <a asp-action="Index" asp-route-quizId="@quiz.Id" asp-route-subject="Math" class="btn btn-sm @(subject == "Math" ? "btn-primary" : "btn-outline-primary")">Math</a>
-</div>
+<form asp-action="Index" method="get" class="mb-3 d-flex align-items-center">
+    <input type="hidden" name="quizId" value="@quiz?.Id" />
+    <strong class="me-2">Filter by subject:</strong>
+    <select name="subject" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+        <option value="" selected="@(string.IsNullOrEmpty(subject))">All</option>
+        @{
+            var subjects = ViewBag.Subjects as List<QuizSystemModel.Models.Subject>;
+            if (subjects != null)
+            {
+                foreach (var subj in subjects)
+                {
+                    <option value="@subj.Name" selected="@(subject == subj.Name)">@subj.Name</option>
+                }
+            }
+        }
+    </select>
+</form>
 <div class="alert alert-info py-2">
     <div class="row">
         <div class="col-md-3"><strong>Quiz Total Marks:</strong> @quiz?.TotalMarks</div>

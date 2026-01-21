@@ -12,15 +12,18 @@ namespace SmartQuizAssessmentSystem.Controllers
     {
         private readonly IQuestionService _questionService;
         private readonly IQuizService _quizService;
+        private readonly ISubjectService _subjectService;
         private readonly UserManager<QuizSystemUser> _userManager;
 
         public QuestionController(
             IQuestionService questionService,
             IQuizService quizService,
+            ISubjectService subjectService,
             UserManager<QuizSystemUser> userManager)
         {
             _questionService = questionService;
             _quizService = quizService;
+            _subjectService = subjectService;
             _userManager = userManager;
         }
 
@@ -29,8 +32,13 @@ namespace SmartQuizAssessmentSystem.Controllers
             var quiz = await _quizService.GetEntityAsync(quizId);
             if (quiz == null) return NotFound();
 
+            // Get all active subjects from database
+            var subjects = await _subjectService.GetAllAsync();
+            var activeSubjects = subjects.Where(s => s.Status == QuizSystemModel.BusinessRules.ModelStatus.Active).ToList();
+
             ViewBag.Quiz = quiz;
             ViewBag.Subject = subject;
+            ViewBag.Subjects = activeSubjects;
 
             var questions = await _questionService.GetByQuizAsync(quizId, subject);
             return View(questions); 
