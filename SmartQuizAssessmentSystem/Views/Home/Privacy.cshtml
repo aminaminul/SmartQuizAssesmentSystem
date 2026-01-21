@@ -1,36 +1,120 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout_Public.cshtml";
+    Layout = User.Identity != null && User.Identity.IsAuthenticated ? "~/Views/Shared/_Layout.cshtml" : "~/Views/Shared/_Layout_Public.cshtml";
     ViewData["Title"] = "Privacy Policy";
 }
 
-<h1 class="mb-3">@ViewData["Title"]</h1>
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <div class="d-inline-block bg-primary bg-opacity-10 text-primary px-4 py-2 rounded-pill fw-bold mb-3 shadow-sm">
+            <i class="fas fa-user-shield me-2"></i> Trust & Transparency
+        </div>
+        <h1 class="display-5 fw-bold text-dark">Privacy Policy</h1>
+        <p class="text-muted lead mx-auto" style="max-width: 700px;">
+            At <span class="text-primary fw-bold">Quiz Management</span>, we treat your data with the highest level of security and respect. Learn how we handle your information.
+        </p>
+        <div class="text-muted small mt-2">
+            <i class="far fa-calendar-alt me-1"></i> Last Updated: January 2026
+        </div>
+    </div>
 
-<h4>1. What we store</h4>
-<ul>
-    <li>Your account information (name, email, username, role).</li>
-    <li>Your quiz activity (attempts, answers, scores).</li>
-</ul>
+    <!-- Content Cards -->
+    <div class="row g-4 justify-content-center">
+        <!-- Section 1 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-box bg-primary bg-opacity-10 text-primary mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 18px;">
+                        <i class="fas fa-database fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">What We Store</h5>
+                    <ul class="list-unstyled text-muted mb-0 text-start">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Account details (Name, Email)</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Username & Role preferences</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Quiz attempts and scores</li>
+                        <li class="mb-0"><i class="fas fa-check-circle text-success me-2"></i> Feedback and answers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-<h4>2. Why we store it</h4>
-<ul>
-    <li>To let you log in and use the quiz system.</li>
-    <li>To run quizzes and show you your results and history.</li>
-</ul>
+        <!-- Section 2 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-box bg-warning bg-opacity-10 text-warning mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 18px;">
+                        <i class="fas fa-chart-line fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Why We Need It</h5>
+                    <ul class="list-unstyled text-muted mb-0 text-start">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> To provide personalized access</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> To track educational progress</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> To generate performance reports</li>
+                        <li class="mb-0"><i class="fas fa-check-circle text-success me-2"></i> To ensure system integrity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-<h4>3. Who can see it</h4>
-<ul>
-    <li>Admins see data needed to manage users and quizzes.</li>
-    <li>Instructors see quiz data and results for their students.</li>
-    <li>Students see only their own profile and quiz results.</li>
-</ul>
+        <!-- Section 3 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-box bg-info bg-opacity-10 text-info mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 18px;">
+                        <i class="fas fa-eye fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Data Visibility</h5>
+                    <ul class="list-unstyled text-muted mb-0 text-start">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Admins: System management</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Instructors: Student results</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Students: Personal records</li>
+                        <li class="mb-0"><i class="fas fa-check-circle text-success me-2"></i> No third-party data selling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h4>4. Security</h4>
-<ul>
-    <li>Your data is stored in this system’s database and protected by login.</li>
-    <li>Keep your password secret and do not share your account.</li>
-</ul>
+    <!-- Security & Cookies Section -->
+    <div class="mt-5">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-6">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100 border-start border-primary border-4">
+                    <h5 class="fw-bold d-flex align-items-center mb-3">
+                        <i class="fas fa-lock text-primary me-2"></i> Security First
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Your data is stored in our secure database and protected by industry-standard encryption. We recommend choosing a strong, unique password and keeping your account credentials confidential at all times.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100 border-start border-warning border-4">
+                    <h5 class="fw-bold d-flex align-items-center mb-3">
+                        <i class="fas fa-cookie-bite text-warning me-2"></i> Cookie Usage
+                    </h5>
+                    <p class="text-muted mb-0">
+                        We use essential session cookies to keep you logged in and improve your navigation experience. These cookies are temporary and expire when you close your browser or log out.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h4>5. Cookies</h4>
-<ul>
-    <li>We may use cookies or sessions to keep you logged in.</li>
-</ul>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    .icon-box {
+        transition: all 0.3s ease;
+    }
+    .card:hover .icon-box {
+        transform: scale(1.1);
+    }
+</style>

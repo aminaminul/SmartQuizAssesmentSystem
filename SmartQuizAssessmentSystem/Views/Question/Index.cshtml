@@ -3,67 +3,177 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var quiz = ViewBag.Quiz as QuizSystemModel.Models.Quiz;
     string subject = ViewBag.Subject as string;
-    ViewData["Title"] = "Questions for " + quiz?.Name;
+    ViewData["Title"] = "Questions - " + quiz?.Name;
+    
+    var currentMarks = Model.Sum(x => x.Marks);
+    var isOverMarks = currentMarks > (quiz?.TotalMarks ?? 0);
 }
 
-<h4>Questions - @quiz?.Name</h4>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <!-- Header Card -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
+                <div class="card-header bg-primary text-white p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-1 fw-bold">@quiz?.Name</h3>
+                            <p class="mb-0 opacity-75"><i class="fas fa-list-ol me-1"></i> Question Management</p>
+                        </div>
+                        <a asp-controller="Quiz" asp-action="Index" class="btn btn-light btn-sm rounded-pill px-3 fw-bold text-primary shadow-sm">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-body bg-light border-bottom p-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                <div class="text-muted small fw-bold text-uppercase mb-1">Total Marks</div>
+                                <div class="h4 mb-0 fw-bold text-primary">@quiz?.TotalMarks</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                <div class="text-muted small fw-bold text-uppercase mb-1">Questions</div>
+                                <div class="h4 mb-0 fw-bold">@Model.Count()</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 bg-white rounded-3 shadow-sm text-center border-bottom border-3 @(isOverMarks ? "border-danger" : "border-success")">
+                                <div class="text-muted small fw-bold text-uppercase mb-1">Marks Assigned</div>
+                                <div class="h4 mb-0 fw-bold @(isOverMarks ? "text-danger" : "text-success")">@currentMarks</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                <div class="text-muted small fw-bold text-uppercase mb-1">Neg. Marking</div>
+                                <div class="h4 mb-0 fw-bold text-warning">@quiz?.NegativeMarking</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<form asp-action="Index" method="get" class="mb-3 d-flex align-items-center">
-    <input type="hidden" name="quizId" value="@quiz?.Id" />
-    <strong class="me-2">Filter by subject:</strong>
-    <select name="subject" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
-        <option value="" selected="@(string.IsNullOrEmpty(subject))">All</option>
-        @{
-            var subjects = ViewBag.Subjects as List<QuizSystemModel.Models.Subject>;
-            if (subjects != null)
-            {
-                foreach (var subj in subjects)
+                <div class="card-body bg-white p-4 d-flex flex-wrap gap-3 align-items-center">
+                    <form asp-action="Index" method="get" class="d-flex align-items-center flex-grow-1">
+                        <input type="hidden" name="quizId" value="@quiz?.Id" />
+                        <div class="input-group input-group-sm" style="max-width: 300px;">
+                            <label class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-filter me-1"></i> Subject</label>
+                            <select name="subject" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                                <option value="" selected="@(string.IsNullOrEmpty(subject))">All Subjects</option>
+                                @{
+                                    var subjects = ViewBag.Subjects as List<QuizSystemModel.Models.Subject>;
+                                    if (subjects != null)
+                                    {
+                                        foreach (var subj in subjects)
+                                        {
+                                            <option value="@subj.Name" selected="@(subject == subj.Name)">@subj.Name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </form>
+
+                    <div class="ms-auto">
+                        <a asp-action="Create" asp-route-quizId="@quiz?.Id" asp-route-subject="@subject" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                            <i class="fas fa-plus me-2"></i> Add New Question
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions List (Centered Cards) -->
+            <div class="questions-container">
+                @if (!Model.Any())
                 {
-                    <option value="@subj.Name" selected="@(subject == subj.Name)">@subj.Name</option>
+                    <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
+                        <i class="fas fa-question-circle fa-4x text-light mb-3"></i>
+                        <h4 class="text-muted">No questions found for this quiz.</h4>
+                        <p class="text-muted">Click the button above to start adding questions.</p>
+                    </div>
                 }
-            }
-        }
-    </select>
-</form>
-<div class="alert alert-info py-2">
-    <div class="row">
-        <div class="col-md-3"><strong>Quiz Total Marks:</strong> @quiz?.TotalMarks</div>
-        <div class="col-md-3"><strong>Questions Added:</strong> @Model.Count()</div>
-        <div class="col-md-3"><strong>Marks Assigned:</strong> <span class="@(Model.Sum(x => x.Marks) > quiz?.TotalMarks ? "text-danger" : "")">@Model.Sum(x => x.Marks)</span></div>
-        <div class="col-md-3"><strong>Negative Marking:</strong> @quiz?.NegativeMarking</div>
+                else
+                {
+                    int counter = 1;
+                    foreach (var q in Model)
+                    {
+                        <div class="card shadow-sm border-0 rounded-4 mb-4 question-card hover-actions">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold me-3">
+                                            Q @(counter++)
+                                        </span>
+                                        <span class="badge bg-light text-muted border px-2 py-1 small rounded-3">@q.Subject</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fw-bold text-dark fs-5">@q.Marks Marks</div>
+                                        <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Correct: @q.RightOption</div>
+                                    </div>
+                                </div>
+                                
+                                <h5 class="fw-bold mb-4 text-dark lh-base">@q.QuestionText</h5>
+
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <div class="p-2 px-3 rounded-3 bg-light border-start border-3 @(q.RightOption == "A" ? "border-success bg-success bg-opacity-10" : "border-light")">
+                                            <span class="fw-bold me-2">A.</span> @q.OptionA
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 px-3 rounded-3 bg-light border-start border-3 @(q.RightOption == "B" ? "border-success bg-success bg-opacity-10" : "border-light")">
+                                            <span class="fw-bold me-2">B.</span> @q.OptionB
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 px-3 rounded-3 bg-light border-start border-3 @(q.RightOption == "C" ? "border-success bg-success bg-opacity-10" : "border-light")">
+                                            <span class="fw-bold me-2">C.</span> @q.OptionC
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 px-3 rounded-3 bg-light border-start border-3 @(q.RightOption == "D" ? "border-success bg-success bg-opacity-10" : "border-light")">
+                                            <span class="fw-bold me-2">D.</span> @q.OptionD
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2 action-buttons">
+                                    <a asp-action="Edit" asp-route-id="@q.Id" class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@q.Id" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
     </div>
 </div>
 
-<p>
-    <a asp-action="Create" asp-route-quizId="@quiz.Id" asp-route-subject="@subject" class="btn btn-primary">
-        Add Question
-    </a>
-</p>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Subject</th>
-            <th>Question</th>
-            <th>Marks</th>
-            <th>Right Option</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var q in Model)
-        {
-            <tr>
-                <td>@q.Subject</td>
-                <td>@q.QuestionText</td>
-                <td>@q.Marks</td>
-                <td>@q.RightOption</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@q.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@q.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<a asp-controller="Quiz" asp-action="Index" class="btn btn-secondary">Back to Quizzes</a>
+<style>
+    .question-card {
+        transition: all 0.2s ease;
+        border-left: 4px solid transparent !important;
+    }
+    .question-card:hover {
+        transform: translateX(5px);
+        border-left-color: #ffc107 !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    }
+    .action-buttons .btn {
+        opacity: 0.7;
+        transition: all 0.2s ease;
+    }
+    .question-card:hover .action-buttons .btn {
+        opacity: 1;
+    }
+    .bg-success-subtle {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+</style>

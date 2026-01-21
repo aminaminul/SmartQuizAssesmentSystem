@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using QuizSystemModel.Models;
+using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
@@ -8,14 +11,50 @@ namespace SmartQuizAssessmentSystem.Controllers
     public class AdminDashboardController : Controller
     {
         private readonly IAdminDashboardService _dashboardService;
-        private readonly Microsoft.AspNetCore.Identity.UserManager<QuizSystemModel.Models.QuizSystemUser> _userManager;
+        private readonly UserManager<QuizSystemUser> _userManager;
 
         public AdminDashboardController(
             IAdminDashboardService dashboardService,
-            Microsoft.AspNetCore.Identity.UserManager<QuizSystemModel.Models.QuizSystemUser> userManager)
+            UserManager<QuizSystemUser> userManager)
         {
             _dashboardService = dashboardService;
             _userManager = userManager;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+            
+            var model = new ChangePasswordViewModel
+            {
+                Email = user.Email
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Password updated successfully";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return View(model);
         }
 
         public async Task<IActionResult> Dashboard()
@@ -30,7 +69,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account");
 
-            var model = new QuizSystemModel.ViewModels.AdminProfileViewModel
+            var model = new AdminProfileViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -43,7 +82,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Profile(QuizSystemModel.ViewModels.AdminProfileViewModel model)
+        public async Task<IActionResult> Profile(AdminProfileViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 

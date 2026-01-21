@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 
     <style>
@@ -33,8 +34,8 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
             <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <span>Quiz Management System</span>
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <span>Quiz <span class="text-primary">Management</span></span>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -50,24 +51,18 @@
                         </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="AdminDashboard" asp-action="Dashboard">Admin Dashboard</a>
-                                </li>
-                            }
-                            else if (User.IsInRole("Instructor"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="InstructorDashboard" asp-action="Dashboard">Instructor Dashboard</a>
-                                </li>
-                            }
-                            else if (User.IsInRole("Student"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="StudentDashboard" asp-action="Dashboard">Student Dashboard</a>
-                                </li>
-                            }
+                            string dashboardController = "StudentDashboard";
+                            string dashboardTitle = "Go to Dashboard";
+                            
+                            if (User.IsInRole("Admin")) { dashboardController = "AdminDashboard"; }
+                            else if (User.IsInRole("Instructor")) { dashboardController = "InstructorDashboard"; }
+
+                            <li class="nav-item ms-lg-3">
+                                <a class="nav-link btn btn-primary text-white px-3 rounded-pill shadow-sm py-1 mt-1" 
+                                   asp-controller="@dashboardController" asp-action="Dashboard">
+                                    <i class="fas fa-th-large me-1"></i> @dashboardTitle
+                                </a>
+                            </li>
                         }
                     </ul>
 

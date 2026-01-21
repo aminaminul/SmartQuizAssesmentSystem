@@ -6,57 +6,125 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Update Student Profile</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <div class="d-inline-block bg-success bg-opacity-10 text-success px-4 py-2 rounded-pill fw-bold mb-3 shadow-sm">
+                    <i class="fas fa-user-edit me-2"></i> Profile Modification
+                </div>
+                <h1 class="display-6 fw-bold text-dark">Edit Student Profile</h1>
+                <p class="text-muted lead">Update your academic and personal information. Note that academic changes require Admin approval.</p>
+            </div>
 
-<form asp-action="UpdateProfile" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="StudentId" />
-    <input type="hidden" asp-for="UserId" />
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-success py-3">
+                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-graduation-cap me-2"></i> My Academic Identity</h5>
+                </div>
+                <div class="card-body p-5 bg-white">
+                    <form asp-action="UpdateProfile" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="StudentId" />
+                        <input type="hidden" asp-for="UserId" />
 
-    <div class="mb-3">
-        <label asp-for="FirstName" class="form-label"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <div class="row g-4">
+                            <!-- Basic Information -->
+                            <div class="col-12">
+                                <h6 class="text-success text-uppercase small fw-bold mb-3 border-bottom pb-2">Basic Information</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-user text-muted"></i></span>
+                                    <input asp-for="FirstName" class="form-control border-0 py-2" placeholder="First Name" />
+                                </div>
+                                <span asp-validation-for="FirstName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-user text-muted"></i></span>
+                                    <input asp-for="LastName" class="form-control border-0 py-2" placeholder="Last Name" />
+                                </div>
+                                <span asp-validation-for="LastName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus text-muted bg-light bg-opacity-50">
+                                    <span class="input-group-text bg-transparent border-0"><i class="fas fa-envelope opacity-50"></i></span>
+                                    <input asp-for="Email" class="form-control border-0 py-2 bg-transparent" readonly />
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">Primary email cannot be updated by student.</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-phone text-muted"></i></span>
+                                    <input asp-for="PhoneNumber" class="form-control border-0 py-2" placeholder="Phone Number" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Enrollment Details -->
+                            <div class="col-12 mt-5">
+                                <h6 class="text-primary text-uppercase small fw-bold mb-3 border-bottom pb-2">Enrollment & Academic Info</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="EducationMediumId" class="form-label fw-bold"></label>
+                                <select asp-for="EducationMediumId" asp-items="ViewBag.EducationMediumId" class="form-select py-2 border rounded-3 shadow-sm transition-focus">
+                                    <option value="">-- Select Education Medium --</option>
+                                </select>
+                                <span asp-validation-for="EducationMediumId" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ClassId" class="form-label fw-bold"></label>
+                                <select asp-for="ClassId" asp-items="ViewBag.ClassId" class="form-select py-2 border rounded-3 shadow-sm transition-focus">
+                                    <option value="">-- Select Class --</option>
+                                </select>
+                                <span asp-validation-for="ClassId" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="col-12 mt-5">
+                                <div class="d-flex gap-3 pt-3 border-top">
+                                    <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm">
+                                        <i class="fas fa-save me-2"></i> Submit Update
+                                    </button>
+                                    <a asp-action="ViewProfile" class="btn btn-light px-4 py-2 rounded-pill border fw-bold text-muted">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="LastName" class="form-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
+<style>
+    .transition-focus {
+        transition: all 0.3s ease;
+    }
+    .transition-focus:focus-within {
+        border-color: #198754 !important;
+        box-shadow: 0 0 10px rgba(25, 135, 84, 0.1) !important;
+    }
+    .form-label {
+        color: #475569;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="PhoneNumber" class="form-label"></label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="EducationMediumId" class="form-label"></label>
-        <select asp-for="EducationMediumId"
-                asp-items="ViewBag.EducationMediumId"
-                class="form-select">
-            <option value="">-- Select Education Medium --</option>
-        </select>
-        <span asp-validation-for="EducationMediumId" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="ClassId" class="form-label"></label>
-        <select asp-for="ClassId"
-                asp-items="ViewBag.ClassId"
-                class="form-select">
-            <option value="">-- Select Class --</option>
-        </select>
-        <span asp-validation-for="ClassId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit Request</button>
-    <a asp-action="ViewProfile" class="btn btn-secondary ms-2">Cancel</a>
-</form>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

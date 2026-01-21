@@ -6,75 +6,151 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Update Instructor Profile</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <div class="d-inline-block bg-info bg-opacity-10 text-info px-4 py-2 rounded-pill fw-bold mb-3 shadow-sm">
+                    <i class="fas fa-edit me-2"></i> Profile Update Request
+                </div>
+                <h1 class="display-6 fw-bold text-dark">Edit My Profile</h1>
+                <p class="text-muted lead">Update your information. Note that some changes may require administrator approval.</p>
+            </div>
 
-<form asp-action="UpdateProfile" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="InstructorId" />
-    <input type="hidden" asp-for="UserId" />
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-info py-3">
+                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-info-circle me-2"></i> Professional Information</h5>
+                </div>
+                <div class="card-body p-5 bg-white">
+                    <form asp-action="UpdateProfile" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="InstructorId" />
+                        <input type="hidden" asp-for="UserId" />
 
-    <div class="mb-3">
-        <label asp-for="FirstName" class="form-label"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <div class="row g-4">
+                            <!-- Personal Details Section -->
+                            <div class="col-12">
+                                <h6 class="text-primary text-uppercase small fw-bold mb-3 border-bottom pb-2">Personal Details</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-user text-muted"></i></span>
+                                    <input asp-for="FirstName" class="form-control border-0 py-2" placeholder="Enter first name" />
+                                </div>
+                                <span asp-validation-for="FirstName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-user text-muted"></i></span>
+                                    <input asp-for="LastName" class="form-control border-0 py-2" placeholder="Enter last name" />
+                                </div>
+                                <span asp-validation-for="LastName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-envelope text-muted"></i></span>
+                                    <input asp-for="Email" class="form-control border-0 py-2" placeholder="example@email.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-phone text-muted"></i></span>
+                                    <input asp-for="PhoneNumber" class="form-control border-0 py-2" placeholder="e.g., +1234567890" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Academic Credentials Section -->
+                            <div class="col-12 mt-5">
+                                <h6 class="text-warning text-uppercase small fw-bold mb-3 border-bottom pb-2">Academic Credentials (HSC Level)</h6>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="HscPassingInstitute" class="form-label fw-bold"></label>
+                                <div class="input-group border rounded-3 overflow-hidden transition-focus">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-university text-muted"></i></span>
+                                    <input asp-for="HscPassingInstitute" class="form-control border-0 py-2" placeholder="Name of Institute" />
+                                </div>
+                                <span asp-validation-for="HscPassingInstitute" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="HscPassingYear" class="form-label fw-bold"></label>
+                                <input asp-for="HscPassingYear" class="form-control py-2 border rounded-3 shadow-sm" placeholder="YYYY" />
+                                <span asp-validation-for="HscPassingYear" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="HscGrade" class="form-label fw-bold"></label>
+                                <input asp-for="HscGrade" class="form-control py-2 border rounded-3 shadow-sm" placeholder="GPA / Grade" />
+                                <span asp-validation-for="HscGrade" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Assignment Section -->
+                            <div class="col-12 mt-5">
+                                <h6 class="text-success text-uppercase small fw-bold mb-3 border-bottom pb-2">Assignment Details</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="EducationMediumId" class="form-label fw-bold"></label>
+                                <select asp-for="EducationMediumId" asp-items="ViewBag.EducationMediumId" class="form-select py-2 border rounded-3 shadow-sm">
+                                    <option value="">-- Select Education Medium --</option>
+                                </select>
+                                <span asp-validation-for="EducationMediumId" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ClassId" class="form-label fw-bold"></label>
+                                <select asp-for="ClassId" asp-items="ViewBag.ClassId" class="form-select py-2 border rounded-3 shadow-sm">
+                                    <option value="">-- Select Class --</option>
+                                </select>
+                                <span asp-validation-for="ClassId" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12 mt-5">
+                                <div class="d-flex gap-3 pt-3 border-top">
+                                    <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill fw-bold shadow-sm">
+                                        <i class="fas fa-paper-plane me-2"></i> Submit Update Request
+                                    </button>
+                                    <a asp-action="ViewProfile" class="btn btn-light px-4 py-2 rounded-pill border fw-bold text-muted">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="LastName" class="form-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
+<style>
+    .transition-focus {
+        transition: all 0.3s ease;
+    }
+    .transition-focus:focus-within {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.1) !important;
+    }
+    .form-label {
+        color: #475569;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="PhoneNumber" class="form-label"></label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="HscPassingInstitute" class="form-label"></label>
-        <input asp-for="HscPassingInstitute" class="form-control" />
-        <span asp-validation-for="HscPassingInstitute" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="HscPassingYear" class="form-label"></label>
-        <input asp-for="HscPassingYear" class="form-control" />
-        <span asp-validation-for="HscPassingYear" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="HscGrade" class="form-label"></label>
-        <input asp-for="HscGrade" class="form-control" />
-        <span asp-validation-for="HscGrade" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="EducationMediumId" class="form-label"></label>
-        <select asp-for="EducationMediumId"
-                asp-items="ViewBag.EducationMediumId"
-                class="form-select">
-            <option value="">-- Select Education Medium --</option>
-        </select>
-        <span asp-validation-for="EducationMediumId" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="ClassId" class="form-label"></label>
-        <select asp-for="ClassId"
-                asp-items="ViewBag.ClassId"
-                class="form-select">
-            <option value="">-- Select Class --</option>
-        </select>
-        <span asp-validation-for="ClassId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit Request</button>
-    <a asp-action="ViewProfile" class="btn btn-secondary ms-2">Cancel</a>
-</form>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
