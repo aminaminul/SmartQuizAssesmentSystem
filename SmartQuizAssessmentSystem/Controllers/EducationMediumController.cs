@@ -22,16 +22,19 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(long? selectedMediumId)
+        public async Task<IActionResult> Index(long? educationMediumId)
         {
-            var mediums = await _mediumService.GetAllAsync();
-            ViewBag.Mediums = mediums;
-            ViewBag.SelectedMediumId = selectedMediumId;
+            var allMediums = await _mediumService.GetAllAsync();
+            ViewBag.EducationMediumId = new SelectList(allMediums, "Id", "Name", educationMediumId);
+
+            var filteredMediums = await _mediumService.GetAllAsync(educationMediumId);
+            ViewBag.Mediums = filteredMediums;
+            ViewBag.SelectedMediumId = educationMediumId;
 
             var classes = new List<Class>();
-            if (selectedMediumId.HasValue)
+            if (educationMediumId.HasValue)
             {
-                classes = await _mediumService.GetClassesByMediumAsync(selectedMediumId.Value);
+                classes = await _mediumService.GetClassesByMediumAsync(educationMediumId.Value);
             }
             ViewBag.Classes = classes;
 

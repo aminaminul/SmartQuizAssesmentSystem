@@ -14,8 +14,8 @@ namespace QuizSystemService.Services
             _repo = repo;
         }
 
-        public Task<List<Subject>> GetAllAsync(long? classId = null) =>
-            _repo.GetAllAsync(classId);
+        public Task<List<Subject>> GetAllAsync(long? classId = null, long? educationMediumId = null) =>
+            _repo.GetAllAsync(classId, educationMediumId);
 
         public Task<Subject?> GetByIdAsync(long id, bool includeClass = false) =>
             _repo.GetByIdAsync(id, includeClass);

@@ -34,10 +34,11 @@ namespace SmartQuizAssessmentSystem.Controllers
             _instructorService = instructorService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(long? educationMediumId, long? classId, long? subjectId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            var quizzes = await _quizService.GetAllAsync(currentUser);
+            var quizzes = await _quizService.GetAllAsync(currentUser, educationMediumId, classId, subjectId);
+            await PopulateDropdownsAsync(educationMediumId, classId, subjectId);
             return View(quizzes);
         }
 
@@ -61,7 +62,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
 
@@ -75,7 +76,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
         }
@@ -86,7 +87,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             var vm = await _quizService.GetForEditAsync(id);
             if (vm == null) return NotFound();
 
-            await PopulateDropdownsAsync(vm.EducationMediumId, vm.ClassId);
+            await PopulateDropdownsAsync(vm.EducationMediumId, vm.ClassId, vm.SubjectId);
             return View(vm);
         }
 
@@ -97,7 +98,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (id != model.Id) return NotFound();
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
 
@@ -112,7 +113,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
         }
@@ -136,6 +137,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Pending()
         {
             var pendingQuizzes = await _quizService.GetPendingAsync();
@@ -143,6 +145,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id, string redirect = "Index")
         {
@@ -153,6 +156,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id, string redirect = "Index")
         {
@@ -181,7 +185,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             return Json(subjects.Select(s => new { id = s.Id, name = s.Name }));
         }
 
-        private async Task PopulateDropdownsAsync(long? mediumId = null, long? classId = null)
+        private async Task PopulateDropdownsAsync(long? mediumId = null, long? classId = null, long? subjectId = null)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var instructor = await _instructorService.GetByUserIdAsync(currentUser.Id);
@@ -204,7 +208,7 @@ namespace SmartQuizAssessmentSystem.Controllers
                 var mediums = await _mediumService.GetAllAsync();
                 ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);
 
-                if (mediumId.HasValue)
+                if (mediumId.HasValue && mediumId.Value > 0)
                 {
                     var classes = await _classService.GetAllAsync(mediumId.Value);
                     ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
@@ -218,12 +222,12 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (classId.HasValue && classId.Value > 0)
             {
                 var subjects = await _subjectService.GetAllAsync(classId.Value);
-                ViewBag.SubjectId = new SelectList(subjects, "Id", "Name");
+                ViewBag.SubjectId = new SelectList(subjects, "Id", "Name", subjectId);
             }
             else
             {
                 var allSubjects = await _subjectService.GetAllAsync();
-                ViewBag.SubjectId = new SelectList(allSubjects, "Id", "Name");
+                ViewBag.SubjectId = new SelectList(allSubjects, "Id", "Name", subjectId);
             }
         }
     }

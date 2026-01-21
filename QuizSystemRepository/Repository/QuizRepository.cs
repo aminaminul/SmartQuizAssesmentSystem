@@ -15,14 +15,24 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public Task<List<Quiz>> GetAllAsync()
+        public Task<List<Quiz>> GetAllAsync(long? mediumId = null, long? classId = null, long? subjectId = null)
         {
-            return _context.Quiz
+            var query = _context.Quiz
                 .Include(q => q.Subject)
                 .Include(q => q.Class)
                 .Include(q => q.EducationMedium)
-                .Where(q => q.Status != ModelStatus.Deleted)
-                .ToListAsync();
+                .Where(q => q.Status != ModelStatus.Deleted);
+
+            if (mediumId.HasValue)
+                query = query.Where(q => q.EducationMediumId == mediumId.Value);
+
+            if (classId.HasValue)
+                query = query.Where(q => q.ClassId == classId.Value);
+
+            if (subjectId.HasValue)
+                query = query.Where(q => q.SubjectId == subjectId.Value);
+
+            return query.ToListAsync();
         }
 
         public Task<Quiz?> GetByIdAsync(long id, bool includeQuestions = false)

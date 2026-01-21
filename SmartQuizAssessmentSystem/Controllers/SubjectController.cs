@@ -44,12 +44,16 @@ namespace SmartQuizAssessmentSystem.Controllers
 
 
         
-        public async Task<IActionResult> Index(long? classId)
+        public async Task<IActionResult> Index(long? educationMediumId, long? classId)
         {
-            var subjects = await _subjectService.GetAllAsync(classId);
-            var classes = await _classService.GetAllAsync();
+            var subjects = await _subjectService.GetAllAsync(classId, educationMediumId);
+            
+            var mediums = await _mediumService.GetAllAsync();
+            ViewBag.EducationMediumId = new SelectList(mediums ?? new List<EducationMedium>(), "Id", "Name", educationMediumId);
 
+            var classes = await _classService.GetAllAsync(educationMediumId);
             ViewBag.ClassId = new SelectList(classes ?? new List<Class>(), "Id", "Name", classId);
+
             return View(subjects ?? new List<Subject>());
         }
 

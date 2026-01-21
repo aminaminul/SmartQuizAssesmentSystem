@@ -7,6 +7,29 @@
 
 <h2>All Classes</h2>
 
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="get" asp-action="Classes" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label for="educationMediumId" class="form-label fw-bold">Education Medium</label>
+                <select id="educationMediumId" name="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
+                    <option value="">-- All Mediums --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i> Filter
+                    </button>
+                    <a asp-action="Classes" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-undo me-1"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <table class="table table-bordered table-striped">
     <thead>
         <tr>

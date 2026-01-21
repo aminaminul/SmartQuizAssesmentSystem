@@ -7,10 +7,99 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4>Quizzes</h4>
     <div class="d-flex gap-2">
-        <a asp-action="Pending" class="btn btn-warning btn-sm">Pending Approvals</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Pending" class="btn btn-warning btn-sm">Pending Approvals</a>
+        }
         <a asp-action="Create" class="btn btn-primary btn-sm">Create New Quiz</a>
     </div>
 </div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="educationMediumId" class="form-label">Education Medium</label>
+                <select name="educationMediumId" id="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
+                    <option value="">All Mediums</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="classId" class="form-label">Class</label>
+                <select name="classId" id="classId" class="form-select" asp-items="ViewBag.ClassId">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="subjectId" class="form-label">Subject</label>
+                <select name="subjectId" id="subjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                    <option value="">All Subjects</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var mediumDropdown = $('#educationMediumId');
+            var classDropdown = $('#classId');
+            var subjectDropdown = $('#subjectId');
+
+            mediumDropdown.change(function () {
+                var mediumId = $(this).val();
+                classDropdown.empty();
+                classDropdown.append('<option value="">All Classes</option>');
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">All Subjects</option>');
+
+                if (mediumId) {
+                    $.ajax({
+                        url: '@Url.Action("GetClasses", "Quiz")',
+                        type: 'GET',
+                        data: { mediumId: mediumId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                classDropdown.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            classDropdown.change(function () {
+                var classId = $(this).val();
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">All Subjects</option>');
+
+                if (classId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSubjects", "Quiz")',
+                        type: 'GET',
+                        data: { classId: classId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                subjectDropdown.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
 
 <table class="table table-bordered">
     <thead>
@@ -58,17 +147,20 @@
                     <a asp-action="Edit" asp-route-id="@q.Id" class="btn btn-sm btn-warning">Edit</a>
                     <a asp-action="Delete" asp-route-id="@q.Id" class="btn btn-sm btn-danger">Delete</a>
 
-                    @if (!q.IsApproved)
+                    @if (User.IsInRole("Admin"))
                     {
-                        <form asp-action="Approve" asp-route-id="@q.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <form asp-action="Reject" asp-route-id="@q.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
-                        </form>
+                        @if (!q.IsApproved)
+                        {
+                            <form asp-action="Approve" asp-route-id="@q.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Reject" asp-route-id="@q.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
+                            </form>
+                        }
                     }
 
                     <a asp-controller="Question" asp-action="Index" asp-route-quizId="@q.Id" class="btn btn-sm btn-outline-primary">

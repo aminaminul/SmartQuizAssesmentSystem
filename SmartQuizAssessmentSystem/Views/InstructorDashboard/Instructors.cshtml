@@ -7,6 +7,35 @@
 
 <h2>All Teachers</h2>
 
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="get" asp-action="Instructors" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="educationMediumId" class="form-label fw-bold">Education Medium</label>
+                <select id="educationMediumId" name="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
+                    <option value="">-- All Mediums --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="classId" class="form-label fw-bold">Class</label>
+                <select id="classId" name="classId" class="form-select" asp-items="ViewBag.ClassId">
+                    <option value="">-- All Classes --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i> Filter
+                    </button>
+                    <a asp-action="Instructors" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-undo me-1"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -34,3 +63,26 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#educationMediumId').change(function () {
+                var mediumId = $(this).val();
+                var classSelect = $('#classId');
+                
+                classSelect.empty();
+                classSelect.append('<option value="">-- All Classes --</option>');
+
+                if (mediumId) {
+                    $.getJSON('@Url.Action("GetClassesByMedium", "InstructorDashboard")', { mediumId: mediumId }, function (data) {
+                        $.each(data, function (index, item) {
+                            classSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

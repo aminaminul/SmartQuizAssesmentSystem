@@ -4,7 +4,7 @@ namespace QuizSystemService.Interfaces
 {
     public interface IEducationMediumService
     {
-        Task<List<EducationMedium>> GetAllAsync();
+        Task<List<EducationMedium>> GetAllAsync(long? id = null);
         Task<EducationMedium?> GetByIdAsync(long id);
         Task<bool> CreateAsync(EducationMedium model, QuizSystemUser currentUser);
         Task<bool> UpdateAsync(long id, EducationMedium model);

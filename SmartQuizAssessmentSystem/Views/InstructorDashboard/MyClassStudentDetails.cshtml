@@ -1,0 +1,81 @@
+@model QuizSystemModel.Models.Student
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Student Details";
+}
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="MyClassStudents">My Class Students</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Student Details</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Student Profile</h4>
+                <a asp-action="EditStudent" asp-route-id="@Model.Id" class="btn btn-warning btn-sm text-white">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Full Name</label>
+                        <p class="h5">@Model.FirstName @Model.LastName</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Status</label>
+                        <p>
+                            @if (Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active)
+                            {
+                                <span class="badge rounded-pill bg-success px-3">Active</span>
+                            }
+                            else if (Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Pending)
+                            {
+                                <span class="badge rounded-pill bg-warning text-dark px-3">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill bg-danger px-3">@Model.Status</span>
+                            }
+                        </p>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Email Address</label>
+                        <p class="h6">@Model.Email</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold d-block mb-1">Phone Number</label>
+                        <p class="h6">@Model.PhoneNumber</p>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <div class="bg-light p-3 rounded-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="text-muted small text-uppercase fw-bold d-block mb-1">Education Medium</label>
+                                    <p class="mb-md-0">@Model.EducationMedium?.Name</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="text-muted small text-uppercase fw-bold d-block mb-1">Assigned Class</label>
+                                    <p class="mb-0">@Model.Class?.Name</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 d-flex gap-2">
+                    <a asp-action="MyClassStudents" class="btn btn-outline-secondary px-4">
+                        <i class="fas fa-arrow-left me-1"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

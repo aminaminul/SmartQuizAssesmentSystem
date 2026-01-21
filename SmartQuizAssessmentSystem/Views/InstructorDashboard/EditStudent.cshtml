@@ -1,0 +1,87 @@
+@model QuizSystemModel.Models.Student
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit Student";
+}
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="MyClassStudents">My Class Students</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Student</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0">Edit Student Info</h4>
+                <p class="text-muted small mb-0">Updating details for <strong>@Model.FirstName @Model.LastName</strong></p>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditStudent" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label fw-bold"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-bold"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold"></label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="Status" class="form-label fw-bold"></label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="@QuizSystemModel.BusinessRules.ModelStatus.Active">Active</option>
+                                <option value="@QuizSystemModel.BusinessRules.ModelStatus.Pending">Pending</option>
+                                <option value="@QuizSystemModel.BusinessRules.ModelStatus.InActive">In-Active</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border mt-4 mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-lock text-muted me-3 fa-lg"></i>
+                            <div>
+                                <small class="text-muted d-block uppercase-text letter-spacing-1">Academic Track (Locked)</small>
+                                <strong class="text-dark">@ViewBag.MediumName &raquo; @ViewBag.ClassName</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning px-4 text-white">
+                            <i class="fas fa-save me-1"></i> Update Student
+                        </button>
+                        <a asp-action="MyClassStudents" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

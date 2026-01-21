@@ -2,7 +2,7 @@
 
 public interface ISubjectService
 {
-    Task<List<Subject>> GetAllAsync(long? classId = null);
+    Task<List<Subject>> GetAllAsync(long? classId = null, long? educationMediumId = null);
     Task<Subject?> GetByIdAsync(long id, bool includeClass = false);
     Task<bool> CreateAsync(Subject model, QuizSystemUser currentUser);
     Task<bool> UpdateAsync(long id, Subject model, QuizSystemUser currentUser);

@@ -15,7 +15,7 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public Task<List<Student>> GetAllAsync(long? classId = null)
+        public Task<List<Student>> GetAllAsync(long? classId = null, long? educationMediumId = null)
         {
             var query = _context.Student
                 .Include(s => s.EducationMedium)
@@ -25,6 +25,11 @@ namespace QuizSystemRepository.Repositories
             if (classId.HasValue)
             {
                 query = query.Where(s => s.ClassId == classId.Value);
+            }
+
+            if (educationMediumId.HasValue)
+            {
+                query = query.Where(s => s.EducationMediumId == educationMediumId.Value);
             }
 
             return query.ToListAsync();

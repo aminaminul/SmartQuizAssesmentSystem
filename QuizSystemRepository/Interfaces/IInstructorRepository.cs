@@ -4,7 +4,7 @@ namespace QuizSystemModel.Interfaces
 {
     public interface IInstructorRepository
     {
-        Task<List<Instructor>> GetAllAsync();
+        Task<List<Instructor>> GetAllAsync(long? educationMediumId = null, long? classId = null);
         Task<Instructor?> GetByIdAsync(long id);
         Task<bool> EmailExistsAsync(string email, long? excludeId = null);
         Task<bool> PhoneExistsAsync(string phone, long? excludeId = null);

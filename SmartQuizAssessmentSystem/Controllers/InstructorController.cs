@@ -28,9 +28,10 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(long? educationMediumId, long? classId)
         {
-            var instructors = await _instructorService.GetAllAsync();
+            var instructors = await _instructorService.GetAllAsync(educationMediumId, classId);
+            await PopulateDropdownsAsync(educationMediumId, classId);
             return View(instructors);
         }
 

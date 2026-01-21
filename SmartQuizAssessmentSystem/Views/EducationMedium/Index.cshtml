@@ -17,6 +17,23 @@
     </div>
 </div>
 
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="educationMediumId" class="form-label">Education Medium</label>
+                <select name="educationMediumId" id="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
+                    <option value="">All Mediums</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <table class="table table-striped mb-4">
     <thead>
         <tr>
@@ -73,31 +90,6 @@
 </table>
 
 <hr />
-
-<h5>Select Education Medium to view Classes</h5>
-
-<form asp-action="Index" method="get" class="mb-3">
-    <div class="row">
-        <div class="col-md-4">
-            <select name="selectedMediumId" class="form-select">
-                <option value=""> Select Education Medium </option>
-                @foreach (var m in mediums)
-                {
-                    var idLong = (long)m.Id;
-
-                    <option value="@idLong"
-                            selected="@(selectedMediumId.HasValue && selectedMediumId.Value == idLong)">
-                        @m.Name
-                    </option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Show Classes</button>
-        </div>
-    </div>
-</form>
-
 @if (selectedMediumId.HasValue)
 {
     var selectedMedium = mediums.FirstOrDefault(m => (long)m.Id == selectedMediumId.Value);

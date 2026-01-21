@@ -76,6 +76,14 @@
                         <a asp-controller="InstructorDashboard" asp-action="EducationMediums">Education Medium</a>
                         <a asp-controller="InstructorDashboard" asp-action="Classes">Classes</a>
                         <a asp-controller="InstructorDashboard" asp-action="Subjects">Subjects</a>
+                        
+                        <div class="mt-4 ms-2 mb-2">
+                            <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Assigned Classes</small>
+                        </div>
+                        <a asp-controller="InstructorDashboard" asp-action="MyClassStudents">
+                            <i class="fas fa-users-cog me-2"></i> View Students
+                        </a>
+
                         <a asp-controller="InstructorDashboard" asp-action="ViewProfile" class="nav-link">
                             View Profile
                         </a>
@@ -87,7 +95,6 @@
                         <a asp-controller="StudentDashboard" asp-action="Dashboard" class="active">Dashboard</a>
                         <a asp-controller="StudentDashboard" asp-action="AvailableQuizzes">Available Quizzes</a>
                         <a asp-controller="StudentDashboard" asp-action="RecentAttempts">Recent Attempts</a>
-                        <a asp-controller="StudentDashboard" asp-action="AllAttempts">All Attempts</a>
                         <a asp-controller="StudentDashboard" asp-action="ViewProfile" class="nav-link">
                             View Profile
                         </a>

@@ -18,7 +18,7 @@ namespace QuizSystemService.Services
             _instructorRepo = instructorRepo;
         }
 
-        public async Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null) 
+        public async Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null, long? mediumId = null, long? classId = null, long? subjectId = null) 
         {
             if (currentUser != null)
             {
@@ -27,16 +27,17 @@ namespace QuizSystemService.Services
                 {
                     if (instructor.ClassId.HasValue)
                     {
-                        return await _repo.GetByClassAsync(instructor.ClassId.Value);
+                        
+                        mediumId = instructor.EducationMediumId;
+                        classId = instructor.ClassId;
                     }
                     else
                     {
-                        
                         return new List<Quiz>();
                     }
                 }
             }
-            return await _repo.GetAllAsync(); 
+            return await _repo.GetAllAsync(mediumId, classId, subjectId); 
         }
 
         public Task<Quiz?> GetEntityAsync(long id, bool includeQuestions = false) =>

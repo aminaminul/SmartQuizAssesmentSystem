@@ -3,11 +3,32 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Students @(ViewBag.ClassName != null ? $"for Class: {ViewBag.ClassName}" : "")</h2>
     <div>
-        @if (ViewBag.SelectedClassId != null)
-        {
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm me-2">Clear Filter</a>
-        }
         <a asp-action="Create" class="btn btn-primary btn-sm">Add New Student</a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Education Medium</label>
+                <select name="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId" onchange="this.form.submit()">
+                    <option value="">All Mediums</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Class</label>
+                <select name="classId" class="form-select" asp-items="ViewBag.ClassId" onchange="this.form.submit()">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                @if (ViewBag.SelectedClassId != null || ViewBag.SelectedMediumId != null)
+                {
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear Filters</a>
+                }
+            </div>
+        </form>
     </div>
 </div>
 <table class="table table-striped">

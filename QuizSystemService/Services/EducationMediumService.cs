@@ -18,8 +18,8 @@ namespace QuizSystemService.Services
             _classRepo = classRepo;
         }
 
-        public Task<List<EducationMedium>> GetAllAsync() =>
-            _repo.GetAllAsync();
+        public Task<List<EducationMedium>> GetAllAsync(long? id = null) =>
+            _repo.GetAllAsync(id);
 
         public Task<EducationMedium?> GetByIdAsync(long id) =>
             _repo.GetByIdAsync(id);

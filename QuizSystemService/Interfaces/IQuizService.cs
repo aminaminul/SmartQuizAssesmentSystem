@@ -5,7 +5,7 @@ namespace QuizSystemService.Interfaces
 {
     public interface IQuizService
     {
-        Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null);
+        Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null, long? mediumId = null, long? classId = null, long? subjectId = null);
         Task<Quiz?> GetEntityAsync(long id, bool includeQuestions = false);
         Task<QuizViewModel?> GetForEditAsync(long id);
         Task<bool> CreateAsync(QuizViewModel model, QuizSystemUser currentUser);

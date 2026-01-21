@@ -23,9 +23,9 @@ namespace QuizSystemService.Services
             _roleManager = roleManager;
         }
 
-        public async Task<List<Instructor>> GetAllAsync() 
+        public async Task<List<Instructor>> GetAllAsync(long? educationMediumId = null, long? classId = null) 
         { 
-            return await _repo.GetAllAsync(); 
+            return await _repo.GetAllAsync(educationMediumId, classId); 
         } 
 
         public async Task<Instructor?> GetByIdAsync(long id)

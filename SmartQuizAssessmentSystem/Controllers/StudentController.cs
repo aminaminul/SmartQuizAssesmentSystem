@@ -23,14 +23,20 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index(long? classId)
+        public async Task<IActionResult> Index(long? classId, long? educationMediumId)
         {
-            var students = await _studentService.GetAllAsync(classId);
+            var students = await _studentService.GetAllAsync(classId, educationMediumId);
+            
+            var mediums = await _studentService.GetEducationMediumsAsync();
+            var classes = await _studentService.GetClassesAsync(educationMediumId);
+
+            ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", educationMediumId);
+            ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
             ViewBag.SelectedClassId = classId;
+            ViewBag.SelectedMediumId = educationMediumId;
             
             if (classId.HasValue)
             {
-                var classes = await _studentService.GetClassesAsync();
                 var cls = classes.FirstOrDefault(c => c.Id == classId.Value);
                 ViewBag.ClassName = cls?.Name;
             }

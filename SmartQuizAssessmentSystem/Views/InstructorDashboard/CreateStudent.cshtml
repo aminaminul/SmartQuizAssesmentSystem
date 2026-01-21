@@ -1,0 +1,95 @@
+@model QuizSystemModel.ViewModels.StudentAddViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add Student to My Class";
+}
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="MyClassStudents">My Class Students</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Add Student</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0">Add Student to @ViewBag.ClassName</h4>
+                <p class="text-muted small mb-0">The student will be automatically assigned to your class.</p>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateStudent" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    @* Hidden fields for forced class/medium *@
+                    <input type="hidden" asp-for="EducationMediumId" />
+                    <input type="hidden" asp-for="ClassId" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label fw-bold"></label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-bold"></label>
+                            <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold"></label>
+                            <input asp-for="Email" class="form-control" placeholder="email@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold"></label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="e.g. 017..." />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border mt-4 mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle text-primary me-3 fa-lg"></i>
+                            <div>
+                                <small class="text-muted d-block uppercase-text letter-spacing-1">Assigned Academic Track</small>
+                                <strong class="text-dark">@ViewBag.MediumName &raquo; @ViewBag.ClassName</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 mb-3 pb-2 border-bottom">Login Credentials</h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-bold"></label>
+                            <input asp-for="Password" type="password" class="form-control" autocomplete="new-password" placeholder="Min 6 characters" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-bold"></label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Repeat password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-user-plus me-1"></i> Register Student
+                        </button>
+                        <a asp-action="MyClassStudents" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
