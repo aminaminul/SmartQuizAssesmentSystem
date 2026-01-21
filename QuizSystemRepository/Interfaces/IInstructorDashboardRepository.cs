@@ -10,5 +10,8 @@ namespace QuizSystemModel.Interfaces
         Task<long> GetClassCountAsync();
         Task<long> GetSubjectCountAsync();
         Task<long> GetQuizCountForInstructorAsync(long instructorUserId);
+        Task<double> GetStudentPerformanceAvgAsync(long instructorUserId);
+        Task<double> GetClassPerformanceAvgAsync(long instructorUserId);
+        Task<double> GetEducationMediumPerformanceAvgAsync(long instructorUserId);
     }
 }

@@ -5,83 +5,97 @@
     ViewData["Title"] = "Edit Instructor";
 }
 
-<h4>Edit Instructor</h4>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-chalkboard-teacher me-2"></i>Edit Instructor</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label fw-bold">First Name</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label fw-bold">Last Name</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
 
-    <div class="mb-3">
-        <label asp-for="FirstName" class="form-label">First Name</label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label fw-bold">Email Address</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PhoneNumber" class="form-label fw-bold">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="HscPassingInstrutute" class="form-label fw-bold">HSC Passing Institute</label>
+                        <input asp-for="HscPassingInstrutute" class="form-control" />
+                        <span asp-validation-for="HscPassingInstrutute" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="HscPassingYear" class="form-label fw-bold">HSC Passing Year</label>
+                        <input asp-for="HscPassingYear" class="form-control" />
+                        <span asp-validation-for="HscPassingYear" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="HscGrade" class="form-label fw-bold">HSC Grade</label>
+                        <input asp-for="HscGrade" class="form-control" />
+                        <span asp-validation-for="HscGrade" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Education Medium</label>
+                        <select name="educationMediumId" class="form-select"
+                                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.EducationMediumId">
+                            <option value="">Select Education Medium</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Class</label>
+                        <select name="classId" class="form-select"
+                                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.ClassId">
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Status" class="form-label fw-bold"></label>
+                        <select asp-for="Status" class="form-select"
+                                asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                        <i class="fas fa-save me-1"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 shadow-sm">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="LastName" class="form-label"> Last Name</label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label">Email Address</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="HscPassingInstrutute" class="form-label">Hsc Passing Instrutute</label>
-        <input asp-for="HscPassingInstrutute" class="form-control" />
-        <span asp-validation-for="HscPassingInstrutute" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="HscPassingYear" class="form-label">Hsc Passing Year</label>
-        <input asp-for="HscPassingYear" class="form-control" />
-        <span asp-validation-for="HscPassingYear" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="HscGrade" class="form-label">Hsc Grade</label>
-        <input asp-for="HscGrade" class="form-control" />
-        <span asp-validation-for="HscGrade" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Education Medium</label>
-        <select name="educationMediumId" class="form-select"
-                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.EducationMediumId">
-            <option value="">Select Education Medium</option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Class</label>
-        <select name="classId" class="form-select"
-                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.ClassId">
-            <option value="">Select Class</option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" class="form-select"
-                asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
+</div>
 
 @section Scripts {
     @{

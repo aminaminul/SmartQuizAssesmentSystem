@@ -6,48 +6,81 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Available Quizzes</h2>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Available Quizzes</h2>
+    </div>
 
-@if (!Model.Any())
-{
-    <p>No quizzes available right now.</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Quiz</th>
-                <th>Subject</th>
-                <th>Duration</th>
-                <th>Marks</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info shadow-sm">
+            <i class="fas fa-info-circle me-2"></i> No quizzes available right now. Check back later!
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach (var quiz in Model)
             {
-                <tr>
-                    <td>@quiz.Name</td>
-                    <td>@quiz.Subject</td>
-                    <td>
-                        @(quiz.Duration.HasValue ? $"{quiz.Duration.Value.TotalMinutes} min" : "-")
-                    </td>
-                    <td>@quiz.TotalMarks</td>
-                    <td>
-                        <form asp-controller="StudentDashboard"
-                              asp-action="StartQuiz"
-                              method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="quizId" value="@quiz.Id" />
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                Start
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                <div class="col">
+                    <div class="card h-100 bg-dark text-white shadow-sm border-0 hover-effect">
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title text-truncate fw-bold mb-0" title="@quiz.Name">@quiz.Name</h5>
+                                <span class="badge bg-primary rounded-pill">@(quiz.Subject?.Name ?? "General")</span>
+                            </div>
+                            
+                            <p class="card-text text-white-50 small flex-grow-1 mb-4">
+                                @if(!string.IsNullOrEmpty(quiz.Description))
+                                {
+                                     @(quiz.Description.Length > 100 ? quiz.Description.Substring(0, 100) + "..." : quiz.Description)
+                                }
+                                else
+                                {
+                                    <span class="fst-italic opacity-50">No description available.</span>
+                                }
+                            </p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between text-white-50 small mb-3 border-top border-secondary pt-3">
+                                    <span><i class="fas fa-clock me-1 text-warning"></i> @(quiz.Duration.HasValue ? $"{quiz.Duration.Value.TotalMinutes} min" : "-")</span>
+                                    <span><i class="fas fa-trophy me-1 text-warning"></i> @quiz.TotalMarks Marks</span>
+                                </div>
+                                
+                                <form asp-controller="StudentDashboard" asp-action="StartQuiz" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="quizId" value="@quiz.Id" />
+                                    <button type="submit" class="btn btn-light w-100 fw-bold btn-hover-grow text-dark">
+                                        Start Quiz <i class="fas fa-arrow-right ms-2"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
-<a asp-controller="StudentDashboard" asp-action="Dashboard" class="btn btn-secondary"> Back to Dashboard</a>
+        </div>
+    }
+    
+    <div class="mt-4">
+        <a asp-controller="StudentDashboard" asp-action="Dashboard" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    .hover-effect {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+    }
+    .btn-hover-grow {
+        transition: transform 0.2s;
+    }
+    .btn-hover-grow:hover {
+        transform: scale(1.02);
+    }
+</style>

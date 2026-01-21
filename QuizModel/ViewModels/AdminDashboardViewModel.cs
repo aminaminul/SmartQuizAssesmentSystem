@@ -15,6 +15,10 @@
         public long PendingInstructors { get; set; }
         public long PendingEducationMediums { get; set; }
         public long PendingProfileUpdates { get; set; }
+
+        public double StudentPerformanceAvg { get; set; }
+        public double ClassPerformanceAvg { get; set; }
+        public double EducationMediumPerformanceAvg { get; set; }
     }
 
 }

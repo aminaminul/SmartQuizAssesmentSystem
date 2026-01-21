@@ -6,58 +6,69 @@
     ViewData["Title"] = "Edit Subject";
 }
 
-<h2>Edit Subject</h2>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Subject</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Name" class="form-label fw-bold"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter subject name" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="col-md-6">
+                        <label asp-for="EducationMedium" class="form-label fw-bold"></label>
+                        <select asp-for="EducationMedium" asp-items="Model.EducationMediumList" class="form-select">
+                            <option value="">Select Education Medium</option>
+                        </select>
+                        <span asp-validation-for="EducationMedium" class="text-danger small"></span>
+                    </div>
 
-    <div class="form-group mb-2">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                    <div class="col-md-6">
+                        <label asp-for="ClassId" class="form-label fw-bold"></label>
+                        <select asp-for="ClassId" asp-items="Model.ClassList" class="form-select">
+                            <option value="">Select Class</option>
+                        </select>
+                        <span asp-validation-for="ClassId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label fw-bold"></label>
+                        <select asp-for="Status" class="form-select"
+                                asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check pt-4">
+                            <input asp-for="IsApproved" class="form-check-input" />
+                            <label asp-for="IsApproved" class="form-check-label fw-bold"></label>
+                            <span asp-validation-for="IsApproved" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                        <i class="fas fa-save me-1"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 shadow-sm">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="form-group mb-2">
-        <label asp-for="EducationMedium"></label>
-        <select asp-for="EducationMedium"
-                asp-items="Model.EducationMediumList"
-                class="form-control">
-            <option value="">Select Education Medium</option>
-        </select>
-        <span asp-validation-for="EducationMedium" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mb-2">
-        <label asp-for="ClassId"></label>
-        <select asp-for="ClassId"
-                asp-items="Model.ClassList"
-                class="form-control">
-            <option value="">Select Class</option>
-        </select>
-        <span asp-validation-for="ClassId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mt-2 form-check">
-        <input asp-for="IsApproved" class="form-check-input" />
-        <label asp-for="IsApproved" class="form-check-label"></label>
-        <span asp-validation-for="IsApproved" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mt-2">
-        <label asp-for="Status"></label>
-        <select asp-for="Status"
-                class="form-control"
-                asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Save</button>
-    <a asp-action="Index" class="btn btn-secondary mt-3">Back to List</a>
-</form>
+</div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

@@ -122,6 +122,67 @@
     </div>
 </div>
 
+
+<hr class="my-5" />
+
+<h2 class="mb-4">Performance Overview</h2>
+
+<div class="row mb-4">
+    @* Student Performance *@
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Student Performance</h5>
+                <p class="card-text display-6 mb-2">@Model.StudentPerformanceAvg.ToString("F1")%</p>
+                <p class="card-text mb-3">
+                    View aggregated student performance and quiz results.
+                </p>
+                <a asp-controller="Performance"
+                   asp-action="Student"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Performance
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* Class Performance *@
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Class Performance</h5>
+                <p class="card-text display-6 mb-2">@Model.ClassPerformanceAvg.ToString("F1")%</p>
+                <p class="card-text mb-3">
+                    Analyze performance metrics across different classes.
+                </p>
+                <a asp-controller="Performance"
+                   asp-action="Class"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Performance
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* Education Medium Performance *@
+    <div class="col-md-4 d-flex">
+        <div class="card text-white bg-dark mb-3 shadow-sm w-100 h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-2">Edu Medium Performance</h5>
+                <p class="card-text display-6 mb-2">@Model.EducationMediumPerformanceAvg.ToString("F1")%</p>
+                <p class="card-text mb-3">
+                    Track performance based on education mediums.
+                </p>
+                <a asp-controller="Performance"
+                   asp-action="EducationMedium"
+                   class="btn btn-light btn-sm mt-auto w-100">
+                    View Performance
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <hr class="my-5" />
 
 <h2 class="mb-4">Pending Approvals</h2>

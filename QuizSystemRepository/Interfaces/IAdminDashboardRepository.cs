@@ -19,6 +19,10 @@
         Task<List<Models.Student>> SearchStudentsAsync(string query);
         Task<List<Models.Quiz>> SearchQuizzesAsync(string query);
         Task<List<Models.Subject>> SearchSubjectsAsync(string query);
+
+        Task<double> GetStudentPerformanceAvgAsync();
+        Task<double> GetClassPerformanceAvgAsync();
+        Task<double> GetEducationMediumPerformanceAvgAsync();
     }
 
 }

@@ -39,7 +39,10 @@ namespace QuizSystemService.Services
                 PendingQuizzes = pending,
                 PendingInstructors = await _repo.GetPendingInstructorCountAsync(),
                 PendingEducationMediums = await _repo.GetPendingEducationMediumCountAsync(),
-                PendingProfileUpdates = await _repo.GetPendingProfileUpdateCountAsync()
+                PendingProfileUpdates = await _repo.GetPendingProfileUpdateCountAsync(),
+                StudentPerformanceAvg = await _repo.GetStudentPerformanceAvgAsync(),
+                ClassPerformanceAvg = await _repo.GetClassPerformanceAvgAsync(),
+                EducationMediumPerformanceAvg = await _repo.GetEducationMediumPerformanceAvgAsync()
             };
         }
 

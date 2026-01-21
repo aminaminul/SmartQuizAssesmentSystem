@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using QuizSystemModel.Models
+@using QuizSystemModel.Interfaces
 @inject UserManager<QuizSystemUser> UserManager
+@inject IAdminDashboardRepository DashboardRepo
 
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
@@ -149,6 +151,15 @@
                 <div class="sidebar-nav">
                     @if (User.IsInRole("Admin"))
                     {
+                        // Fetch counts only for Admin
+                        long pInst = await DashboardRepo.GetPendingInstructorCountAsync();
+                        long pQuiz = await DashboardRepo.GetPendingQuizCountAsync();
+                        long pMed = await DashboardRepo.GetPendingEducationMediumCountAsync();
+                        long pClass = await DashboardRepo.GetPendingClassCountAsync();
+                        long pSub = await DashboardRepo.GetPendingSubjectCountAsync();
+                        long pProf = await DashboardRepo.GetPendingProfileUpdateCountAsync();
+                        long totalPending = pInst + pQuiz + pMed + pClass + pSub + pProf;
+
                         <a asp-controller="AdminDashboard" asp-action="Dashboard" class="@IsActive("AdminDashboard", "Dashboard")">
                             <i class="fas fa-th-large"></i> Dashboard
                         </a>
@@ -170,8 +181,48 @@
                         <a asp-controller="Subject" asp-action="Index" class="@IsActive("Subject")">
                             <i class="fas fa-book-open"></i> Subjects
                         </a>
-                        <a asp-controller="ProfileApproval" asp-action="Pending" class="@IsActive("ProfileApproval")">
-                            <i class="fas fa-user-check"></i> Profile Updates
+                        
+                        <div class="section-label d-flex justify-content-between align-items-center">
+                            Pending Approvals
+                            @if(totalPending > 0) {
+                                <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7em;">@totalPending</span>
+                            }
+                        </div>
+                        
+                        <a asp-controller="Instructor" asp-action="Pending" class="@IsActive("Instructor", "Pending") d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-chalkboard-teacher"></i> Instructors</span>
+                            @if(pInst > 0) { <span class="badge bg-danger rounded-pill">@pInst</span> }
+                        </a>
+                        <a asp-controller="Quiz" asp-action="Pending" class="@IsActive("Quiz", "Pending") d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-tasks"></i> Quizzes</span>
+                            @if(pQuiz > 0) { <span class="badge bg-danger rounded-pill">@pQuiz</span> }
+                        </a>
+                        <a asp-controller="EducationMedium" asp-action="Pending" class="@IsActive("EducationMedium", "Pending") d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-book"></i> Edu Mediums</span>
+                             @if(pMed > 0) { <span class="badge bg-danger rounded-pill">@pMed</span> }
+                        </a>
+                        <a asp-controller="Class" asp-action="Pending" class="@IsActive("Class", "Pending") d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-graduation-cap"></i> Classes</span>
+                             @if(pClass > 0) { <span class="badge bg-danger rounded-pill">@pClass</span> }
+                        </a>
+                        <a asp-controller="Subject" asp-action="Pending" class="@IsActive("Subject", "Pending") d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-book-open"></i> Subjects</span>
+                             @if(pSub > 0) { <span class="badge bg-danger rounded-pill">@pSub</span> }
+                        </a>
+                        <a asp-controller="ProfileApproval" asp-action="Pending" class="@IsActive("ProfileApproval", "Pending") d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user-check"></i> Profile Updates</span>
+                             @if(pProf > 0) { <span class="badge bg-danger rounded-pill">@pProf</span> }
+                        </a>
+
+                        <div class="section-label">Performance Analytics</div>
+                        <a asp-controller="Performance" asp-action="Student" class="@IsActive("Performance", "Student")">
+                            <i class="fas fa-chart-line"></i> Student Performance
+                        </a>
+                        <a asp-controller="Performance" asp-action="Class" class="@IsActive("Performance", "Class")">
+                            <i class="fas fa-chart-bar"></i> Class Performance
+                        </a>
+                        <a asp-controller="Performance" asp-action="EducationMedium" class="@IsActive("Performance", "EducationMedium")">
+                            <i class="fas fa-chart-pie"></i> Medium Performance
                         </a>
                         <a asp-controller="AdminDashboard" asp-action="Profile" class="@IsActive("AdminDashboard", "Profile")">
                             <i class="fas fa-user-circle"></i> My Profile
@@ -206,6 +257,17 @@
                             <i class="fas fa-users-cog"></i> My Class Students
                         </a>
 
+                        <div class="section-label">Performance Analytics</div>
+                        <a asp-controller="Performance" asp-action="Student" class="@IsActive("Performance", "Student")">
+                            <i class="fas fa-chart-line"></i> Student Performance
+                        </a>
+                        <a asp-controller="Performance" asp-action="Class" class="@IsActive("Performance", "Class")">
+                            <i class="fas fa-chart-bar"></i> Class Performance
+                        </a>
+                        <a asp-controller="Performance" asp-action="EducationMedium" class="@IsActive("Performance", "EducationMedium")">
+                            <i class="fas fa-chart-pie"></i> Medium Performance
+                        </a>
+
                         <a asp-controller="InstructorDashboard" asp-action="ViewProfile" class="@IsActive("InstructorDashboard", "ViewProfile")">
                             <i class="fas fa-user-circle"></i> View Profile
                         </a>
@@ -220,6 +282,9 @@
                         </a>
                         <a asp-controller="StudentDashboard" asp-action="RecentAttempts" class="@IsActive("StudentDashboard", "RecentAttempts")">
                             <i class="fas fa-history"></i> Recent Attempts
+                        </a>
+                        <a asp-controller="Performance" asp-action="MyPerformance" class="@IsActive("Performance", "MyPerformance")">
+                            <i class="fas fa-chart-line"></i> My Performance
                         </a>
                         <a asp-controller="StudentDashboard" asp-action="ViewProfile" class="@IsActive("StudentDashboard", "ViewProfile")">
                             <i class="fas fa-user-circle"></i> View Profile

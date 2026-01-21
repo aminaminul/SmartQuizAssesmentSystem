@@ -5,42 +5,51 @@
     ViewData["Title"] = "Subject Details";
 }
 
-<h2>Subject Details</h2>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-book-open me-2"></i>Subject Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-9">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-muted fw-bold">Subject Name</dt>
+                        <dd class="col-sm-9">@Model.Name</dd>
 
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">Name</dt>
-        <dd class="col-sm-10">@Model.Name</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Class</dt>
+                        <dd class="col-sm-9">@Model.Class?.Name</dd>
 
-        <dt class="col-sm-2">Class</dt>
-        <dd class="col-sm-10">@Model.Class?.Name</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Approved</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.IsApproved)
+                            {
+                                <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Pending</span>
+                            }
+                        </dd>
 
-        <dt class="col-sm-2">Approved</dt>
-        <dd class="col-sm-10">@Model.IsApproved</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Status</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge @(Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active ? "bg-success" : "bg-warning") p-2 px-3">
+                                @Model.Status
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
 
-        <dt class="col-sm-2">Status</dt>
-        <dd class="col-sm-10">@Model.Status</dd>
-
-        <dt class="col-sm-2">Created At</dt>
-        <dd class="col-sm-10">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
-
-        <dt class="col-sm-2">Approved At</dt>
-        <dd class="col-sm-10">
-            @(Model.ApprovedAt.HasValue
-                        ? Model.ApprovedAt.Value.ToString("yyyy-MM-dd HH:mm")
-                        : "N/A")
-        </dd>
-
-        <dt class="col-sm-2">Rejected At</dt>
-        <dd class="col-sm-10">
-            @(Model.RejectedAt.HasValue
-                        ? Model.RejectedAt.Value.ToString("yyyy-MM-dd HH:mm")
-                        : "N/A")
-        </dd>
-    </dl>
+            <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary px-4 shadow-sm">
+                    <i class="fas fa-edit me-1"></i> Edit Subject
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4 shadow-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</p>

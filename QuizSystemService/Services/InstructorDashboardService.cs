@@ -29,7 +29,10 @@ namespace QuizSystemService.Services
                 TotalEducationMediums = totalMediums,
                 TotalClasses = totalClasses,
                 TotalSubjects = totalSubjects,
-                TotalQuizzes = totalQuizzesForInstr
+                TotalQuizzes = totalQuizzesForInstr,
+                StudentPerformanceAvg = await _repo.GetStudentPerformanceAvgAsync(instructorUserId),
+                ClassPerformanceAvg = await _repo.GetClassPerformanceAvgAsync(instructorUserId),
+                EducationMediumPerformanceAvg = await _repo.GetEducationMediumPerformanceAvgAsync(instructorUserId)
             };
         }
     }

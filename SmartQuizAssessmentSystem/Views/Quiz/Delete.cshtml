@@ -4,16 +4,49 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Delete Quiz";
 }
-<h2>Delete Quiz</h2>
 
-<h4>Are you sure you want to delete this quiz?</h4>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-danger text-white py-3">
+            <h5 class="mb-0">Delete Quiz</h5>
+        </div>
+        <div class="card-body">
+            <h6 class="text-danger mb-4">Are you sure you want to delete this quiz?</h6>
+            
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-muted fw-bold">Quiz Name</dt>
+                        <dd class="col-sm-9">@Model.Name</dd>
 
-<div class="mb-3">
-    <strong>@Model.Name</strong> (@Model.Subject?.Name)
+                        <dt class="col-sm-3 text-muted fw-bold">Subject</dt>
+                        <dd class="col-sm-9">@Model.Subject?.Name</dd>
+
+                        <dt class="col-sm-3 text-muted fw-bold">Total Marks</dt>
+                        <dd class="col-sm-9">@Model.TotalMarks</dd>
+                        
+                        <dt class="col-sm-3 text-muted fw-bold">Duration</dt>
+                        <dd class="col-sm-9">@(Model.Duration.HasValue ? $"{Model.Duration.Value.TotalMinutes} min" : "-")</dd>
+
+                        <dt class="col-sm-3 text-muted fw-bold">Created At</dt>
+                        <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
+
+                        <dt class="col-sm-3 text-muted fw-bold">Status</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge @(Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active ? "bg-success" : "bg-warning")">
+                                @Model.Status
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger px-4">Delete</button>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4 ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
 </div>
-
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>

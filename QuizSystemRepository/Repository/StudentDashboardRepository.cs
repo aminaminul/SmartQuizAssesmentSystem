@@ -24,6 +24,7 @@ namespace QuizSystemRepository.Repositories
             if (student == null) return new List<Quiz>();
 
             return await _context.Quiz
+                .Include(q => q.Subject)
                 .Where(q => q.Status == ModelStatus.Active
                             && q.IsApproved
                             && q.Questions.Any(ques => ques.Status == ModelStatus.Active)

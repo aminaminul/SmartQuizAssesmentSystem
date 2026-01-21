@@ -29,6 +29,9 @@ namespace QuizSystemService.Services
                 AverageScore = completedAttempts.Count > 0
                     ? completedAttempts.Average(a => a.TotalScore)
                     : 0,
+                AveragePerformancePercentage = completedAttempts.Count > 0
+                    ? completedAttempts.Average(a => a.Quiz.TotalMarks > 0 ? (double)a.TotalScore / a.Quiz.TotalMarks * 100 : 0)
+                    : 0,
                 AvailableQuizzes = availableQuizzes,
                 RecentAttempts = attempts.Take(5).ToList()
             };

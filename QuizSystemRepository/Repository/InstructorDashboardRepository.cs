@@ -54,5 +54,20 @@ namespace QuizSystemRepository.Repositories
             return await _context.Quiz
                 .LongCountAsync(q => q.CreatedBy != null && q.CreatedBy.Id == instructorUserId);
         }
+
+        public async Task<double> GetStudentPerformanceAvgAsync(long instructorUserId)
+        {
+            var attempts = _context.QuizAttempt
+                .Include(a => a.Quiz)
+                .Where(a => a.IsSubmitted && a.Quiz.TotalMarks > 0 && 
+                            a.Quiz.CreatedBy != null && a.Quiz.CreatedBy.Id == instructorUserId);
+
+            if (!await attempts.AnyAsync()) return 0;
+            return await attempts.AverageAsync(a => (double)a.TotalScore / a.Quiz.TotalMarks * 100);
+        }
+
+        public async Task<double> GetClassPerformanceAvgAsync(long instructorUserId) => await GetStudentPerformanceAvgAsync(instructorUserId);
+
+        public async Task<double> GetEducationMediumPerformanceAvgAsync(long instructorUserId) => await GetStudentPerformanceAvgAsync(instructorUserId);
     }
 }

@@ -5,26 +5,45 @@
     ViewData["Title"] = "Student Details";
 }
 
-<h2>Student Details</h2>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Student Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-9">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-muted fw-bold">Full Name</dt>
+                        <dd class="col-sm-9">@Model.FirstName @Model.LastName</dd>
 
-<dl class="row">
-    <dt class="col-sm-3">Name</dt>
-    <dd class="col-sm-9">@($"{Model.FirstName} {Model.LastName}")</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Email</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
 
-    <dt class="col-sm-3">Email</dt>
-    <dd class="col-sm-9">@Model.Email</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Phone Number</dt>
+                        <dd class="col-sm-9">@Model.PhoneNumber</dd>
 
-    <dt class="col-sm-3">Phone</dt>
-    <dd class="col-sm-9">@Model.PhoneNumber</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Education Medium</dt>
+                        <dd class="col-sm-9">@Model.EducationMedium?.Name</dd>
 
-    <dt class="col-sm-3">Education Medium</dt>
-    <dd class="col-sm-9">@Model.EducationMedium?.Name</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Class</dt>
+                        <dd class="col-sm-9">@Model.Class?.Name</dd>
 
-    <dt class="col-sm-3">Class</dt>
-    <dd class="col-sm-9">@Model.Class?.Name</dd>
+                        <dt class="col-sm-3 text-muted fw-bold">Status</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge @(Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active ? "bg-success" : "bg-warning") p-2 px-3">
+                                @Model.Status
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
 
-    <dt class="col-sm-3">Status</dt>
-    <dd class="col-sm-9">@Model.Status</dd>
-</dl>
-
-<a asp-action="Students" class="btn btn-secondary">Back to Students</a>
+            <div class="d-flex gap-2">
+                <a asp-action="Students" class="btn btn-outline-secondary px-4 shadow-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Students
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

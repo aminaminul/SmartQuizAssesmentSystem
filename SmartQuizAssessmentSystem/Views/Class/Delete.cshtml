@@ -5,20 +5,42 @@
     ViewData["Title"] = "Delete Class";
 }
 
-<h4>Delete Class</h4>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-danger text-white py-3">
+            <h5 class="mb-0">Delete Class</h5>
+        </div>
+        <div class="card-body">
+            <h6 class="text-danger mb-4">Are you sure you want to delete this class?</h6>
+            
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-muted fw-bold">Class Name</dt>
+                        <dd class="col-sm-9">@Model.Name</dd>
 
-<h5>Are you sure you want to delete this?</h5>
+                        <dt class="col-sm-3 text-muted fw-bold">Education Medium</dt>
+                        <dd class="col-sm-9">@Model.EducationMedium?.Name</dd>
 
-<div class="mb-3">
-    <strong>Name:</strong> @Model.Name
+                        <dt class="col-sm-3 text-muted fw-bold">Approved</dt>
+                        <dd class="col-sm-9">@(Model.IsApproved ? "Yes" : "No")</dd>
+
+                        <dt class="col-sm-3 text-muted fw-bold">Status</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge @(Model.Status == QuizSystemModel.BusinessRules.ModelStatus.Active ? "bg-success" : "bg-warning")">
+                                @Model.Status
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger px-4">Delete</button>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4 ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
 </div>
-<div class="mb-3">
-    <strong>Approved:</strong> @(Model.IsApproved ? "Yes" : "No")
-</div>
-
-<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>

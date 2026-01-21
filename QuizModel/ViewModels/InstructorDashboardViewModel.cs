@@ -10,5 +10,9 @@
         public long TotalEducationMediums { get; set; }
         public long TotalClasses { get; set; }
         public long TotalSubjects { get; set; }
+
+        public double StudentPerformanceAvg { get; set; }
+        public double ClassPerformanceAvg { get; set; }
+        public double EducationMediumPerformanceAvg { get; set; }
     }
 }

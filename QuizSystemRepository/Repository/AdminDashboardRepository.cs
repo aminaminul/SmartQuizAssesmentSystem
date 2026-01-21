@@ -135,6 +135,21 @@ namespace QuizSystemRepository.Repositories
                 .Take(20)
                 .ToListAsync();
         }
+
+
+        public async Task<double> GetStudentPerformanceAvgAsync()
+        {
+            var attempts = _context.QuizAttempt
+                .Include(a => a.Quiz)
+                .Where(a => a.IsSubmitted && a.Quiz.TotalMarks > 0);
+
+            if (!await attempts.AnyAsync()) return 0;
+            return await attempts.AverageAsync(a => (double)a.TotalScore / a.Quiz.TotalMarks * 100);
+        }
+
+        public async Task<double> GetClassPerformanceAvgAsync() => await GetStudentPerformanceAvgAsync();
+
+        public async Task<double> GetEducationMediumPerformanceAvgAsync() => await GetStudentPerformanceAvgAsync();
     }
 
 }
