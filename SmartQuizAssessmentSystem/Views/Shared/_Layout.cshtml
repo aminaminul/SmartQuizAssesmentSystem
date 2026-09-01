@@ -118,10 +118,10 @@
         }
 
         .topbar {
-            background: #ffffff;
+            background: #111111;
             padding: 0.5rem 2rem;
-            border-bottom: 1px solid #edf2f7;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid #222;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             z-index: 999;
             height: 70px;
         }
@@ -135,10 +135,11 @@
         .search-container input {
             padding-left: 2.5rem;
             border-radius: 10px;
-            background-color: #f1f5f9;
-            border: 1px solid transparent;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.9rem;
             height: 40px;
+            color: #ffffff;
             transition: all 0.2s;
         }
 
@@ -163,17 +164,17 @@
             align-items: center;
             justify-content: center;
             border-radius: 10px;
-            color: #64748b;
+            color: #adb5bd;
             transition: all 0.2s;
             position: relative;
             text-decoration: none;
-            background: #f8fafc;
-            border: 1px solid #f1f5f9;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .top-nav-btn:hover {
-            color: #0f172a;
-            background: #f1f5f9;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-1px);
         }
 
@@ -432,8 +433,8 @@
                     else
                     {
                         <div class="d-none d-md-block">
-                            <h6 class="mb-0 text-muted ms-2">
-                                <span class="fw-normal">Welcome back,</span> <span class="text-dark fw-bold">@User.Identity?.Name</span>
+                            <h6 class="mb-0 text-white-50 ms-2">
+                                <span class="fw-normal">Welcome back,</span> <span class="text-white fw-bold">@User.Identity?.Name</span>
                             </h6>
                         </div>
                     }

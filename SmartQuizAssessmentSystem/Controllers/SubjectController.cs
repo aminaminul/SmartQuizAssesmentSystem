@@ -122,21 +122,27 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Edit(long id)
         {
             var subject = await _subjectService.GetByIdAsync(id, includeClass: true);
-            if (subject == null || !subject.ClassId.HasValue) return NotFound();
+            if (subject == null) return NotFound();
 
-            var cls = await _classService.GetByIdAsync(subject.ClassId.Value, true);
-            if (cls == null) return NotFound();
+            long? educationMediumId = null;
+            if (subject.ClassId.HasValue)
+            {
+                var cls = await _classService.GetByIdAsync(subject.ClassId.Value, true);
+                if (cls != null)
+                {
+                    educationMediumId = cls.EducationMediumId;
+                }
+            }
 
             var vm = new SubjectViewModel
             {
                 Id = subject.Id,
                 Name = subject.Name,
-                ClassId = subject.ClassId!.Value,
+                ClassId = subject.ClassId,
                 IsApproved = subject.IsApproved,
-                EducationMediumId = cls.EducationMediumId,
+                EducationMediumId = educationMediumId,
                 Status = subject.Status,
-                EducationMediumList = await GetEducationMediumSelectListAsync(),
-                Class = cls
+                EducationMediumList = await GetEducationMediumSelectListAsync()
             };
 
             await PopulateClassListAsync(vm);

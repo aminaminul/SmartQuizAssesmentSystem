@@ -1,11 +1,88 @@
+@model QuizSystemModel.ViewModels.ClassPerformanceViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Class Performance";
 }
 
-<div class="container mt-4">
-    <h2>Class Performance Analytics</h2>
-    <p class="lead">Performance reports generated automatically from quiz attempts categorized by class.</p>
-     <div class="alert alert-info">
-        <i class="fas fa-chart-bar me-2"></i> Detailed class performance metrics will be displayed here.
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-primary"><i class="fas fa-chart-bar me-2"></i>Class Performance</h2>
+            <p class="text-muted">Compare performance metrics across different classes.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body bg-light rounded-3">
+            <form asp-action="Class" method="get" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label for="mediumId" class="form-label fw-bold">Filter by Medium</label>
+                    <select name="mediumId" id="mediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
+                        <option value="">All Mediums</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                     <button type="submit" class="btn btn-primary w-100 shadow-sm"><i class="fas fa-filter me-2"></i>Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="py-3 ps-4">Class Name</th>
+                            <th class="py-3">Medium</th>
+                            <th class="py-3 text-center">Total Students</th>
+                            <th class="py-3 text-center">Total Attempts</th>
+                            <th class="py-3 text-center">Avg. Score</th>
+                            <th class="py-3 text-center">Pass Rate</th>
+                            <th class="py-3 text-center">Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Classes.Any())
+                        {
+                            @foreach (var cls in Model.Classes)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">@cls.ClassName</td>
+                                    <td><span class="badge bg-light text-dark border">@cls.MediumName</span></td>
+                                    <td class="text-center">@cls.TotalStudents</td>
+                                    <td class="text-center">@cls.TotalAttempts</td>
+                                    <td class="text-center fw-bold text-primary">@cls.AverageScore</td>
+                                    <td class="text-center">
+                                        @{
+                                            var passClass = cls.PassRate >= 70 ? "success" : cls.PassRate >= 40 ? "warning" : "danger";
+                                        }
+                                        <span class="badge bg-@passClass">@cls.PassRate%</span>
+                                    </td>
+                                    <td class="text-center">
+                                         <div class="progress" style="height: 6px; width: 120px; margin: 0 auto;">
+                                             @{
+                                                 var color = cls.PassRate >= 70 ? "success" : cls.PassRate >= 40 ? "warning" : "danger";
+                                             }
+                                            <div class="progress-bar bg-@color" role="progressbar" style="width: @cls.PassRate%" aria-valuenow="@cls.PassRate" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-chart-bar me-2 fa-2x mb-3 d-block opacity-25"></i>
+                                    No class performance data available.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

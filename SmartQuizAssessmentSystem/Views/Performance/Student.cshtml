@@ -1,12 +1,118 @@
+@model QuizSystemModel.ViewModels.StudentPerformanceViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Student Performance";
 }
 
-<div class="container mt-4">
-    <h2>Student Performance Analytics</h2>
-    <p class="lead">Performance reports generated automatically from quiz attempts.</p>
-    
-    <div class="alert alert-info">
-        <i class="fas fa-chart-line me-2"></i> Detailed student performance metrics will be displayed here.
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-primary"><i class="fas fa-user-graduate me-2"></i>Student Performance</h2>
+            <p class="text-muted">Analyze detailed performance metrics for all students.</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body bg-light rounded-3">
+            <form asp-action="Student" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="mediumId" class="form-label fw-bold">Filter by Medium</label>
+                    <select name="mediumId" id="mediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
+                        <option value="">All Mediums</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="classId" class="form-label fw-bold">Filter by Class</label>
+                    <select name="classId" id="classId" class="form-select" asp-items="ViewBag.ClassId">
+                        <option value="">All Classes</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm"><i class="fas fa-filter me-2"></i>Apply Filters</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="py-3 ps-4">Student</th>
+                            <th class="py-3">Medium</th>
+                            <th class="py-3">Class</th>
+                            <th class="py-3 text-center">Attempts</th>
+                            <th class="py-3 text-center">Pass Rate</th>
+                            <th class="py-3 text-center">Avg. Score</th>
+                            <th class="py-3 text-center">Passed/Failed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Students.Any())
+                        {
+                            @foreach (var student in Model.Students)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">@student.StudentName</div>
+                                        <small class="text-muted">@student.Email</small>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">@student.MediumName</span></td>
+                                    <td><span class="badge bg-light text-dark border">@student.ClassName</span></td>
+                                    <td class="text-center fw-bold">@student.TotalAttempts</td>
+                                    <td class="text-center">
+                                        @{
+                                            var passClass = student.PassRate >= 70 ? "success" : student.PassRate >= 40 ? "warning" : "danger";
+                                        }
+                                        <span class="badge bg-@passClass">@student.PassRate%</span>
+                                    </td>
+                                    <td class="text-center fw-bold text-primary">@student.AverageScore</td>
+                                    <td class="text-center">
+                                        <span class="text-success fw-bold"><i class="fas fa-check me-1"></i>@student.QuizzesPassed</span>
+                                        <span class="text-muted mx-1">/</span>
+                                        <span class="text-danger fw-bold"><i class="fas fa-times me-1"></i>@student.QuizzesFailed</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-search me-2 fa-2x mb-3 d-block opacity-25"></i>
+                                    No performance records found matching the criteria.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#mediumId').change(function () {
+                var mediumId = $(this).val();
+                var classSelect = $('#classId');
+                
+                // Clear current options
+                classSelect.empty();
+                classSelect.append('<option value="">All Classes</option>');
+                
+                if (mediumId) {
+                    $.getJSON('@Url.Action("GetClassesByMedium", "Performance")', { mediumId: mediumId }, function (data) {
+                        $.each(data, function (i, item) {
+                            classSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

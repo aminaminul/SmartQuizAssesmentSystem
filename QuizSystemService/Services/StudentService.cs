@@ -138,5 +138,31 @@ namespace QuizSystemService.Services
             await _repo.UpdateAsync(student);
             return true;
         }
+
+        public async Task<bool> ApproveAsync(long id, QuizSystemUser currentUser)
+        {
+            var student = await _repo.GetByIdAsync(id);
+            if (student == null) return false;
+
+            student.Status = ModelStatus.Active;
+            student.ModifiedAt = DateTime.UtcNow;
+            student.ModifiedBy = currentUser;
+
+            await _repo.UpdateAsync(student);
+            return true;
+        }
+
+        public async Task<bool> RejectAsync(long id, QuizSystemUser currentUser)
+        {
+            var student = await _repo.GetByIdAsync(id);
+            if (student == null) return false;
+
+            student.Status = ModelStatus.InActive;
+            student.ModifiedAt = DateTime.UtcNow;
+            student.ModifiedBy = currentUser;
+
+            await _repo.UpdateAsync(student);
+            return true;
+        }
     }
 }

@@ -1,11 +1,87 @@
+@model QuizSystemModel.ViewModels.MediumPerformanceViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Education Medium Performance";
 }
 
-<div class="container mt-4">
-    <h2>Education Medium Performance Analytics</h2>
-    <p class="lead">Performance reports generated automatically from quiz attempts by education medium.</p>
-     <div class="alert alert-info">
-        <i class="fas fa-chart-pie me-2"></i> Detailed education medium performance metrics will be displayed here.
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-primary"><i class="fas fa-chart-pie me-2"></i>Medium Performance</h2>
+            <p class="text-muted">High-level performance overview by education medium.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.Mediums.Any())
+        {
+            @foreach (var medium in Model.Mediums)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm border-0 h-100 rounded-4 transition-hover">
+                        <div class="card-header bg-transparent border-0 pt-4 pb-2 px-4">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
+                                <span class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-book"></i>
+                                </span>
+                                @medium.MediumName
+                            </h5>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <div class="row text-center mb-4 mt-2">
+                                <div class="col-6 mb-3 border-end border-light">
+                                    <div class="text-muted x-small text-uppercase fw-bold ls-1">Classes</div>
+                                    <div class="h4 fw-bold mb-0 mt-1">@medium.TotalClasses</div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="text-muted x-small text-uppercase fw-bold ls-1">Students</div>
+                                    <div class="h4 fw-bold mb-0 mt-1">@medium.TotalStudents</div>
+                                </div>
+                                <div class="col-6 border-end border-light">
+                                    <div class="text-muted x-small text-uppercase fw-bold ls-1">Avg Score</div>
+                                    <div class="h4 fw-bold text-primary mb-0 mt-1">@medium.AverageScore</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted x-small text-uppercase fw-bold ls-1">Pass Rate</div>
+                                    @{
+                                        var rateColor = medium.PassRate >= 70 ? "text-success" : medium.PassRate >= 40 ? "text-warning" : "text-danger";
+                                    }
+                                    <div class="h4 fw-bold @rateColor mb-0 mt-1">@medium.PassRate%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-light rounded-3 p-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small fw-bold text-muted">Overall Performance</span>
+                                    <span class="small fw-bold @rateColor">@medium.PassRate%</span>
+                                </div>
+                                <div class="progress" style="height: 8px; background-color: #e9ecef;">
+                                     @{
+                                         var barColor = medium.PassRate >= 70 ? "success" : medium.PassRate >= 40 ? "warning" : "danger";
+                                     }
+                                    <div class="progress-bar bg-@barColor rounded-pill" role="progressbar" style="width: @medium.PassRate%" aria-valuenow="@medium.PassRate" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5 rounded-4 border-0 shadow-sm">
+                    <i class="fas fa-chart-pie me-2 fa-2x mb-3 d-block opacity-50"></i>
+                    No education medium performance data available.
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+<style>
+    .x-small { font-size: 0.75rem; }
+    .ls-1 { letter-spacing: 1px; }
+    .transition-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .transition-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important; }
+</style>

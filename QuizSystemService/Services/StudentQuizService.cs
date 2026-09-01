@@ -112,8 +112,12 @@ namespace QuizSystemService.Services
             foreach (var ans in answers)
             {
                 var q = ans.QuestionBank;
-                if (!string.IsNullOrEmpty(ans.SelectedOption) &&
-                    ans.SelectedOption == q.RightOption)
+                // Normalize strings for comparison
+                var selected = ans.SelectedOption?.Trim();
+                var correct = q.RightOption?.Trim();
+
+                if (!string.IsNullOrEmpty(selected) &&
+                    string.Equals(selected, correct, StringComparison.OrdinalIgnoreCase))
                 {
                     ans.Score = q.Marks;
                     total += q.Marks;
@@ -130,7 +134,9 @@ namespace QuizSystemService.Services
             attempt.EndAt = DateTime.UtcNow;
             attempt.IsSubmitted = true;
 
-            var passMarks = quiz.TotalMarks * quiz.RequiredPassPercentage / 100m;
+            // Ensure TotalMarks is not zero to avoid division by zero
+            var totalMarks = quiz.TotalMarks > 0 ? quiz.TotalMarks : 1;
+            var passMarks = totalMarks * quiz.RequiredPassPercentage / 100m;
             attempt.IsPassed = total >= passMarks;
 
             await _attemptRepository.UpdateAsync(attempt);

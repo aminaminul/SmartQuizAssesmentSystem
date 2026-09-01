@@ -1,4 +1,7 @@
-﻿using QuizSystemModel.Interfaces;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using QuizSystemModel.Interfaces;
+using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
@@ -59,6 +62,11 @@ namespace QuizSystemService.Services
                 Quizzes = await _repo.SearchQuizzesAsync(query),
                 Subjects = await _repo.SearchSubjectsAsync(query)
             };
+        }
+
+        public async Task<List<QuizAttempt>> GetTopStudentsAsync(int count)
+        {
+            return await _repo.GetTopPerformingStudentsAsync(count);
         }
     }
 }

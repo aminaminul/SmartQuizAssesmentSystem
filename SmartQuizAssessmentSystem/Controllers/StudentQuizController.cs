@@ -27,13 +27,21 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(quizzes);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Start(long quizId)
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+            
             var attempt = await _studentQuizService.StartAttemptAsync(quizId, user.Id);
             return RedirectToAction("Attempt", new { id = attempt.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartPost(long quizId)
+        {
+            return await Start(quizId);
         }
 
         [HttpGet]
@@ -42,6 +50,11 @@ namespace SmartQuizAssessmentSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             var attempt = await _studentQuizService.GetAttemptWithQuestionsAsync(id, user.Id);
             if (attempt == null) return NotFound();
+
+            if (attempt.IsSubmitted)
+            {
+                return RedirectToAction("Result", new { id = attempt.Id });
+            }
 
             return View(attempt);
         }

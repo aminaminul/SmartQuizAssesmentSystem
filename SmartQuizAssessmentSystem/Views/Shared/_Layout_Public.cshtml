@@ -32,10 +32,10 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
-                    <span>Quiz <span class="text-primary">Management</span></span>
+                    <span class="text-white">Quiz <span class="text-secondary">Management</span></span>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -47,18 +47,18 @@
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             string dashboardController = "StudentDashboard";
-                            string dashboardTitle = "Go to Dashboard";
+                            string dashboardTitle = "Dashboard";
                             
                             if (User.IsInRole("Admin")) { dashboardController = "AdminDashboard"; }
                             else if (User.IsInRole("Instructor")) { dashboardController = "InstructorDashboard"; }
 
                             <li class="nav-item ms-lg-3">
-                                <a class="nav-link btn btn-primary text-white px-3 rounded-pill shadow-sm py-1 mt-1" 
+                                <a class="nav-link btn btn-outline-light text-white px-3 rounded-pill shadow-sm py-1 mt-1 border-white border-opacity-25" 
                                    asp-controller="@dashboardController" asp-action="Dashboard">
                                     <i class="fas fa-th-large me-1"></i> @dashboardTitle
                                 </a>

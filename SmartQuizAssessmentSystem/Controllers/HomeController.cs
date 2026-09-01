@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuizSystemService.Interfaces;
 using QuizSystemModel.Models;
 using System.Diagnostics;
+using System.Linq;
 
 namespace QuizSystem.Controllers
 {
@@ -12,17 +13,23 @@ namespace QuizSystem.Controllers
         private readonly IClassService _classService;
         private readonly ISubjectService _subjectService;
         private readonly IStudentService _studentService;
+        private readonly IQuizService _quizService;
+        private readonly IAdminDashboardService _adminDashboardService;
 
         public HomeController(
             ILogger<HomeController> logger,
             IClassService classService,
             ISubjectService subjectService,
-            IStudentService studentService)
+            IStudentService studentService,
+            IQuizService quizService,
+            IAdminDashboardService adminDashboardService)
         {
             _logger = logger;
             _classService = classService;
             _subjectService = subjectService;
             _studentService = studentService;
+            _quizService = quizService;
+            _adminDashboardService = adminDashboardService;
         }
 
         public async Task<IActionResult> Index()
@@ -30,6 +37,14 @@ namespace QuizSystem.Controllers
             ViewBag.ClassCount = (await _classService.GetAllAsync(null)).Count;
             ViewBag.SubjectCount = (await _subjectService.GetAllAsync(null)).Count;
             ViewBag.StudentCount = (await _studentService.GetAllAsync()).Count;
+            
+            // Fetch quizzes (assuming null parameters mean all approved/visible)
+            var quizzes = await _quizService.GetAllAsync();
+            ViewBag.RecentQuizzes = quizzes.OrderByDescending(q => q.Id).Take(6).ToList();
+            
+            // Top Students
+            ViewBag.TopPerformers = await _adminDashboardService.GetTopStudentsAsync(6);
+
             return View();
         }
         public IActionResult Privacy()

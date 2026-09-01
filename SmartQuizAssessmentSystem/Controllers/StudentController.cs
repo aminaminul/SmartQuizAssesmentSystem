@@ -22,7 +22,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Instructor")]
         public async Task<IActionResult> Index(long? classId, long? educationMediumId)
         {
             var students = await _studentService.GetAllAsync(classId, educationMediumId);
@@ -172,13 +172,51 @@ namespace SmartQuizAssessmentSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Instructor")]
+        public async Task<IActionResult> Approve(long id, long? classId, long? educationMediumId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return RedirectToAction("Login", "Account");
+
+            await _studentService.ApproveAsync(id, currentUser);
+            return RedirectToAction(nameof(Index), new { classId, educationMediumId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Instructor")]
+        public async Task<IActionResult> Reject(long id, long? classId, long? educationMediumId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return RedirectToAction("Login", "Account");
+
+            await _studentService.RejectAsync(id, currentUser);
+            return RedirectToAction(nameof(Index), new { classId, educationMediumId });
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetClassesByMedium(long? mediumId)
+        {
+            var classes = await _studentService.GetClassesAsync(mediumId);
+            return Json(classes.Select(c => new { id = c.Id, name = c.Name }).ToList());
+        }
+
         private async Task PopulateDropdownsAsync(long? selectedEducationMediumId = null, long? selectedClassId = null)
         {
             var educationMediums = await _studentService.GetEducationMediumsAsync() ?? new List<EducationMedium>();
-            var classes = await _studentService.GetClassesAsync(selectedEducationMediumId) ?? new List<Class>();
+            ViewBag.EducationMediumId = new SelectList(educationMediums, "Id", "Name", selectedEducationMediumId);
 
-            ViewBag.EducationMediumId = new SelectList(educationMediums.Any() ? educationMediums : new List<EducationMedium> { new EducationMedium { Id = 0, Name = "No Mediums Available" } }, "Id", "Name", selectedEducationMediumId);
-            ViewBag.ClassId = new SelectList(classes.Any() ? classes : new List<Class> { new Class { Id = 0, Name = "No Classes Available" } }, "Id", "Name", selectedClassId);
+            if (selectedEducationMediumId.HasValue && selectedEducationMediumId.Value > 0)
+            {
+                var classes = await _studentService.GetClassesAsync(selectedEducationMediumId) ?? new List<Class>();
+                ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedClassId);
+            }
+            else
+            {
+                ViewBag.ClassId = new SelectList(new List<Class>(), "Id", "Name");
+            }
         }
     }
 }

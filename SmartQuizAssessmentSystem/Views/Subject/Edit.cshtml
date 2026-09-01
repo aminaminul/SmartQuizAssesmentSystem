@@ -25,11 +25,11 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="EducationMedium" class="form-label fw-bold"></label>
-                        <select asp-for="EducationMedium" asp-items="Model.EducationMediumList" class="form-select">
+                        <label asp-for="EducationMediumId" class="form-label fw-bold"></label>
+                        <select asp-for="EducationMediumId" asp-items="Model.EducationMediumList" class="form-select">
                             <option value="">Select Education Medium</option>
                         </select>
-                        <span asp-validation-for="EducationMedium" class="text-danger small"></span>
+                        <span asp-validation-for="EducationMediumId" class="text-danger small"></span>
                     </div>
 
                     <div class="col-md-6">
@@ -72,4 +72,28 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            $('#EducationMediumId').change(function () {
+                var mediumId = $(this).val();
+                var $classSelect = $('#ClassId');
+
+                // Clear current options
+                $classSelect.empty();
+                $classSelect.append('<option value="">Select Class</option>');
+
+                if (mediumId) {
+                     $.getJSON('/Account/GetClassesByMedium', { mediumId: mediumId }, function (data) {
+                        $.each(data, function (index, item) {
+                            $classSelect.append($('<option/>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
 }

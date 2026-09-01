@@ -1,180 +1,312 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout_Public.cshtml";
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Smart Quiz Assessment System";
+    var recentQuizzes = ViewBag.RecentQuizzes as List<QuizSystemModel.Models.Quiz>;
+    var topPerformers = ViewBag.TopPerformers as List<QuizSystemModel.Models.QuizAttempt>;
 }
 
-<style>
-    .hero-section {
-        border-radius: 18px;
-        background: linear-gradient(135deg, #fff3cd, #e3f2fd);
-        padding: 2rem 2.5rem;
-    }
-
-    .hero-title {
-        font-weight: 700;
-        color: #212529;
-    }
-
-    .hero-subtext {
-        color: #495057;
-    }
-
-    .hero-btn-primary {
-        min-width: 190px;
-    }
-
-    .quick-card {
-        border-radius: 16px;
-        border: none;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
-    }
-
-        .quick-card .card-header {
-            font-weight: 600;
-            background-color: #ffffff;
-            border-bottom: 1px solid #f1f3f5;
-        }
-
-    .role-card {
-        border-radius: 16px;
-        border: none;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-        .role-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-        }
-    .stat-label {
-        color: #6c757d;
-    }
-
-    .stat-value {
-        font-weight: 600;
-        color: #212529;
-    }
-</style>
-
-<div class="container py-4">
-
-    
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="hero-section mb-3">
-                <h1 class="h3 mb-2 hero-title">Welcome to Quiz Management System</h1>
-                <p class="mb-3 hero-subtext">
-                    Create and manage quizzes, organize classes and subjects, and let students attempt quizzes online with instant results.
-                </p>
-
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    if (User.IsInRole("Admin"))
-                    {
-                        <a asp-controller="AdminDashboard" asp-action="Dashboard"
-                           class="btn btn-primary hero-btn-primary me-2">
-                            Go to Admin Dashboard
-                        </a>
-                    }
-                    else if (User.IsInRole("Instructor"))
-                    {
-                        <a asp-controller="InstructorDashboard" asp-action="Dashboard"
-                           class="btn btn-primary hero-btn-primary me-2">
-                            Go to Instructor Dashboard
-                        </a>
-                    }
-                    else if (User.IsInRole("Student"))
-                    {
-                        <a asp-controller="StudentDashboard" asp-action="Dashboard"
-                           class="btn btn-primary hero-btn-primary me-2">
-                            Go to Student Dashboard
-                        </a>
-                    }
-                }
-                else
-                {
-                    <a asp-controller="Account" asp-action="Login"
-                       class="btn btn-primary hero-btn-primary me-2">
-                        Login
-                    </a>
-                    <a asp-controller="Account" asp-action="Register"
-                       class="btn btn-outline-secondary">
-                        Register
-                    </a>
-                }
+<div class="home-wrapper">
+    <!-- Hero Section -->
+    <div class="hero-header py-5 mb-5 overflow-hidden position-relative">
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center">
+                    <span class="badge bg-dark bg-opacity-10 text-dark px-3 py-2 rounded-pill fw-bold mb-3">
+                        <i class="fas fa-bolt me-1"></i> Next-Gen Learning
+                    </span>
+                    <h1 class="display-4 fw-bold text-dark mb-3">Elevate Your Knowledge with <span class="text-dark">Smart Quizzes</span></h1>
+                    <p class="lead text-muted mb-4">A powerful, interactive platform for educators to create and students to master subjects through real-time assessments.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <a asp-action="Dashboard" asp-controller="@(User.IsInRole("Admin") ? "AdminDashboard" : User.IsInRole("Instructor") ? "InstructorDashboard" : "StudentDashboard")" class="btn btn-dark btn-lg rounded-pill px-4 shadow">
+                                Go to Dashboard <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-dark btn-lg rounded-pill px-5 shadow">
+                                Join Now
+                            </a>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="hero-wave">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,141.4,117,219,103.34c8.43-1.48,16.71-3.2,24.89-5.18,4.72-1.15,9.4-2.38,13.98-3.69,8.55-2.45,17-5.18,25.41-8.12,1.3-.45,2.59-.92,3.88-1.39C296,81.67,305.29,77.58,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </div>
 
-        <div class="col-md-4">
-            <div class="card quick-card">
-                <div class="card-header">
-                    Quick stats
+    <!-- Stats Bar -->
+    <div class="container mb-5">
+        <div class="row stats-row g-3 rounded-4 overflow-hidden">
+            <div class="col-md-4">
+                <div class="p-4 text-center bg-dark text-white rounded-4 shadow-sm h-100">
+                    <div class="h2 fw-bold mb-0">@ViewBag.ClassCount+</div>
+                    <div class="text-white-50 small text-uppercase fw-bold">Registered Classes</div>
                 </div>
-                <div class="card-body">
-                    <p class="mb-2">
-                        <span class="stat-label">Classes:</span>
-                        <span class="stat-value">@ViewBag.ClassCount</span>
-                    </p>
-                    <p class="mb-2">
-                        <span class="stat-label">Subjects:</span>
-                        <span class="stat-value">@ViewBag.SubjectCount</span>
-                    </p>
-                    <p class="mb-0">
-                        <span class="stat-label">Students:</span>
-                        <span class="stat-value">@ViewBag.StudentCount</span>
-                    </p>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 text-center bg-success text-white rounded-4 shadow-sm h-100">
+                    <div class="h2 fw-bold mb-0">@ViewBag.SubjectCount</div>
+                    <div class="text-white-50 small text-uppercase fw-bold">Active Subjects</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 text-center bg-warning text-dark rounded-4 shadow-sm h-100">
+                    <div class="h2 fw-bold mb-0">@ViewBag.StudentCount</div>
+                    <div class="text-dark-50 small text-uppercase fw-bold">Active Students</div>
                 </div>
             </div>
         </div>
     </div>
 
-    
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="card h-100 role-card admin">
-                <div class="card-body">
-                    <div class="role-icon"></div>
-                    <h5 class="card-title">Admins</h5>
-                    <p class="card-text">
-                        Manage Users, Education Mediums, Classes, and Approve Content Before it Goes Live.
-                    </p>
-                    <a asp-controller="AdminDashboard" asp-action="Dashboard"
-                       class="btn btn-sm btn-outline-primary">
-                        Admin Panel
-                    </a>
-                </div>
+    <!-- Recent Quizzes Section -->
+    <div class="section-container container py-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h6 class="text-dark fw-bold text-uppercase ls-1">Join the challenge</h6>
+                <h2 class="fw-bold fs-1">Latest Quizzes</h2>
             </div>
+            <a asp-action="Dashboard" asp-controller="StudentDashboard" class="text-decoration-none fw-bold">View All <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 role-card instructor">
-                <div class="card-body">
-                    <div class="role-icon"></div>
-                    <h5 class="card-title">Instructors</h5>
-                    <p class="card-text">
-                        Create Quizzes Tailored To Different Classes and Mediums.
-                    </p>
-                    <a asp-controller="InstructorDashboard" asp-action="Dashboard"
-                       class="btn btn-sm btn-outline-success">
-                        Instructor Panel
-                    </a>
+        <div class="row g-4">
+            @if (recentQuizzes != null && recentQuizzes.Any())
+            {
+                int qIdx = 0;
+                string[] qColors = { "bg-dark", "bg-success", "bg-warning" };
+                string[] qText = { "text-white", "text-white", "text-dark" };
+                string[] btnColors = { "btn-outline-light", "btn-outline-light", "btn-outline-dark" };
+                
+                foreach (var quiz in recentQuizzes)
+                {
+                    var bgColor = qColors[qIdx % 3];
+                    var textColor = qText[qIdx % 3];
+                    var btnColor = btnColors[qIdx % 3];
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow rounded-4 quiz-card hover-lift @bgColor @textColor">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between mb-3 text-opacity-75">
+                                    <span class="badge @(bgColor == "bg-warning" ? "bg-dark " : "bg-white") bg-opacity-10 @(bgColor == "bg-warning" ? "text-dark" : "text-white") px-3 py-2 rounded-pill fw-bold">@quiz.TotalMarks Marks</span>
+                                    <span class="small"><i class="far fa-clock me-1"></i> @quiz.Duration Min</span>
+                                </div>
+                                <h5 class="fw-bold mb-3">@quiz.Name</h5>
+                                <p class="small mb-4 line-clamp-2 opacity-75">@(string.IsNullOrEmpty(quiz.Description) ? "Test your knowledge in this comprehensive quiz designed to assess your understanding of the subject." : quiz.Description)</p>
+                                
+                                <div class="d-flex align-items-center mb-4 text-opacity-75">
+                                    <div class="p-2 rounded-3 me-3 @(bgColor == "bg-warning" ? "bg-dark" : "bg-white") bg-opacity-10">
+                                        <i class="fas fa-layer-group @(bgColor == "bg-warning" ? "text-dark" : "text-white")"></i>
+                                    </div>
+                                    <div>
+                                        <small class="d-block uppercase tracking-wider font-semibold opacity-75">Subject</small>
+                                        <span class="fw-bold">@(quiz.Subject?.Name ?? "General")</span>
+                                    </div>
+                                    <div class="ms-auto text-end">
+                                        <small class="d-block uppercase tracking-wider font-semibold opacity-75">Class</small>
+                                        <span class="fw-bold">@(quiz.Class?.Name ?? "All")</span>
+                                    </div>
+                                </div>
+                                <div class="mt-auto">
+                                    <a asp-controller="StudentQuiz" asp-action="Start" asp-route-quizId="@quiz.Id" class="btn @btnColor w-100 rounded-pill fw-bold py-2 shadow-sm">
+                                        Attempt Quiz <i class="fas fa-play ms-1 small"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    qIdx++;
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <div class="placeholder-icon mb-3 opacity-25"><i class="fas fa-folder-open fa-4x"></i></div>
+                    <h5 class="text-muted">No public quizzes available right now.</h5>
                 </div>
+            }
+        </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="bg-light py-5 mt-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h6 class="text-success fw-bold text-uppercase">Top Achievers</h6>
+                <h2 class="fw-bold fs-1">System Leaderboard</h2>
+                <div class="title-underline mx-auto"></div>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                @if (topPerformers != null && topPerformers.Any())
+                {
+                    int rank = 1;
+                    foreach (var performer in topPerformers)
+                    {
+                        var rankClass = rank == 1 ? "bg-warning text-dark shadow" : rank == 2 ? "bg-secondary text-white shadow" : rank == 3 ? "bg-dark text-white shadow" : "bg-white text-dark";
+                        <div class="col-md-4 col-lg-2">
+                            <div class="card border-0 rounded-4 text-center p-3 h-100 performer-box @rankClass">
+                                <div class="rank-badge @(rank == 1 ? "bg-dark text-white" : "bg-light text-muted") shadow-sm">@rank</div>
+                                <div class="avatar-sm mx-auto mb-3 bg-white bg-opacity-25 border border-2 border-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <span class="fs-4 fw-bold @(rankClass.Contains("text-white") ? "text-white" : "text-dark")">@(performer.StudentUser?.FirstName?.FirstOrDefault() ?? 'U')</span>
+                                </div>
+                                <h6 class="fw-bold mb-1 text-truncate px-2">@performer.StudentUser?.FirstName</h6>
+                                <div class="fw-bold fs-5">@performer.TotalScore.ToString("F1")</div>
+                                <small class="opacity-75">Score</small>
+                            </div>
+                        </div>
+                        rank++;
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center text-muted py-4">
+                        <p>No results have been announced yet. Start attempting quizzes to see yourself here!</p>
+                    </div>
+                }
             </div>
         </div>
+    </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 role-card student">
-                <div class="card-body">
-                    <div class="role-icon"></div>
-                    <h5 class="card-title">Students</h5>
-                    <p class="card-text">
-                        Log In To See Available Quizzes, Attempt Them, And Track Your Performance Over Time.
-                    </p>
-                    <a asp-controller="StudentDashboard" asp-action="Dashboard"
-                       class="btn btn-sm btn-outline-warning">
-                        Student Panel
-                    </a>
+    <!-- Roles CTA Section -->
+    <div class="container py-5 my-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold fs-1">A Solution for Everyone</h2>
+            <p class="text-muted">Choose your path and explore the features tailored for you.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 rounded-4 p-4 text-center role-cta bg-dark text-white shadow">
+                    <div class="icon-box bg-white bg-opacity-10 text-white mx-auto mb-4">
+                        <i class="fas fa-user-shield fa-2x"></i>
+                    </div>
+                    <h4 class="fw-bold">Administrators</h4>
+                    <p class="text-white-50 mb-4">Complete control over the platform. Manage users, approve content, and monitor global performance analytics.</p>
+                    <a asp-controller="AdminDashboard" asp-action="Dashboard" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Open Portal</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 rounded-4 p-4 text-center role-cta bg-secondary text-white shadow">
+                    <div class="icon-box bg-white bg-opacity-10 text-white mx-auto mb-4">
+                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                    </div>
+                    <h4 class="fw-bold">Instructors</h4>
+                    <p class="text-white-50 mb-4">Craft perfect assessments. Design question banks, assign categories, and track your class progress in real-time.</p>
+                    <a asp-controller="InstructorDashboard" asp-action="Dashboard" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Go to Class</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 rounded-4 p-4 text-center role-cta bg-success text-white shadow">
+                    <div class="icon-box bg-white bg-opacity-10 text-white mx-auto mb-4">
+                        <i class="fas fa-user-graduate fa-2x"></i>
+                    </div>
+                    <h4 class="fw-bold">Students</h4>
+                    <p class="text-white-50 mb-4">Learn through action. Access assigned quizzes, get instant feedback, and climb the leaderboard rankings.</p>
+                    <a asp-controller="StudentDashboard" asp-action="Dashboard" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Start Quiz</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .home-wrapper {
+        background-color: #f8fafc;
+        margin-top: -1.5rem; /* Match header overlap if needed */
+    }
+
+    .hero-header {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .hero-wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        line-height: 0;
+    }
+
+    .hero-wave svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 60px;
+    }
+
+    .hero-wave .shape-fill {
+        fill: #f8fafc;
+    }
+
+    .ls-1 { letter-spacing: 1px; }
+
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important;
+    }
+
+    .stats-row .col-md-4 {
+        transition: background 0.3s ease;
+    }
+
+    .stats-row .col-md-4:hover {
+        background: #f1f5f9;
+    }
+
+    .title-underline {
+        height: 4px;
+        width: 60px;
+        background: #198754;
+        border-radius: 2px;
+        margin-top: 15px;
+    }
+
+    .icon-box {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+    }
+
+    .performer-box {
+        position: relative;
+        overflow: visible;
+        transition: all 0.3s ease;
+    }
+    
+    .performer-box:hover {
+        transform: scale(1.05);
+    }
+
+    .rank-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>

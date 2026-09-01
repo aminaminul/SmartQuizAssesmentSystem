@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
@@ -150,6 +152,17 @@ namespace QuizSystemRepository.Repositories
         public async Task<double> GetClassPerformanceAvgAsync() => await GetStudentPerformanceAvgAsync();
 
         public async Task<double> GetEducationMediumPerformanceAvgAsync() => await GetStudentPerformanceAvgAsync();
+
+        public async Task<List<QuizAttempt>> GetTopPerformingStudentsAsync(int count)
+        {
+            return await _context.QuizAttempt
+                .Include(a => a.StudentUser)
+                .Include(a => a.Quiz)
+                .Where(a => a.IsSubmitted)
+                .OrderByDescending(a => a.TotalScore)
+                .Take(count)
+                .ToListAsync();
+        }
     }
 
 }

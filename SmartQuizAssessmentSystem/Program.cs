@@ -74,6 +74,7 @@ builder.Services.AddScoped<IProfileUpdateRepository, ProfileUpdateRepository>();
 builder.Services.AddScoped<IProfileUpdateService, ProfileUpdateService>();
 
 builder.Services.AddScoped<IStudentQuizService, StudentQuizService>();
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
 
 var app = builder.Build();
 

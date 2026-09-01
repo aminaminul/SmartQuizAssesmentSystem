@@ -15,7 +15,7 @@ namespace SmartQuizAssessmentSystem.ViewModels
 
         [Required(ErrorMessage = "Class is required")]
         [Display(Name = "Class")]
-        public long ClassId { get; set; }
+        public long? ClassId { get; set; }
 
         [Required(ErrorMessage = "Education Medium is required")]
         [Display(Name = "Education Medium")]

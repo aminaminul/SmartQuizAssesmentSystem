@@ -3,7 +3,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Students @(ViewBag.ClassName != null ? $"for Class: {ViewBag.ClassName}" : "")</h2>
     <div>
-        <a asp-action="Create" class="btn btn-primary btn-sm">Add New Student</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary btn-sm">Add New Student</a>
+        }
     </div>
 </div>
 
@@ -71,9 +74,28 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">Details</a>
-                    <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" class="btn btn-danger btn-sm">Delete</a>
+                    <div class="d-flex gap-1 flex-wrap">
+                        @if (student.Status != QuizSystemModel.BusinessRules.ModelStatus.Active)
+                        {
+                            <form asp-action="Approve" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" asp-route-educationMediumId="@ViewBag.SelectedMediumId" method="post">
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                        }
+                        @if (student.Status != QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                        {
+                            <form asp-action="Reject" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" asp-route-educationMediumId="@ViewBag.SelectedMediumId" method="post">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                            </form>
+                        }
+
+                        <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">Details</a>
+                        
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" class="btn btn-danger btn-sm">Delete</a>
+                        }
+                    </div>
                 </td>
             </tr>
         }

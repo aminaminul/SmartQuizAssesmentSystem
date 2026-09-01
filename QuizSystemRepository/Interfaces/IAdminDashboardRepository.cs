@@ -1,4 +1,8 @@
-﻿namespace QuizSystemModel.Interfaces
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using QuizSystemModel.Models;
+
+namespace QuizSystemModel.Interfaces
 {
     public interface IAdminDashboardRepository
     {
@@ -15,14 +19,14 @@
         Task<long> GetPendingEducationMediumCountAsync();
         Task<long> GetPendingProfileUpdateCountAsync();
 
-        Task<List<Models.Instructor>> SearchInstructorsAsync(string query);
-        Task<List<Models.Student>> SearchStudentsAsync(string query);
-        Task<List<Models.Quiz>> SearchQuizzesAsync(string query);
-        Task<List<Models.Subject>> SearchSubjectsAsync(string query);
+        Task<List<Instructor>> SearchInstructorsAsync(string query);
+        Task<List<Student>> SearchStudentsAsync(string query);
+        Task<List<Quiz>> SearchQuizzesAsync(string query);
+        Task<List<Subject>> SearchSubjectsAsync(string query);
 
         Task<double> GetStudentPerformanceAvgAsync();
         Task<double> GetClassPerformanceAvgAsync();
         Task<double> GetEducationMediumPerformanceAvgAsync();
+        Task<List<QuizAttempt>> GetTopPerformingStudentsAsync(int count);
     }
-
 }

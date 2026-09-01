@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
+using QuizSystemModel.BusinessRules;
 using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
@@ -177,11 +178,12 @@ namespace SmartQuizAssessmentSystem.Controllers
         private async Task<IEnumerable<SelectListItem>> GetMediumSelectListAsync()
         {
             var mediums = await _mediumService.GetAllAsync();
-            return mediums.Select(m => new SelectListItem
-            {
-                Value = m.Id.ToString(),
-                Text = m.Name
-            });
+            return mediums.Where(m => m.IsApproved && m.Status == ModelStatus.Active)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.Id.ToString(),
+                    Text = m.Name
+                });
         }
 
         private async Task<IEnumerable<SelectListItem>> GetClassSelectListAsync()
@@ -198,22 +200,27 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<JsonResult> GetClassesByMedium(long? mediumId)
         {
-            
-            
-            
-            if (mediumId == 0) mediumId = null;
-
             var classes = await _classService.GetAllAsync(mediumId);
-            return Json(classes.Select(c => new { id = c.Id, name = c.Name }));
+            return Json(classes.Select(c => new { id = c.Id, name = c.Name }).ToList());
         }
 
         private async Task PopulateMediumAndClassDropdownsAsync(long? mediumId = null, long? classId = null)
         {
+            // Show all non-deleted mediums
             var mediums = await _mediumService.GetAllAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);
 
-            var classes = await _classService.GetAllAsync(mediumId);
-            ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
+            // Fetch classes only if a valid medium is selected
+            if (mediumId.HasValue && mediumId.Value > 0)
+            {
+                var classes = await _classService.GetAllAsync(mediumId);
+                ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId);
+            }
+            else
+            {
+                // Ensure the list is empty if no medium is selected
+                ViewBag.ClassId = new SelectList(new List<Class>(), "Id", "Name");
+            }
         }
 
         [HttpGet]

@@ -88,29 +88,64 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
+            console.log('Quiz Create page loaded');
+
             $('#mediumSelect').change(function () {
                 var mediumId = $(this).val();
+                console.log('Medium selected:', mediumId);
+                
                 $('#classSelect').empty().append('<option value="">Select Class</option>');
                 $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
+                
                 if (mediumId) {
-                    $.getJSON('@Url.Action("GetClasses", "Quiz")', { mediumId: mediumId }, function (data) {
-                        $.each(data, function (i, item) {
-                            $('#classSelect').append('<option value="' + item.id + '">' + item.name + '</option>');
-                        });
+                    $.ajax({
+                        url: '@Url.Action("GetClasses", "Quiz")',
+                        type: 'GET',
+                        data: { mediumId: mediumId },
+                        success: function (data) {
+                            console.log('Classes received:', data);
+                            $.each(data, function (i, item) {
+                                $('#classSelect').append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error loading classes:', error);
+                            alert('Failed to load classes. Please try again.');
+                        }
                     });
                 }
             });
 
             $('#classSelect').change(function () {
                 var classId = $(this).val();
+                console.log('Class selected:', classId);
+                
                 $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
+                
                 if (classId) {
-                    $.getJSON('@Url.Action("GetSubjects", "Quiz")', { classId: classId }, function (data) {
-                        $.each(data, function (i, item) {
-                            $('#subjectSelect').append('<option value="' + item.id + '">' + item.name + '</option>');
-                        });
+                    $.ajax({
+                        url: '@Url.Action("GetSubjects", "Quiz")',
+                        type: 'GET',
+                        data: { classId: classId },
+                        success: function (data) {
+                            console.log('Subjects received:', data);
+                            $.each(data, function (i, item) {
+                                $('#subjectSelect').append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error loading subjects:', error);
+                            alert('Failed to load subjects. Please try again.');
+                        }
                     });
                 }
             });

@@ -41,5 +41,19 @@ namespace QuizSystemRepository.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<QuizAttempt>> GetAllAttemptsAsync()
+        {
+            return await _context.QuizAttempt
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Subject)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Class)
+                        .ThenInclude(c => c.EducationMedium)
+                .Include(a => a.StudentUser)
+                .Where(a => a.IsSubmitted)
+                .OrderByDescending(a => a.StartAt)
+                .ToListAsync();
+        }
     }
 }

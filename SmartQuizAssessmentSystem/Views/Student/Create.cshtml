@@ -4,50 +4,54 @@
 <form asp-action="Create" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input type="hidden" asp-for="Role" value="Student" />
-    <div class="form-group">
+    <div class="form-group pb-3">
         <label asp-for="FirstName"></label>
         <input asp-for="FirstName" class="form-control" />
         <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group pb-3">
         <label asp-for="LastName"></label>
         <input asp-for="LastName" class="form-control" />
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group pb-3">
         <label asp-for="Email"></label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group pb-3">
         <label asp-for="PhoneNumber"></label>
         <input asp-for="PhoneNumber" class="form-control" />
         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group pb-3">
         <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" />
+        <input asp-for="Password" type="password" class="form-control" />
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group pb-3">
         <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" class="form-control" />
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="EducationMediumId">Education Medium</label>
-        <select asp-for="EducationMediumId" asp-items="ViewBag.EducationMediumId" class="form-control" required></select>
+    <div class="form-group mb-3">
+        <label asp-for="EducationMediumId" class="form-label">Education Medium</label>
+        <select asp-for="EducationMediumId" asp-items="ViewBag.EducationMediumId" class="form-control" id="EducationMediumId" required>
+            <option value="">Select Medium</option>
+        </select>
     </div>
 
-    <div class="form-group">
-        <label asp-for="ClassId">Class</label>
-        <select asp-for="ClassId" asp-items="ViewBag.ClassId" class="form-control" required></select>
+    <div class="form-group mb-4">
+        <label asp-for="ClassId" class="form-label">Class</label>
+        <select asp-for="ClassId" asp-items="ViewBag.ClassId" class="form-control" id="ClassId" required>
+            <option value="">Select Class</option>
+        </select>
     </div>
 
     <div class="form-group">
@@ -57,27 +61,39 @@
 </form>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        $(document).ready(function () {
-            $('#EducationMediumId').change(function () {
-                var mediumId = $(this).val();
-                var $classSelect = $('#ClassId');
+    <script type="text/javascript">
+        function loadClasses(mediumId) {
+            var classDropdown = $('#ClassId');
+            classDropdown.empty();
+            classDropdown.append('<option value="">Select Class</option>');
 
-                $classSelect.empty();
-                $classSelect.append('<option value="">Select Class</option>');
-
-                if (mediumId) {
-                    $.getJSON('/Account/GetClassesByMedium', { mediumId: mediumId }, function (data) {
+            if (mediumId) {
+                $.ajax({
+                    url: '@Url.Action("GetClassesByMedium", "Student")',
+                    type: 'GET',
+                    data: { mediumId: mediumId },
+                    success: function (data) {
                         $.each(data, function (index, item) {
-                            $classSelect.append($('<option/>', {
+                            classDropdown.append($('<option>', {
                                 value: item.id,
                                 text: item.name
                             }));
                         });
-                    });
-                }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Ajax error:", status, error);
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            $('#EducationMediumId').change(function () {
+                var selectedMedium = $(this).val();
+                loadClasses(selectedMedium);
             });
         });
     </script>

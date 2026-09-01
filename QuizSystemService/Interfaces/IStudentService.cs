@@ -14,5 +14,7 @@ namespace QuizSystemService.Interfaces
         Task<bool> SoftDeleteAsync(long id, QuizSystemUser currentUser);
         Task<List<EducationMedium>> GetEducationMediumsAsync();
         Task<List<Class>> GetClassesAsync(long? mediumId = null);
+        Task<bool> ApproveAsync(long id, QuizSystemUser currentUser);
+        Task<bool> RejectAsync(long id, QuizSystemUser currentUser);
     }
 }

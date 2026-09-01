@@ -1,4 +1,7 @@
-﻿using QuizSystemModel.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using QuizSystemModel.Models;
 
 namespace QuizSystemModel.Interfaces
 {
