@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Identity;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
@@ -26,12 +26,8 @@ namespace SmartQuizAssessmentSystem.Services
 
         public async Task<IdentityResult> RegisterStudentAsync(StudentAddViewModel model)
         {
-            const string defaultRoleName = "Student";
-            var roleName = string.IsNullOrWhiteSpace(model.Role)
-                ? defaultRoleName
-                : model.Role!;
+            const string roleName = "Student";
 
-            
             if (await _accountRepository.StudentEmailExistsAsync(model.Email!))
                 return IdentityResult.Failed(new IdentityError
                 {
@@ -64,34 +60,41 @@ namespace SmartQuizAssessmentSystem.Services
             if (!createResult.Succeeded)
                 return createResult;
 
-            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
-            if (!roleResult.Succeeded)
-                return roleResult;
-
-            var student = new Student
+            try
             {
-                FirstName = model.FirstName!,
-                LastName = model.LastName!,
-                Email = model.Email!,
-                PhoneNumber = model.PhoneNumber!,
-                UserId = user.Id,
-                EducationMediumId = model.EducationMediumId,
-                ClassId = model.ClassId,           
-                CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active
-            };
+                var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+                if (!roleResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return roleResult;
+                }
 
-            await _accountRepository.AddStudentAsync(student);
+                var student = new Student
+                {
+                    FirstName = model.FirstName!,
+                    LastName = model.LastName!,
+                    Email = model.Email!,
+                    PhoneNumber = model.PhoneNumber!,
+                    UserId = user.Id,
+                    EducationMediumId = model.EducationMediumId,
+                    ClassId = model.ClassId,           
+                    CreatedAt = DateTime.UtcNow,
+                    Status = ModelStatus.Active
+                };
 
-            return IdentityResult.Success;
+                await _accountRepository.AddStudentAsync(student);
+                return IdentityResult.Success;
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(user);
+                throw;
+            }
         }
 
         public async Task<IdentityResult> RegisterInstructorAsync(InstructorAddViewModel model)
         {
-            const string defaultRoleName = "Instructor";
-            var roleName = string.IsNullOrWhiteSpace(model.Role)
-                ? defaultRoleName
-                : model.Role!;
+            const string roleName = "Instructor";
 
             if (await _accountRepository.InstructorEmailExistsAsync(model.Email))
                 return IdentityResult.Failed(new IdentityError
@@ -125,28 +128,38 @@ namespace SmartQuizAssessmentSystem.Services
             if (!createResult.Succeeded)
                 return createResult;
 
-            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
-            if (!roleResult.Succeeded)
-                return roleResult;
-
-            var instructor = new Instructor
+            try
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                HscPassingInstrutute = model.HscPassingInstitute,
-                HscPassingYear = model.HscPassingYear,
-                HscGrade = model.HscGrade,
-                UserId = user.Id,
-                CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Pending,
-                EducationMediumId = model.EducationMediumId
-            };
+                var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+                if (!roleResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return roleResult;
+                }
 
-            await _accountRepository.AddInstructorAsync(instructor);
+                var instructor = new Instructor
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    HscPassingInstrutute = model.HscPassingInstitute,
+                    HscPassingYear = model.HscPassingYear,
+                    HscGrade = model.HscGrade,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    Status = ModelStatus.Pending,
+                    EducationMediumId = model.EducationMediumId
+                };
 
-            return IdentityResult.Success;
+                await _accountRepository.AddInstructorAsync(instructor);
+                return IdentityResult.Success;
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(user);
+                throw;
+            }
         }
 
         public async Task<bool> IsUserApprovedAsync(long userId)

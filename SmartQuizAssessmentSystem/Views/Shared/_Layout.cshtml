@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using QuizSystemModel.Models
 @using QuizSystemModel.Interfaces
 @inject UserManager<QuizSystemUser> UserManager
@@ -47,7 +47,7 @@
         }
 
         .sidebar-header {
-            padding: 2rem 1.5rem;
+            padding: 1.75rem 1.5rem 0.5rem;
             border-bottom: 1px solid #222;
         }
 
@@ -60,7 +60,7 @@
         }
 
         .sidebar-nav {
-            padding: 1.5rem 0.75rem;
+            padding: 1rem 0.75rem 1.5rem;
         }
 
         .sidebar a {
@@ -98,8 +98,8 @@
         }
 
         .section-label {
-            padding: 1.5rem 1.2rem 0.5rem;
-            font-size: 0.75rem;
+            padding: 1rem 1.2rem 0.4rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
             font-weight: 700;
             color: #6c757d;
@@ -249,9 +249,9 @@
             @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 <div class="sidebar-header text-center border-0 pb-0">
-                    <h4 class="text-white fw-bold mb-0">Quiz <span class="text-warning">Management</span></h4>
+                    <h4 class="text-white fw-bold mb-3">Quiz <span class="text-warning">Management</span></h4>
                 </div>
-                <div class="px-3 pb-3">
+                <div class="px-3 pb-3 mt-1">
                     <div class="p-3 rounded-4 bg-dark bg-opacity-50 border border-secondary border-opacity-25">
                         @if (User.IsInRole("Admin"))
                         {
@@ -285,6 +285,9 @@
                         </a>
                         <a asp-controller="Quiz" asp-action="Index" class="@IsActive("Quiz")">
                             <i class="fas fa-tasks"></i> Manage Quiz
+                        </a>
+                        <a asp-controller="Question" asp-action="Index" class="@IsActive("Question")">
+                            <i class="fas fa-question-circle"></i> Question Bank
                         </a>
                         <a asp-controller="Instructor" asp-action="Index" class="@IsActive("Instructor")">
                             <i class="fas fa-chalkboard-teacher"></i> Instructors
@@ -355,6 +358,9 @@
                         </a>
                         <a asp-controller="Quiz" asp-action="Index" class="@IsActive("Quiz")">
                             <i class="fas fa-tasks"></i> Manage Quiz
+                        </a>
+                        <a asp-controller="Question" asp-action="Index" class="@IsActive("Question")">
+                            <i class="fas fa-question-circle"></i> Question Bank
                         </a>
                         <a asp-controller="InstructorDashboard" asp-action="Instructors" class="@IsActive("InstructorDashboard", "Instructors")">
                             <i class="fas fa-chalkboard-teacher"></i> Instructors

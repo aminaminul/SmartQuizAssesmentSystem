@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -67,10 +67,10 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(student);
         }
 
-        public async Task<IActionResult> Instructors(long? educationMediumId, long? classId)
+        public async Task<IActionResult> Instructors(long? educationMediumId, long? classId, long? subjectId)
         {
-            var instructors = await _instructorService.GetAllAsync(educationMediumId, classId);
-            await PopulateInstructorDropdownsAsync(educationMediumId, classId);
+            var instructors = await _instructorService.GetAllAsync(educationMediumId, classId, subjectId);
+            await PopulateInstructorDropdownsAsync(educationMediumId, classId, subjectId);
             return View(instructors);
         }
 
@@ -392,13 +392,23 @@ namespace SmartQuizAssessmentSystem.Controllers
             return Json(classes.Select(c => new { id = c.Id, name = c.Name }));
         }
 
-        private async Task PopulateInstructorDropdownsAsync(long? selectedMediumId = null, long? selectedClassId = null)
+        [HttpGet]
+        public async Task<JsonResult> GetSubjectsByClass(long? classId)
+        {
+            var subjects = await _subjectService.GetAllAsync(classId);
+            return Json(subjects.Select(s => new { id = s.Id, name = s.Name }));
+        }
+
+        private async Task PopulateInstructorDropdownsAsync(long? selectedMediumId = null, long? selectedClassId = null, long? selectedSubjectId = null)
         {
             var mediums = await _mediumService.GetAllAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedMediumId);
 
             var classes = await _classService.GetAllAsync(selectedMediumId);
             ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedClassId);
+
+            var subjects = await _subjectService.GetAllAsync(selectedClassId);
+            ViewBag.SubjectId = new SelectList(subjects, "Id", "Name", selectedSubjectId);
         }
     }
 }

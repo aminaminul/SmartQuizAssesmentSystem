@@ -1,4 +1,4 @@
-﻿using QuizSystemModel.BusinessRules;
+using QuizSystemModel.BusinessRules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +28,7 @@ namespace QuizSystemModel.Models
         public EducationMedium? EducationMedium { get; set; }
         public long? ClassId { get; set; }
         public Class? Class { get; set; }
+        public long? SubjectId { get; set; }
+        public Subject? Subject { get; set; }
     }
 }

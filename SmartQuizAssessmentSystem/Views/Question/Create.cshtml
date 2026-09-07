@@ -1,131 +1,476 @@
-﻿@model QuizSystemModel.ViewModels.QuestionViewModel
+@model QuizSystemModel.ViewModels.BatchQuestionViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var quiz = ViewBag.Quiz as QuizSystemModel.Models.Quiz;
-    ViewData["Title"] = "Create Question";
+    var quizzesList = ViewBag.QuizzesList as List<QuizSystemModel.Models.Quiz> ?? new List<QuizSystemModel.Models.Quiz>();
+    ViewData["Title"] = "Add Questions in Batch";
 }
 
-<h2>Create Question - @quiz?.Name</h2>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <form asp-action="Create" method="post" id="batchQuestionForm">
+                @Html.AntiForgeryToken()
 
-<form asp-action="Create" method="post">
-    <input type="hidden" asp-for="QuizId" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <!-- Header Card -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
+                    <div class="card-header bg-dark text-white p-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h3 class="mb-1 fw-bold"><i class="fas fa-layer-group me-2 text-warning"></i> Add Questions</h3>
+                                <p class="mb-0 text-white-50">Select a Quiz and set question count to add multiple questions together</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Index" asp-route-quizId="@Model.QuizId" asp-route-subject="@Model.Subject" class="btn btn-outline-light rounded-pill px-3 fw-bold">
+                                    <i class="fas fa-arrow-left me-1"></i> Back to Questions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="mb-3">
-        <label asp-for="Subject" class="form-label"></label>
-        <select asp-for="Subject" class="form-select">
-            <option>English</option>
-            <option>Bangla</option>
-            <option>Math</option>
-        </select>
-        <span asp-validation-for="Subject" class="text-danger"></span>
-    </div>
+                    <div class="card-body bg-light border-bottom p-4">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 mb-3"></div>
 
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label">Title</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="mb-3" id="textQuestionContainer">
-        <label asp-for="QuestionText" class="form-label">Question</label>
-        <textarea asp-for="QuestionText" class="form-control"></textarea>
-        <span asp-validation-for="QuestionText" class="text-danger"></span>
-    </div>
+                        <div class="row g-3 align-items-end">
+                            <!-- Quiz Selection Dropdown -->
+                            <div class="col-md-5">
+                                <label asp-for="QuizId" class="form-label fw-bold text-dark"><i class="fas fa-tasks text-warning me-1"></i> Select Quiz <span class="text-danger">*</span></label>
+                                <select asp-for="QuizId" class="form-select border-2 shadow-none" id="quizSelect" required>
+                                    @if (!quizzesList.Any())
+                                    {
+                                        <option value="">No Quizzes Found - Please create a quiz first</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="">-- Choose a Quiz --</option>
+                                        @foreach (var qz in quizzesList)
+                                        {
+                                            var subjName = qz.Subject?.Name ?? "General";
+                                            var isSelected = (Model.QuizId == qz.Id);
+                                            <option value="@qz.Id" 
+                                                    data-subject="@subjName"
+                                                    data-totalmarks="@qz.TotalMarks"
+                                                    data-negativemarking="@qz.NegativeMarking"
+                                                    data-medium="@(qz.EducationMedium?.Name ?? "")"
+                                                    data-class="@(qz.Class?.Name ?? "")"
+                                                    selected="@isSelected">
+                                                @qz.Name (@subjName - @(qz.Class?.Name ?? "General"))
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="QuizId" class="text-danger small"></span>
+                            </div>
 
-    <div class="mb-3 d-none" id="mathQuestionContainer">
-        <label class="form-label">Math Question</label>
-        <math-field id="mathQuestion" style="width:100%; min-height:60px; border:1px solid #ccc;"></math-field>
-        <input type="hidden" asp-for="QuestionText" id="QuestionTextHidden" />
-        <span asp-validation-for="QuestionText" class="text-danger"></span>
-    </div>
+                            <!-- Subject (Auto populated from Quiz) -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold text-dark"><i class="fas fa-book text-primary me-1"></i> Subject / Topic</label>
+                                <input type="text" asp-for="Subject" id="globalSubjectInput" class="form-control border-2 shadow-none bg-white fw-bold text-dark" readonly value="@(Model.Subject ?? quiz?.Subject?.Name ?? "General")" />
+                            </div>
 
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+                            <!-- Number of Questions Field -->
+                            <div class="col-md-4">
+                                <label asp-for="QuestionCount" class="form-label fw-bold text-dark"><i class="fas fa-calculator text-success me-1"></i> How many questions to add?</label>
+                                <div class="input-group">
+                                    <input asp-for="QuestionCount" type="number" min="1" max="50" class="form-control border-2 shadow-none" id="questionCountInput" />
+                                    <button type="button" class="btn btn-primary fw-bold px-3" id="btnApplyCount">
+                                        <i class="fas fa-sync-alt me-1"></i> Set Count
+                                    </button>
+                                </div>
+                                <span asp-validation-for="QuestionCount" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label asp-for="OptionA" class="form-label"></label>
-            <input asp-for="OptionA" class="form-control" />
-            <span asp-validation-for="OptionA" class="text-danger"></span>
+                        <!-- Quiz Info Summary Banner -->
+                        <div class="mt-3 p-3 bg-white rounded-3 shadow-sm border d-flex gap-4 align-items-center flex-wrap" id="quizInfoBanner">
+                            <div>
+                                <small class="text-muted fw-bold text-uppercase">Total Marks:</small> 
+                                <span class="badge bg-primary fs-6" id="quizTotalMarksBadge">@(quiz?.TotalMarks ?? 0)</span>
+                            </div>
+                            <div>
+                                <small class="text-muted fw-bold text-uppercase">Negative Marking:</small> 
+                                <span class="badge bg-warning text-dark fs-6" id="quizNegativeMarkingBadge">@(quiz?.NegativeMarking ?? 0)</span>
+                            </div>
+                            <div class="text-muted small ms-auto">
+                                <i class="fas fa-info-circle text-info me-1"></i> 
+                                Question Mark must be &gt;= <span id="quizNegativeRuleBadge">@(quiz?.NegativeMarking ?? 0)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions Container -->
+                <div id="questionsContainer" class="d-flex flex-column gap-4">
+                    @for (int i = 0; i < (Model.Questions?.Count ?? 0); i++)
+                    {
+                        var qNum = i + 1;
+                        var currentSubject = Model.Questions[i]?.Subject ?? Model.Subject ?? quiz?.Subject?.Name ?? "General";
+                        var isMath = string.Equals(currentSubject, "Math", StringComparison.OrdinalIgnoreCase);
+
+                        <div class="card shadow-sm border-0 rounded-4 question-card" data-index="@i">
+                            <div class="card-header bg-white border-bottom p-3 px-4 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-dark rounded-pill px-3 py-2 fs-6 question-number-badge">Question #@qNum</span>
+                                    <span class="badge bg-info text-dark rounded-pill px-3 py-1 card-subject-badge">@currentSubject</span>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-remove-question" @(Model.Questions?.Count <= 1 ? "disabled" : "")>
+                                    <i class="fas fa-trash-alt me-1"></i> Remove
+                                </button>
+                            </div>
+
+                            <div class="card-body p-4">
+                                <input type="hidden" name="Questions[@i].QuizId" class="input-quiz-id" value="@Model.QuizId" />
+                                <input type="hidden" name="Questions[@i].Subject" class="input-subject" value="@currentSubject" />
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Question Title / Summary (Optional)</label>
+                                        <input type="text" name="Questions[@i].Name" class="form-control" value="@Model.Questions[i]?.Name" placeholder="e.g. Basic Grammar / Quadratic Equation" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Marks <span class="text-danger">*</span></label>
+                                        <input type="number" name="Questions[@i].Marks" class="form-control" value="@(Model.Questions[i]?.Marks ?? 1)" min="1" required />
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 text-question-wrapper @(isMath ? "d-none" : "")">
+                                    <label class="form-label fw-bold">Question Text <span class="text-danger">*</span></label>
+                                    <textarea name="Questions[@i].QuestionText" class="form-control question-textarea" rows="3" placeholder="Enter your question here..." required>@Model.Questions[i]?.QuestionText</textarea>
+                                </div>
+
+                                <div class="mb-3 math-question-wrapper @(isMath ? "" : "d-none")">
+                                    <label class="form-label fw-bold">Math Question (LaTeX / MathLive)</label>
+                                    <math-field class="math-field-input" style="width:100%; min-height:60px; border:1px solid #ced4da; border-radius:0.375rem; padding:0.5rem;">@Model.Questions[i]?.QuestionText</math-field>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-secondary">Explanation / Description (Optional)</label>
+                                    <textarea name="Questions[@i].Description" class="form-control" rows="2" placeholder="Explain why the right answer is correct...">@Model.Questions[i]?.Description</textarea>
+                                </div>
+
+                                <!-- Options Grid -->
+                                <div class="bg-light p-3 rounded-3 mb-3 border">
+                                    <div class="fw-bold mb-2 text-dark"><i class="fas fa-list me-1"></i> Answer Options</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text fw-bold bg-white">A</span>
+                                                <input type="text" name="Questions[@i].OptionA" class="form-control" value="@Model.Questions[i]?.OptionA" placeholder="Option A" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text fw-bold bg-white">B</span>
+                                                <input type="text" name="Questions[@i].OptionB" class="form-control" value="@Model.Questions[i]?.OptionB" placeholder="Option B" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text fw-bold bg-white">C</span>
+                                                <input type="text" name="Questions[@i].OptionC" class="form-control" value="@Model.Questions[i]?.OptionC" placeholder="Option C" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text fw-bold bg-white">D</span>
+                                                <input type="text" name="Questions[@i].OptionD" class="form-control" value="@Model.Questions[i]?.OptionD" placeholder="Option D" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Option Selector -->
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-success"><i class="fas fa-check-circle me-1"></i> Correct Answer <span class="text-danger">*</span></label>
+                                        <select name="Questions[@i].RightOption" class="form-select border-success fw-bold" required>
+                                            <option value="">-- Choose Right Option --</option>
+                                            <option value="A" selected="@(Model.Questions[i]?.RightOption == "A")">Option A</option>
+                                            <option value="B" selected="@(Model.Questions[i]?.RightOption == "B")">Option B</option>
+                                            <option value="C" selected="@(Model.Questions[i]?.RightOption == "C")">Option C</option>
+                                            <option value="D" selected="@(Model.Questions[i]?.RightOption == "D")">Option D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Bottom Actions Toolbar -->
+                <div class="card shadow-sm border-0 rounded-4 mt-4 bg-white">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <button type="button" class="btn btn-outline-primary rounded-pill px-4 fw-bold" id="btnAddQuestion">
+                            <i class="fas fa-plus me-1"></i> Add Another Question
+                        </button>
+
+                        <div class="d-flex gap-2">
+                            <a asp-action="Index" asp-route-quizId="@Model.QuizId" asp-route-subject="@Model.Subject" class="btn btn-secondary rounded-pill px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" id="btnSubmitAll">
+                                <i class="fas fa-save me-1"></i> Save All Questions (<span id="submitCountBadge">@(Model.Questions?.Count ?? 0)</span>)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
         </div>
-        <div class="col-md-6">
-            <label asp-for="OptionB" class="form-label"></label>
-            <input asp-for="OptionB" class="form-control" />
-            <span asp-validation-for="OptionB" class="text-danger"></span>
-        </div>
     </div>
-
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label asp-for="OptionC" class="form-label"></label>
-            <input asp-for="OptionC" class="form-control" />
-            <span asp-validation-for="OptionC" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="OptionD" class="form-label"></label>
-            <input asp-for="OptionD" class="form-control" />
-            <span asp-validation-for="OptionD" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="RightOption" class="form-label"></label>
-        <select asp-for="RightOption" class="form-select">
-            <option value="">Select</option>
-            <option value="A">Option A</option>
-            <option value="B">Option B</option>
-            <option value="C">Option C</option>
-            <option value="D">Option D</option>
-        </select>
-        <span asp-validation-for="RightOption" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Marks" class="form-label"></label>
-        <input asp-for="Marks" class="form-control" />
-        <span asp-validation-for="Marks" class="text-danger"></span>
-        <small class="text-muted"> Quiz Total: @quiz?.TotalMarks. Negative Marking: @quiz?.NegativeMarking. (Question Mark must be >= @quiz?.NegativeMarking)</small>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" asp-route-quizId="@Model.QuizId" asp-route-subject="@Model.Subject" class="btn btn-secondary">Back</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://unpkg.com/mathlive"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const subjectSelect = document.getElementById('@Html.IdFor(m => m.Subject)');
-            const textContainer = document.getElementById('textQuestionContainer');
-            const mathContainer = document.getElementById('mathQuestionContainer');
-            const hidden = document.getElementById('QuestionTextHidden');
-            const textarea = document.getElementById('@Html.IdFor(m => m.QuestionText)');
-            const mf = document.getElementById('mathQuestion');
+            const container = document.getElementById('questionsContainer');
+            const countInput = document.getElementById('questionCountInput');
+            const btnApplyCount = document.getElementById('btnApplyCount');
+            const btnAddQuestion = document.getElementById('btnAddQuestion');
+            const submitCountBadge = document.getElementById('submitCountBadge');
+            const quizSelect = document.getElementById('quizSelect');
+            const globalSubjectInput = document.getElementById('globalSubjectInput');
+            const quizTotalMarksBadge = document.getElementById('quizTotalMarksBadge');
+            const quizNegativeMarkingBadge = document.getElementById('quizNegativeMarkingBadge');
+            const quizNegativeRuleBadge = document.getElementById('quizNegativeRuleBadge');
 
-            function updateUI() {
-                if (subjectSelect.value === 'Math') {
-                    textContainer.classList.add('d-none');
-                    mathContainer.classList.remove('d-none');
-                    mf.value = textarea.value || '';
-                    hidden.value = mf.value;
-                } else {
-                    textContainer.classList.remove('d-none');
-                    mathContainer.classList.add('d-none');
+            function onQuizChanged() {
+                const selectedOption = quizSelect.options[quizSelect.selectedIndex];
+                const quizId = quizSelect.value || '';
+                
+                let subject = 'General';
+                let totalMarks = '0';
+                let negativeMarking = '0';
+
+                if (selectedOption && selectedOption.dataset) {
+                    if (selectedOption.dataset.subject) subject = selectedOption.dataset.subject;
+                    if (selectedOption.dataset.totalmarks) totalMarks = selectedOption.dataset.totalmarks;
+                    if (selectedOption.dataset.negativemarking) negativeMarking = selectedOption.dataset.negativemarking;
                 }
+
+                // Update subject input
+                if (globalSubjectInput) globalSubjectInput.value = subject;
+
+                // Update info banner
+                quizTotalMarksBadge.textContent = totalMarks;
+                quizNegativeMarkingBadge.textContent = negativeMarking;
+                quizNegativeRuleBadge.textContent = negativeMarking;
+
+                const isMath = subject.toLowerCase() === 'math';
+
+                // Sync all question cards
+                document.querySelectorAll('.question-card').forEach(card => {
+                    const hiddenQuizId = card.querySelector('.input-quiz-id');
+                    if (hiddenQuizId) hiddenQuizId.value = quizId;
+
+                    const hiddenSubj = card.querySelector('.input-subject');
+                    if (hiddenSubj) hiddenSubj.value = subject;
+
+                    const subjBadge = card.querySelector('.card-subject-badge');
+                    if (subjBadge) subjBadge.textContent = subject;
+
+                    const textWrapper = card.querySelector('.text-question-wrapper');
+                    const mathWrapper = card.querySelector('.math-question-wrapper');
+                    const textarea = card.querySelector('.question-textarea');
+                    const mf = card.querySelector('.math-field-input');
+
+                    if (isMath) {
+                        if (textWrapper) textWrapper.classList.add('d-none');
+                        if (mathWrapper) mathWrapper.classList.remove('d-none');
+                        if (mf && textarea) {
+                            mf.value = textarea.value || '';
+                            mf.oninput = () => { textarea.value = mf.value; };
+                        }
+                    } else {
+                        if (textWrapper) textWrapper.classList.remove('d-none');
+                        if (mathWrapper) mathWrapper.classList.add('d-none');
+                    }
+                });
             }
 
-            subjectSelect.addEventListener('change', updateUI);
+            function reindexQuestions() {
+                const cards = container.querySelectorAll('.question-card');
+                const total = cards.length;
+                countInput.value = total;
+                submitCountBadge.textContent = total;
 
-            mf.addEventListener('input', () => {
-                hidden.value = mf.value;
+                cards.forEach((card, index) => {
+                    card.setAttribute('data-index', index);
+                    
+                    // Update header badge
+                    const numBadge = card.querySelector('.question-number-badge');
+                    if (numBadge) numBadge.textContent = `Question #${index + 1}`;
+
+                    // Update Remove Button state
+                    const btnRemove = card.querySelector('.btn-remove-question');
+                    if (btnRemove) {
+                        btnRemove.disabled = (total <= 1);
+                    }
+
+                    // Re-index all input names
+                    card.querySelectorAll('input, select, textarea').forEach(input => {
+                        const name = input.getAttribute('name');
+                        if (name) {
+                            const newName = name.replace(/Questions\[\d+\]/, `Questions[${index}]`);
+                            input.setAttribute('name', newName);
+                        }
+                    });
+                });
+
+                onQuizChanged();
+            }
+
+            function createQuestionCard(index) {
+                const subj = globalSubjectInput.value || 'General';
+                const quizId = quizSelect.value || '';
+                const qNum = index + 1;
+                const isMath = subj.toLowerCase() === 'math';
+
+                const card = document.createElement('div');
+                card.className = 'card shadow-sm border-0 rounded-4 question-card';
+                card.setAttribute('data-index', index);
+                card.innerHTML = `
+                    <div class="card-header bg-white border-bottom p-3 px-4 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-dark rounded-pill px-3 py-2 fs-6 question-number-badge">Question #${qNum}</span>
+                            <span class="badge bg-info text-dark rounded-pill px-3 py-1 card-subject-badge">${subj}</span>
+                        </div>
+                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 btn-remove-question">
+                            <i class="fas fa-trash-alt me-1"></i> Remove
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <input type="hidden" name="Questions[${index}].QuizId" class="input-quiz-id" value="${quizId}" />
+                        <input type="hidden" name="Questions[${index}].Subject" class="input-subject" value="${subj}" />
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Question Title / Summary (Optional)</label>
+                                <input type="text" name="Questions[${index}].Name" class="form-control" placeholder="e.g. Basic Grammar / Quadratic Equation" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Marks <span class="text-danger">*</span></label>
+                                <input type="number" name="Questions[${index}].Marks" class="form-control" value="1" min="1" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 text-question-wrapper ${isMath ? 'd-none' : ''}">
+                            <label class="form-label fw-bold">Question Text <span class="text-danger">*</span></label>
+                            <textarea name="Questions[${index}].QuestionText" class="form-control question-textarea" rows="3" placeholder="Enter your question here..." required></textarea>
+                        </div>
+
+                        <div class="mb-3 math-question-wrapper ${isMath ? '' : 'd-none'}">
+                            <label class="form-label fw-bold">Math Question (LaTeX / MathLive)</label>
+                            <math-field class="math-field-input" style="width:100%; min-height:60px; border:1px solid #ced4da; border-radius:0.375rem; padding:0.5rem;"></math-field>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">Explanation / Description (Optional)</label>
+                            <textarea name="Questions[${index}].Description" class="form-control" rows="2" placeholder="Explain why the right answer is correct..."></textarea>
+                        </div>
+
+                        <div class="bg-light p-3 rounded-3 mb-3 border">
+                            <div class="fw-bold mb-2 text-dark"><i class="fas fa-list me-1"></i> Answer Options</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold bg-white">A</span>
+                                        <input type="text" name="Questions[${index}].OptionA" class="form-control" placeholder="Option A" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold bg-white">B</span>
+                                        <input type="text" name="Questions[${index}].OptionB" class="form-control" placeholder="Option B" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold bg-white">C</span>
+                                        <input type="text" name="Questions[${index}].OptionC" class="form-control" placeholder="Option C" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text fw-bold bg-white">D</span>
+                                        <input type="text" name="Questions[${index}].OptionD" class="form-control" placeholder="Option D" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-success"><i class="fas fa-check-circle me-1"></i> Correct Answer <span class="text-danger">*</span></label>
+                                <select name="Questions[${index}].RightOption" class="form-select border-success fw-bold" required>
+                                    <option value="">-- Choose Right Option --</option>
+                                    <option value="A" selected>Option A</option>
+                                    <option value="B">Option B</option>
+                                    <option value="C">Option C</option>
+                                    <option value="D">Option D</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return card;
+            }
+
+            // Remove question event delegation
+            container.addEventListener('click', function (e) {
+                const btn = e.target.closest('.btn-remove-question');
+                if (btn) {
+                    const card = btn.closest('.question-card');
+                    if (container.querySelectorAll('.question-card').length > 1) {
+                        card.remove();
+                        reindexQuestions();
+                    }
+                }
             });
 
-            updateUI();
+            // Add single question
+            btnAddQuestion.addEventListener('click', function () {
+                const currentCount = container.querySelectorAll('.question-card').length;
+                if (currentCount >= 50) {
+                    alert('Maximum 50 questions can be added at once.');
+                    return;
+                }
+                const newCard = createQuestionCard(currentCount);
+                container.appendChild(newCard);
+                reindexQuestions();
+                newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+
+            // Apply count button
+            btnApplyCount.addEventListener('click', function () {
+                let targetCount = parseInt(countInput.value, 10);
+                if (isNaN(targetCount) || targetCount < 1) targetCount = 1;
+                if (targetCount > 50) targetCount = 50;
+                countInput.value = targetCount;
+
+                let currentCards = container.querySelectorAll('.question-card');
+                let currentCount = currentCards.length;
+
+                if (targetCount > currentCount) {
+                    for (let i = currentCount; i < targetCount; i++) {
+                        container.appendChild(createQuestionCard(i));
+                    }
+                } else if (targetCount < currentCount) {
+                    for (let i = currentCount - 1; i >= targetCount; i--) {
+                        currentCards[i].remove();
+                    }
+                }
+                reindexQuestions();
+            });
+
+            // Change event for Quiz Select dropdown
+            quizSelect.addEventListener('change', onQuizChanged);
+
+            // Initial trigger
+            onQuizChanged();
         });
     </script>
 }

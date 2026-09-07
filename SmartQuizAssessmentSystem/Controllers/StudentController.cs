@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +8,7 @@ using QuizSystemService.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Instructor")]
     public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
@@ -21,8 +22,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        
-        [Authorize(Roles = "Admin, Instructor")]
         public async Task<IActionResult> Index(long? classId, long? educationMediumId)
         {
             var students = await _studentService.GetAllAsync(classId, educationMediumId);
@@ -174,7 +173,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, Instructor")]
+        [Authorize(Roles = "Admin,Instructor")]
         public async Task<IActionResult> Approve(long id, long? classId, long? educationMediumId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -186,7 +185,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, Instructor")]
+        [Authorize(Roles = "Admin,Instructor")]
         public async Task<IActionResult> Reject(long id, long? classId, long? educationMediumId)
         {
             var currentUser = await _userManager.GetUserAsync(User);

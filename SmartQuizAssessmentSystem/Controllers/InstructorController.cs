@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,46 +10,46 @@ using QuizSystemModel.Interfaces;
 
 namespace SmartQuizAssessmentSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class InstructorController : Controller
     {
         private readonly IInstructorService _instructorService;
         private readonly UserManager<QuizSystemUser> _userManager;
         private readonly IClassService _classService;
+        private readonly ISubjectService _subjectService;
 
         public InstructorController(
             IInstructorService instructorService,
             UserManager<QuizSystemUser> userManager,
-            IClassService classService)
+            IClassService classService,
+            ISubjectService subjectService)
         {
             _instructorService = instructorService;
             _userManager = userManager;
             _classService = classService;
+            _subjectService = subjectService;
         }
 
-        
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index(long? educationMediumId, long? classId)
+        public async Task<IActionResult> Index(long? educationMediumId, long? classId, long? subjectId)
         {
-            var instructors = await _instructorService.GetAllAsync(educationMediumId, classId);
-            await PopulateDropdownsAsync(educationMediumId, classId);
+            var instructors = await _instructorService.GetAllAsync(educationMediumId, classId, subjectId);
+            await PopulateDropdownsAsync(educationMediumId, classId, subjectId);
             return View(instructors);
         }
 
-        
         public async Task<IActionResult> Create()
         {
             await PopulateDropdownsAsync();
             return View(new InstructorAddViewModel());
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InstructorAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
 
@@ -62,41 +62,38 @@ namespace SmartQuizAssessmentSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId);
+                await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
         }
 
-        
         public async Task<IActionResult> Edit(long id)
         {
             var instructor = await _instructorService.GetForEditAsync(id);
             if (instructor == null)
                 return NotFound();
 
-            await PopulateDropdownsAsync(instructor.EducationMediumId, instructor.ClassId);
+            await PopulateDropdownsAsync(instructor.EducationMediumId, instructor.ClassId, instructor.SubjectId);
             return View(instructor);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, Instructor model, long? educationMediumId, long? classId)
+        public async Task<IActionResult> Edit(long id, Instructor model, long? educationMediumId, long? classId, long? subjectId)
         {
             if (id != model.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
             {
-                await PopulateDropdownsAsync(educationMediumId, classId);
+                await PopulateDropdownsAsync(educationMediumId, classId, subjectId);
                 return View(model);
             }
 
             try
             {
-                var ok = await _instructorService.UpdateAsync(id, model, educationMediumId, classId);
+                var ok = await _instructorService.UpdateAsync(id, model, educationMediumId, classId, subjectId);
                 if (!ok)
                     return NotFound();
 
@@ -105,12 +102,11 @@ namespace SmartQuizAssessmentSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                await PopulateDropdownsAsync(educationMediumId, classId);
+                await PopulateDropdownsAsync(educationMediumId, classId, subjectId);
                 return View(model);
             }
         }
 
-        
         public async Task<IActionResult> Details(long id)
         {
             var instructor = await _instructorService.GetByIdAsync(id);
@@ -120,7 +116,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(instructor);
         }
 
-        
         public async Task<IActionResult> Delete(long id)
         {
             var instructor = await _instructorService.GetByIdAsync(id);
@@ -130,7 +125,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(instructor);
         }
 
-        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
@@ -151,7 +145,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             return View(pendingInstructors);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(long id, string redirect = "Index")
@@ -165,10 +158,10 @@ namespace SmartQuizAssessmentSystem.Controllers
             else
                 TempData["ErrorMessage"] = "Failed to approve instructor.";
 
-            return RedirectToAction(redirect);
+            var targetAction = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(targetAction);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(long id, string redirect = "Index")
@@ -182,7 +175,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             else
                 TempData["ErrorMessage"] = "Failed to reject instructor.";
 
-            return RedirectToAction(redirect);
+            var targetAction = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(targetAction);
         }
 
         [HttpGet]
@@ -192,13 +186,23 @@ namespace SmartQuizAssessmentSystem.Controllers
              return Json(classes.Select(c => new { id = c.Id, name = c.Name }));
         }
 
-        private async Task PopulateDropdownsAsync(long? selectedMediumId = null, long? selectedClassId = null)
+        [HttpGet]
+        public async Task<JsonResult> GetSubjectsByClass(long? classId)
+        {
+             var subjects = await _subjectService.GetAllAsync(classId);
+             return Json(subjects.Select(s => new { id = s.Id, name = s.Name }));
+        }
+
+        private async Task PopulateDropdownsAsync(long? selectedMediumId = null, long? selectedClassId = null, long? selectedSubjectId = null)
         {
             var mediums = await _instructorService.GetEducationMediumsAsync();
             ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", selectedMediumId);
 
             var classes = await _classService.GetAllAsync(selectedMediumId);
             ViewBag.ClassId = new SelectList(classes, "Id", "Name", selectedClassId);
+
+            var subjects = await _subjectService.GetAllAsync(selectedClassId);
+            ViewBag.SubjectId = new SelectList(subjects, "Id", "Name", selectedSubjectId);
         }
     }
 }

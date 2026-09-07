@@ -1,4 +1,4 @@
-﻿using QuizSystemModel.BusinessRules;
+using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
@@ -16,6 +16,9 @@ namespace QuizSystemService.Services
             _repo = repo;
             _quizRepo = quizRepo;
         }
+
+        public Task<List<QuestionBank>> GetAllAsync(long? quizId = null, string? subject = null) =>
+            _repo.GetAllAsync(quizId, subject);
 
         public Task<List<QuestionBank>> GetByQuizAsync(long quizId, string? subject = null) =>
             _repo.GetByQuizAsync(quizId, subject);
@@ -81,6 +84,61 @@ namespace QuizSystemService.Services
 
             await _repo.AddAsync(q);
             return true;
+        }
+
+        public async Task<int> CreateBatchAsync(BatchQuestionViewModel model, QuizSystemUser currentUser)
+        {
+            var quiz = await _quizRepo.GetByIdAsync(model.QuizId);
+            if (quiz == null)
+                throw new InvalidOperationException("Quiz not found.");
+
+            if (model.Questions == null || !model.Questions.Any())
+                throw new InvalidOperationException("Please add at least one question.");
+
+            var currentQuestions = await _repo.GetByQuizAsync(model.QuizId);
+            var currentTotal = currentQuestions.Sum(q => q.Marks);
+            var newBatchTotal = model.Questions.Sum(q => q.Marks);
+
+            if (currentTotal + newBatchTotal > quiz.TotalMarks)
+                throw new InvalidOperationException($"Total marks of all questions ({currentTotal + newBatchTotal}) cannot exceed Quiz total marks ({quiz.TotalMarks}). Current marks in quiz: {currentTotal}");
+
+            var list = new List<QuestionBank>();
+            for (int i = 0; i < model.Questions.Count; i++)
+            {
+                var qModel = model.Questions[i];
+                int qNum = i + 1;
+
+                if (string.IsNullOrWhiteSpace(qModel.QuestionText))
+                    throw new InvalidOperationException($"Question #{qNum}: Question text is required.");
+
+                if (quiz.NegativeMarking > qModel.Marks)
+                    throw new InvalidOperationException($"Question #{qNum}: Negative marking ({quiz.NegativeMarking}) cannot be greater than the Question Mark ({qModel.Marks}).");
+
+                if (string.IsNullOrWhiteSpace(qModel.RightOption))
+                    throw new InvalidOperationException($"Question #{qNum}: Right option must be selected.");
+
+                var q = new QuestionBank
+                {
+                    QuizId = model.QuizId,
+                    Subject = !string.IsNullOrWhiteSpace(qModel.Subject) ? qModel.Subject : (model.Subject ?? quiz.Subject?.Name ?? "General"),
+                    Name = !string.IsNullOrWhiteSpace(qModel.Name) ? qModel.Name : (qModel.QuestionText.Length > 50 ? qModel.QuestionText.Substring(0, 47) + "..." : qModel.QuestionText),
+                    QuestionText = qModel.QuestionText,
+                    Description = qModel.Description ?? "",
+                    OptionA = qModel.OptionA ?? "",
+                    OptionB = qModel.OptionB ?? "",
+                    OptionC = qModel.OptionC ?? "",
+                    OptionD = qModel.OptionD ?? "",
+                    RightOption = qModel.RightOption,
+                    Marks = qModel.Marks,
+                    CreatedAt = DateTime.UtcNow,
+                    Status = ModelStatus.Active,
+                    CreatedBy = currentUser
+                };
+                list.Add(q);
+            }
+
+            await _repo.AddRangeAsync(list);
+            return list.Count;
         }
 
         public async Task<bool> UpdateAsync(long id, QuestionViewModel model, QuizSystemUser currentUser)

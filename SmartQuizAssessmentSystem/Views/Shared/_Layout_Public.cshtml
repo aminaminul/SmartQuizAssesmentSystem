@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using QuizSystemModel.Models
 @inject UserManager<QuizSystemUser> UserManager
 
@@ -17,59 +17,122 @@
         body {
             background-color: #f4f6f9;
         }
-
-        .navbar-brand span {
-            font-weight: 700;
-        }
-
         .footer {
             border-top: 1px solid #ddd;
             padding: 1rem 0;
             font-size: 0.9rem;
             color: #666;
         }
+
+        /* ── Public Topbar (matches dashboard) ── */
+        .public-topbar {
+            background: #111111;
+            padding: 0 2rem;
+            border-bottom: 1px solid #222;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .public-topbar .brand-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .public-topbar .brand-text span { color: #ffc107; }
+        .public-topbar .nav-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .public-topbar .nav-links a:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .public-topbar .nav-links a.active-link { color: #ffc107; }
+
+        /* Reuse dashboard top-nav-btn style */
+        .top-nav-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: #adb5bd;
+            transition: all 0.2s;
+            text-decoration: none;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .top-nav-btn:hover { color:#fff; background:rgba(255,255,255,0.1); transform:translateY(-1px); }
+        .top-nav-btn.text-danger:hover { background:#fff1f2; color:#ef4444; border-color:#fecaca; }
+
+        /* User avatar reuse */
+        .user-avatar {
+            width: 35px; height: 35px;
+            border-radius: 10px;
+            background: #ffc107;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #000;
+            margin-right: 12px;
+        }
+        .user-profile-toggle {
+            display: flex; align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid #f1f5f9;
+            background: #f8fafc;
+        }
+        .user-profile-toggle:hover { background:#f1f5f9; }
+        .user-profile-toggle::after, .user-avatar.dropdown-toggle::after { display: none; }
     </style>
 </head>
 <body>
+    <!-- Public Topbar (same style as dashboard) -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary shadow-sm">
-            <div class="container">
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
-                    <span class="text-white">Quiz <span class="text-secondary">Management</span></span>
+        <div class="public-topbar">
+            <!-- Left: Brand + nav links -->
+            <div class="d-flex align-items-center gap-4">
+                <a class="brand-text" asp-controller="Home" asp-action="Index">
+                    Quiz <span>Management</span>
                 </a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarMain" aria-controls="navbarMain"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            string dashboardController = "StudentDashboard";
-                            string dashboardTitle = "Dashboard";
-                            
-                            if (User.IsInRole("Admin")) { dashboardController = "AdminDashboard"; }
-                            else if (User.IsInRole("Instructor")) { dashboardController = "InstructorDashboard"; }
-
-                            <li class="nav-item ms-lg-3">
-                                <a class="nav-link btn btn-outline-light text-white px-3 rounded-pill shadow-sm py-1 mt-1 border-white border-opacity-25" 
-                                   asp-controller="@dashboardController" asp-action="Dashboard">
-                                    <i class="fas fa-th-large me-1"></i> @dashboardTitle
-                                </a>
-                            </li>
-                        }
-                    </ul>
-
-                    <partial name="_LoginPartial" />
-                </div>
+                <nav class="nav-links d-none d-md-flex gap-1">
+                    <a asp-controller="Home" asp-action="Index"><i class="fas fa-home me-1"></i>Home</a>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        string dc = User.IsInRole("Admin") ? "AdminDashboard" : User.IsInRole("Instructor") ? "InstructorDashboard" : "StudentDashboard";
+                        <a asp-controller="@dc" asp-action="Dashboard"><i class="fas fa-th-large me-1"></i>Dashboard</a>
+                    }
+                </nav>
             </div>
-        </nav>
+
+            <!-- Right: Icons + User Card (same as dashboard) -->
+            <div class="d-flex align-items-center gap-3">
+                <a asp-controller="Home" asp-action="Privacy" class="top-nav-btn" title="Privacy Policy">
+                    <i class="far fa-question-circle"></i>
+                </a>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="vr mx-1 text-muted opacity-25" style="height:30px;"></div>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="top-nav-btn text-danger border-danger border-opacity-10" title="Logout">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </form>
+                }
+                <div class="vr mx-1 text-muted opacity-25" style="height:30px;"></div>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
     </header>
 
     <main class="container py-4">

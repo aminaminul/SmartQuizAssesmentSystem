@@ -1,84 +1,143 @@
-﻿@model IEnumerable<QuizSystemModel.Models.QuestionBank>
+@model IEnumerable<QuizSystemModel.Models.QuestionBank>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var quiz = ViewBag.Quiz as QuizSystemModel.Models.Quiz;
+    long? quizId = ViewBag.QuizId as long?;
     string subject = ViewBag.Subject as string;
-    ViewData["Title"] = "Questions - " + quiz?.Name;
+    var quizzes = ViewBag.Quizzes as List<QuizSystemModel.Models.Quiz>;
+    var subjects = ViewBag.Subjects as List<QuizSystemModel.Models.Subject>;
+    
+    ViewData["Title"] = quiz != null ? "Questions - " + quiz.Name : "All Questions - Question Bank";
     
     var currentMarks = Model.Sum(x => x.Marks);
-    var isOverMarks = currentMarks > (quiz?.TotalMarks ?? 0);
+    var isOverMarks = quiz != null && currentMarks > quiz.TotalMarks;
 }
 
 <div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-lg-9">
+        <div class="col-lg-10">
             <!-- Header Card -->
             <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
-                <div class="card-header bg-primary text-white p-4">
+                <div class="card-header bg-dark text-white p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h3 class="mb-1 fw-bold">@quiz?.Name</h3>
-                            <p class="mb-0 opacity-75"><i class="fas fa-list-ol me-1"></i> Question Management</p>
+                            <h3 class="mb-1 fw-bold">@(quiz != null ? quiz.Name : "Question Bank (All Questions)")</h3>
+                            <p class="mb-0 text-white-50"><i class="fas fa-list-ol me-1"></i> Question Bank & Topic Management</p>
                         </div>
-                        <a asp-controller="Quiz" asp-action="Index" class="btn btn-light btn-sm rounded-pill px-3 fw-bold text-primary shadow-sm">
-                            <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
-                        </a>
+                        <div class="d-flex gap-2">
+                            @if (quiz != null)
+                            {
+                                <a asp-action="Index" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold">
+                                    <i class="fas fa-layer-group me-1"></i> View All Questions
+                                </a>
+                            }
+                            <a asp-controller="Quiz" asp-action="Index" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark shadow-sm">
+                                <i class="fas fa-tasks me-1"></i> Manage Quizzes
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="card-body bg-light border-bottom p-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="p-3 bg-white rounded-3 shadow-sm text-center">
-                                <div class="text-muted small fw-bold text-uppercase mb-1">Total Marks</div>
-                                <div class="h4 mb-0 fw-bold text-primary">@quiz?.TotalMarks</div>
+                @if (quiz != null)
+                {
+                    <div class="card-body bg-light border-bottom p-4">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Total Marks</div>
+                                    <div class="h4 mb-0 fw-bold text-primary">@quiz.TotalMarks</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 bg-white rounded-3 shadow-sm text-center">
-                                <div class="text-muted small fw-bold text-uppercase mb-1">Questions</div>
-                                <div class="h4 mb-0 fw-bold">@Model.Count()</div>
+                            <div class="col-md-3">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Questions</div>
+                                    <div class="h4 mb-0 fw-bold">@Model.Count()</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 bg-white rounded-3 shadow-sm text-center border-bottom border-3 @(isOverMarks ? "border-danger" : "border-success")">
-                                <div class="text-muted small fw-bold text-uppercase mb-1">Marks Assigned</div>
-                                <div class="h4 mb-0 fw-bold @(isOverMarks ? "text-danger" : "text-success")">@currentMarks</div>
+                            <div class="col-md-3">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center border-bottom border-3 @(isOverMarks ? "border-danger" : "border-success")">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Marks Assigned</div>
+                                    <div class="h4 mb-0 fw-bold @(isOverMarks ? "text-danger" : "text-success")">@currentMarks</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 bg-white rounded-3 shadow-sm text-center">
-                                <div class="text-muted small fw-bold text-uppercase mb-1">Neg. Marking</div>
-                                <div class="h4 mb-0 fw-bold text-warning">@quiz?.NegativeMarking</div>
+                            <div class="col-md-3">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Neg. Marking</div>
+                                    <div class="h4 mb-0 fw-bold text-warning">@quiz.NegativeMarking</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="card-body bg-light border-bottom p-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Total Questions</div>
+                                    <div class="h4 mb-0 fw-bold text-primary">@Model.Count()</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Active Quizzes</div>
+                                    <div class="h4 mb-0 fw-bold text-success">@(quizzes?.Count ?? 0)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-3 bg-white rounded-3 shadow-sm text-center">
+                                    <div class="text-muted small fw-bold text-uppercase mb-1">Topics / Subjects</div>
+                                    <div class="h4 mb-0 fw-bold text-warning">@(subjects?.Count ?? 0)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 <div class="card-body bg-white p-4 d-flex flex-wrap gap-3 align-items-center">
-                    <form asp-action="Index" method="get" class="d-flex align-items-center flex-grow-1">
-                        <input type="hidden" name="quizId" value="@quiz?.Id" />
-                        <div class="input-group input-group-sm" style="max-width: 300px;">
-                            <label class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-filter me-1"></i> Subject</label>
+                    <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+                        <!-- Topic / Subject Dropdown Filter -->
+                        <div class="input-group input-group-sm" style="max-width: 250px;">
+                            <label class="input-group-text bg-white border-end-0 text-muted fw-bold"><i class="fas fa-filter me-1 text-primary"></i> Topic</label>
                             <select name="subject" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
-                                <option value="" selected="@(string.IsNullOrEmpty(subject))">All Subjects</option>
-                                @{
-                                    var subjects = ViewBag.Subjects as List<QuizSystemModel.Models.Subject>;
-                                    if (subjects != null)
+                                <option value="" selected="@(string.IsNullOrEmpty(subject))">All Topics / Subjects</option>
+                                @if (subjects != null)
+                                {
+                                    foreach (var subj in subjects)
                                     {
-                                        foreach (var subj in subjects)
-                                        {
-                                            <option value="@subj.Name" selected="@(subject == subj.Name)">@subj.Name</option>
-                                        }
+                                        <option value="@subj.Name" selected="@(subject == subj.Name)">@subj.Name</option>
                                     }
                                 }
                             </select>
                         </div>
+
+                        <!-- Quiz Dropdown Filter -->
+                        <div class="input-group input-group-sm" style="max-width: 260px;">
+                            <label class="input-group-text bg-white border-end-0 text-muted fw-bold"><i class="fas fa-tasks me-1 text-warning"></i> Quiz</label>
+                            <select name="quizId" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                                <option value="" selected="@(!quizId.HasValue || quizId.Value == 0)">All Quizzes</option>
+                                @if (quizzes != null)
+                                {
+                                    foreach (var qz in quizzes)
+                                    {
+                                        <option value="@qz.Id" selected="@(quizId == qz.Id)">@qz.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(subject) || (quizId.HasValue && quizId.Value > 0))
+                        {
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                <i class="fas fa-undo me-1"></i> Reset
+                            </a>
+                        }
                     </form>
 
                     <div class="ms-auto">
                         <a asp-action="Create" asp-route-quizId="@quiz?.Id" asp-route-subject="@subject" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
-                            <i class="fas fa-plus me-2"></i> Add New Question
+                            <i class="fas fa-plus me-2"></i> Add Question
                         </a>
                     </div>
                 </div>
@@ -89,9 +148,12 @@
                 @if (!Model.Any())
                 {
                     <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
-                        <i class="fas fa-question-circle fa-4x text-light mb-3"></i>
-                        <h4 class="text-muted">No questions found for this quiz.</h4>
-                        <p class="text-muted">Click the button above to start adding questions.</p>
+                        <i class="fas fa-question-circle fa-4x text-muted opacity-50 mb-3"></i>
+                        <h4 class="text-muted">No questions found.</h4>
+                        <p class="text-muted mb-3">Try adjusting your Topic/Quiz filter or add a new question.</p>
+                        <a asp-action="Create" asp-route-quizId="@quiz?.Id" asp-route-subject="@subject" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                            <i class="fas fa-plus me-2"></i> Add Question Now
+                        </a>
                     </div>
                 }
                 else
@@ -102,19 +164,40 @@
                         <div class="card shadow-sm border-0 rounded-4 mb-4 question-card hover-actions">
                             <div class="card-body p-4">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold me-3">
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">
                                             Q @(counter++)
                                         </span>
-                                        <span class="badge bg-light text-muted border px-2 py-1 small rounded-3">@q.Subject</span>
+                                        <span class="badge bg-info text-dark px-2 py-1 rounded-3">
+                                            <i class="fas fa-tag me-1"></i>Topic: @q.Subject
+                                        </span>
+                                        @if (q.Quiz != null)
+                                        {
+                                            <span class="badge bg-dark bg-opacity-75 text-white px-2 py-1 rounded-3">
+                                                <i class="fas fa-tasks me-1 text-warning"></i>Quiz: @q.Quiz.Name
+                                            </span>
+                                            @if (q.Quiz.EducationMedium != null)
+                                            {
+                                                <span class="badge bg-success bg-opacity-25 text-dark border border-success-subtle px-2 py-1 rounded-3">
+                                                    <i class="fas fa-book me-1 text-success"></i>@q.Quiz.EducationMedium.Name
+                                                </span>
+                                            }
+                                        }
                                     </div>
                                     <div class="text-end">
                                         <div class="fw-bold text-dark fs-5">@q.Marks Marks</div>
-                                        <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Correct: @q.RightOption</div>
+                                        <div class="small text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Correct: Option @q.RightOption</div>
                                     </div>
                                 </div>
                                 
-                                <h5 class="fw-bold mb-4 text-dark lh-base">@q.QuestionText</h5>
+                                <h5 class="fw-bold mb-3 text-dark lh-base">@q.QuestionText</h5>
+
+                                @if (!string.IsNullOrWhiteSpace(q.Description))
+                                {
+                                    <div class="p-2 px-3 mb-3 bg-light rounded-3 border-start border-3 border-info small text-muted">
+                                        <span class="fw-bold text-info"><i class="fas fa-lightbulb me-1"></i> Explanation:</span> @q.Description
+                                    </div>
+                                }
 
                                 <div class="row g-2">
                                     <div class="col-md-6">
@@ -167,7 +250,7 @@
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
     }
     .action-buttons .btn {
-        opacity: 0.7;
+        opacity: 0.8;
         transition: all 0.2s ease;
     }
     .question-card:hover .action-buttons .btn {

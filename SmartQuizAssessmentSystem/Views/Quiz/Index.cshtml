@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QuizSystemModel.Models.Quiz>
+@model IEnumerable<QuizSystemModel.Models.Quiz>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -105,6 +105,8 @@
     <thead>
         <tr>
             <th>Name</th>
+            <th>Education Medium</th>
+            <th>Class</th>
             <th>Subject</th>
             <th>Total Marks</th>
             <th>Pass %</th>
@@ -119,9 +121,11 @@
         {
             <tr>
                 <td>@q.Name</td>
+                <td><span class="badge bg-info text-dark">@(q.EducationMedium?.Name ?? "-")</span></td>
+                <td>@(q.Class?.Name ?? "-")</td>
                 <td>@q.Subject?.Name</td>
                 <td>@q.TotalMarks</td>
-                <td>@q.RequiredPassPercentage</td>
+                <td>@q.RequiredPassPercentage%</td>
                 <td>@q.StartAt?.ToString("g")</td>
                 <td>@q.EndAt?.ToString("g")</td>
                 <td>
@@ -164,7 +168,10 @@
                     }
 
                     <a asp-controller="Question" asp-action="Index" asp-route-quizId="@q.Id" class="btn btn-sm btn-outline-primary">
-                        Questions
+                        <i class="fas fa-list"></i> Questions
+                    </a>
+                    <a asp-controller="Question" asp-action="Create" asp-route-quizId="@q.Id" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus-circle"></i> Add Questions
                     </a>
                 </td>
             </tr>

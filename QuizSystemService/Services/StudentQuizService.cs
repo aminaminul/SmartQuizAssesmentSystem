@@ -1,4 +1,5 @@
-﻿using QuizSystemModel.Interfaces;
+using QuizSystemModel.BusinessRules;
+using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Interfaces;
 using QuizSystemService.Interfaces;
@@ -34,12 +35,31 @@ namespace QuizSystemService.Services
         {
             var quiz = await _quizRepository.GetByIdWithQuestionsAsync(quizId);
             if (quiz == null)
-                throw new Exception("Quiz Not Found");
+                throw new InvalidOperationException("Quiz not found.");
 
-            
+            if (!quiz.IsApproved || quiz.Status != ModelStatus.Active)
+                throw new InvalidOperationException("This quiz is not currently active or approved.");
+
+            var now = DateTime.UtcNow;
+            if (quiz.StartAt.HasValue && now < quiz.StartAt.Value)
+                throw new InvalidOperationException("This quiz has not started yet.");
+
+            if (quiz.EndAt.HasValue && now > quiz.EndAt.Value)
+                throw new InvalidOperationException("This quiz has already ended.");
+
             var student = await _accountRepository.GetStudentByUserIdAsync(studentUserId);
             if (student == null || student.EducationMediumId != quiz.EducationMediumId || student.ClassId != quiz.ClassId)
-                throw new Exception("You are not authorized to attempt this quiz.");
+                throw new InvalidOperationException("You are not authorized to attempt this quiz.");
+
+            // Check if attempt already exists
+            var existingAttempt = await _attemptRepository.GetByUserAndQuizAsync(studentUserId, quizId);
+            if (existingAttempt != null)
+            {
+                if (existingAttempt.IsSubmitted)
+                    throw new InvalidOperationException("You have already completed this quiz.");
+
+                return existingAttempt; // Resume in-progress attempt
+            }
 
             var attempt = new QuizAttempt
             {
@@ -53,7 +73,8 @@ namespace QuizSystemService.Services
             await _attemptRepository.AddAsync(attempt);
             await _attemptRepository.SaveChangesAsync();
 
-            foreach (var q in quiz.Questions)
+            var activeQuestions = quiz.Questions.Where(q => q.Status != ModelStatus.Deleted).ToList();
+            foreach (var q in activeQuestions)
             {
                 var ans = new AttemptedQuizAnswer
                 {
@@ -101,26 +122,34 @@ namespace QuizSystemService.Services
         {
             var attempt = await _attemptRepository.GetByIdAsync(attemptId);
             if (attempt == null || attempt.StudentUserId != studentUserId)
-                throw new Exception("Attempt not found");
+                throw new InvalidOperationException("Attempt not found");
 
             if (attempt.IsSubmitted) return;
 
-            var quiz = attempt.Quiz;
+            var quiz = attempt.Quiz ?? await _quizRepository.GetByIdWithQuestionsAsync(attempt.QuizId)
+                       ?? throw new InvalidOperationException("Quiz associated with attempt not found.");
             var answers = await _answerRepository.GetByAttemptIdAsync(attemptId);
 
             decimal total = 0;
             foreach (var ans in answers)
             {
                 var q = ans.QuestionBank;
-                // Normalize strings for comparison
                 var selected = ans.SelectedOption?.Trim();
-                var correct = q.RightOption?.Trim();
+                var correct = q?.RightOption?.Trim();
 
-                if (!string.IsNullOrEmpty(selected) &&
-                    string.Equals(selected, correct, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(selected))
                 {
-                    ans.Score = q.Marks;
-                    total += q.Marks;
+                    if (string.Equals(selected, correct, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var marks = q?.Marks ?? 0;
+                        ans.Score = marks;
+                        total += marks;
+                    }
+                    else
+                    {
+                        ans.Score = -quiz.NegativeMarking;
+                        total -= quiz.NegativeMarking;
+                    }
                 }
                 else
                 {
@@ -130,14 +159,13 @@ namespace QuizSystemService.Services
                 await _answerRepository.UpdateAsync(ans);
             }
 
-            attempt.TotalScore = total;
+            attempt.TotalScore = Math.Max(0, total);
             attempt.EndAt = DateTime.UtcNow;
             attempt.IsSubmitted = true;
 
-            // Ensure TotalMarks is not zero to avoid division by zero
             var totalMarks = quiz.TotalMarks > 0 ? quiz.TotalMarks : 1;
             var passMarks = totalMarks * quiz.RequiredPassPercentage / 100m;
-            attempt.IsPassed = total >= passMarks;
+            attempt.IsPassed = attempt.TotalScore >= passMarks;
 
             await _attemptRepository.UpdateAsync(attempt);
             await _answerRepository.SaveChangesAsync();

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizSystemModel.ViewModels
 {
@@ -15,5 +15,7 @@ namespace QuizSystemModel.ViewModels
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
 
+        // Expected role — passed from role card on Home page
+        public string? Role { get; set; }
     }
 }

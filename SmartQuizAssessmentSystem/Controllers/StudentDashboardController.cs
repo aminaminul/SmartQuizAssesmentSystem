@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -70,8 +70,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            var model = await _dashboardService.GetDashboardAsync(user.Id);
-            return View(model.RecentAttempts);
+            var allAttempts = await _dashboardService.GetAllAttemptsAsync(user.Id);
+            return View(allAttempts);
         }
         [HttpGet]
         public async Task<IActionResult> ViewProfile()

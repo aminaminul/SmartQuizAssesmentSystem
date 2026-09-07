@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
@@ -27,64 +28,135 @@ namespace SmartQuizAssessmentSystem.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(long quizId, string? subject)
+        public async Task<IActionResult> Index(long? quizId, string? subject)
         {
-            var quiz = await _quizService.GetEntityAsync(quizId);
-            if (quiz == null) return NotFound();
+            Quiz? quiz = null;
+            if (quizId.HasValue && quizId.Value > 0)
+            {
+                quiz = await _quizService.GetEntityAsync(quizId.Value);
+            }
 
             // Get all active subjects from database
             var subjects = await _subjectService.GetAllAsync();
             var activeSubjects = subjects.Where(s => s.Status == QuizSystemModel.BusinessRules.ModelStatus.Active).ToList();
 
+            var allQuizzes = await _quizService.GetAllAsync();
+            var activeQuizzes = allQuizzes.Where(q => q.Status != QuizSystemModel.BusinessRules.ModelStatus.Deleted).OrderByDescending(q => q.Id).ToList();
+
             ViewBag.Quiz = quiz;
+            ViewBag.QuizId = quizId;
             ViewBag.Subject = subject;
             ViewBag.Subjects = activeSubjects;
+            ViewBag.Quizzes = activeQuizzes;
 
-            var questions = await _questionService.GetByQuizAsync(quizId, subject);
+            var questions = await _questionService.GetAllAsync(quizId, subject);
             return View(questions); 
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create(long quizId, string? subject)
+        public async Task<IActionResult> Create(long? quizId, string? subject, int count = 1)
         {
-            var quiz = await _quizService.GetEntityAsync(quizId);
-            if (quiz == null) return NotFound();
+            var allQuizzes = await _quizService.GetAllAsync();
+            var activeQuizzes = allQuizzes.Where(q => q.Status != QuizSystemModel.BusinessRules.ModelStatus.Deleted).OrderByDescending(q => q.Id).ToList();
+
+            Quiz? quiz = null;
+            if (quizId.HasValue && quizId.Value > 0)
+            {
+                quiz = await _quizService.GetEntityAsync(quizId.Value);
+            }
+            else if (activeQuizzes.Any())
+            {
+                quiz = activeQuizzes.FirstOrDefault();
+            }
+
+            var subjects = await _subjectService.GetAllAsync();
+            var activeSubjects = subjects.Where(s => s.Status == QuizSystemModel.BusinessRules.ModelStatus.Active).ToList();
+
+            if (count < 1) count = 1;
+            if (count > 50) count = 50;
+
+            var targetQuizId = quiz?.Id ?? (quizId ?? (activeQuizzes.FirstOrDefault()?.Id ?? 0));
+            var targetSubject = quiz?.Subject?.Name ?? subject ?? activeSubjects.FirstOrDefault()?.Name ?? "General";
+
+            var vm = new BatchQuestionViewModel
+            {
+                QuizId = targetQuizId,
+                Subject = targetSubject,
+                QuestionCount = count,
+                Questions = new List<QuestionViewModel>()
+            };
+
+            for (int i = 0; i < count; i++)
+            {
+                vm.Questions.Add(new QuestionViewModel
+                {
+                    QuizId = targetQuizId,
+                    Subject = targetSubject,
+                    Marks = 1,
+                    RightOption = "A"
+                });
+            }
 
             ViewBag.Quiz = quiz;
-
-            var vm = new QuestionViewModel
-            {
-                QuizId = quizId,
-                Subject = subject ?? quiz.Subject?.Name ?? ""
-            };
+            ViewBag.QuizzesList = activeQuizzes;
+            ViewBag.Quizzes = new SelectList(activeQuizzes, "Id", "Name", targetQuizId);
+            ViewBag.Subjects = activeSubjects;
 
             return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(QuestionViewModel model)
+        public async Task<IActionResult> Create(BatchQuestionViewModel model)
         {
-            var quiz = await _quizService.GetEntityAsync(model.QuizId);
-            if (quiz == null) return NotFound();
+            var allQuizzes = await _quizService.GetAllAsync();
+            var activeQuizzes = allQuizzes.Where(q => q.Status != QuizSystemModel.BusinessRules.ModelStatus.Deleted).OrderByDescending(q => q.Id).ToList();
 
-            if (!ModelState.IsValid)
+            var subjects = await _subjectService.GetAllAsync();
+            var activeSubjects = subjects.Where(s => s.Status == QuizSystemModel.BusinessRules.ModelStatus.Active).ToList();
+
+            var quiz = await _quizService.GetEntityAsync(model.QuizId);
+            ViewBag.Quiz = quiz;
+            ViewBag.QuizzesList = activeQuizzes;
+            ViewBag.Quizzes = new SelectList(activeQuizzes, "Id", "Name", model.QuizId);
+            ViewBag.Subjects = activeSubjects;
+
+            if (quiz == null)
             {
-                ViewBag.Quiz = quiz;
+                ModelState.AddModelError("QuizId", "Quiz not found.");
                 return View(model);
+            }
+
+            // Automatically set subject from Quiz
+            if (!string.IsNullOrWhiteSpace(quiz.Subject?.Name))
+            {
+                model.Subject = quiz.Subject.Name;
+            }
+
+            if (model.Questions == null || !model.Questions.Any())
+            {
+                ModelState.AddModelError(string.Empty, "Please provide at least one question.");
+                return View(model);
+            }
+
+            // Ensure every question has the quiz's subject
+            foreach (var q in model.Questions)
+            {
+                q.QuizId = model.QuizId;
+                q.Subject = model.Subject;
             }
 
             var currentUser = await _userManager.GetUserAsync(User);
 
             try
             {
-                await _questionService.CreateAsync(model, currentUser!);
+                var count = await _questionService.CreateBatchAsync(model, currentUser!);
+                TempData["SuccessMessage"] = $"{count} question(s) added successfully to '{quiz.Name}'!";
                 return RedirectToAction(nameof(Index), new { quizId = model.QuizId, subject = model.Subject });
             }
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                ViewBag.Quiz = quiz;
                 return View(model);
             }
         }

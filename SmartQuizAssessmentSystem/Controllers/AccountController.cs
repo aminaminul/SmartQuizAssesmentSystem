@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -34,9 +34,9 @@ namespace SmartQuizAssessmentSystem.Controllers
         
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? role = null)
         {
-            return View();
+            return View(new LoginViewModel { Email = "", Password = "", Role = role });
         }
 
         [HttpPost]
@@ -54,7 +54,7 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (!result.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
                 return View(model);
             }
 
@@ -66,7 +66,42 @@ namespace SmartQuizAssessmentSystem.Controllers
                 return View(model);
             }
 
+            var isApproved = await _accountService.IsUserApprovedAsync(user.Id);
+            if (!isApproved)
+            {
+                await _signInManager.SignOutAsync();
+                ModelState.AddModelError(string.Empty, "Your account is pending approval by an administrator or has been deactivated.");
+                return View(model);
+            }
+
             var roles = await _userManager.GetRolesAsync(user);
+
+            // Role portal check — if user came from a specific portal card, enforce role match
+            if (!string.IsNullOrEmpty(model.Role))
+            {
+                bool roleMatch = model.Role switch
+                {
+                    "Admin"      => roles.Contains("Admin"),
+                    "Instructor" => roles.Contains("Instructor"),
+                    "Student"    => roles.Contains("Student"),
+                    _            => true
+                };
+
+                if (!roleMatch)
+                {
+                    await _signInManager.SignOutAsync();
+                    var portalName = model.Role switch
+                    {
+                        "Admin"      => "Admin Portal",
+                        "Instructor" => "Instructor Portal",
+                        "Student"    => "Student Portal",
+                        _            => model.Role + " Portal"
+                    };
+                    ModelState.AddModelError(string.Empty,
+                        $"Access denied. This account does not have {model.Role} privileges. Please use the correct portal.");
+                    return View(model);
+                }
+            }
 
             if (roles.Contains("Admin"))
                 return RedirectToAction("Dashboard", "AdminDashboard");

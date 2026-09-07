@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizSystemModel.ViewModels
 {
@@ -49,5 +49,10 @@ namespace QuizSystemModel.ViewModels
         public long? ClassId { get; set; }
 
         public string? ClassName { get; set; }
+
+        [Display(Name = "Subject")]
+        public long? SubjectId { get; set; }
+
+        public string? SubjectName { get; set; }
     }
 }

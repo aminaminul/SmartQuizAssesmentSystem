@@ -1,4 +1,4 @@
-﻿using QuizSystemModel.Models;
+using QuizSystemModel.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuizSystemModel.ViewModels
@@ -39,11 +39,12 @@ namespace QuizSystemModel.ViewModels
         public long? HscPassingYear { get; set; }
 
         [Required]
-        [Range(4.00, 5.00, ErrorMessage = "GPA must be between 4.00 and 5.00")]
+        [RegularExpression(@"^([1-4](\.\d{1,2})?|5(\.0{1,2})?)$", ErrorMessage = "GPA must be a valid number up to 5.00")]
         public string HscGrade { get; set; }
 
         public string? Role { get; set; }
         public long? EducationMediumId { get; set; }
         public long? ClassId { get; set; }
+        public long? SubjectId { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model QuizSystemModel.Models.Instructor
+@model QuizSystemModel.Models.Instructor
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -59,7 +59,7 @@
                         <span asp-validation-for="HscGrade" class="text-danger small"></span>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Education Medium</label>
                         <select name="educationMediumId" class="form-select"
                                 asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.EducationMediumId">
@@ -67,7 +67,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Class</label>
                         <select name="classId" class="form-select"
                                 asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.ClassId">
@@ -75,7 +75,15 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Subject</label>
+                        <select name="subjectId" class="form-select"
+                                asp-items="(Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.SubjectId">
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
                         <label asp-for="Status" class="form-label fw-bold"></label>
                         <select asp-for="Status" class="form-select"
                                 asp-items="Html.GetEnumSelectList<QuizSystemModel.BusinessRules.ModelStatus>()">
@@ -107,11 +115,14 @@
         $(document).ready(function () {
             var mediumDropdown = $('select[name="educationMediumId"]');
             var classDropdown = $('select[name="classId"]');
+            var subjectDropdown = $('select[name="subjectId"]');
 
             mediumDropdown.change(function () {
                 var mediumId = $(this).val();
                 classDropdown.empty();
                 classDropdown.append('<option value="">Select Class</option>');
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">Select Subject</option>');
 
                 if (mediumId) {
                     $.ajax({
@@ -121,6 +132,28 @@
                         success: function (data) {
                             $.each(data, function (i, item) {
                                 classDropdown.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            classDropdown.change(function () {
+                var classId = $(this).val();
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">Select Subject</option>');
+
+                if (classId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSubjectsByClass", "Instructor")',
+                        type: 'GET',
+                        data: { classId: classId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                subjectDropdown.append($('<option>', {
                                     value: item.id,
                                     text: item.name
                                 }));

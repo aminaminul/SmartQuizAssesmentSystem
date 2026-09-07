@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QuizSystemModel.Models.Instructor>
+@model IEnumerable<QuizSystemModel.Models.Instructor>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,19 +10,25 @@
 <div class="card mb-4 shadow-sm">
     <div class="card-body">
         <form method="get" asp-action="Instructors" class="row g-3 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="educationMediumId" class="form-label fw-bold">Education Medium</label>
                 <select id="educationMediumId" name="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
                     <option value="">-- All Mediums --</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="classId" class="form-label fw-bold">Class</label>
                 <select id="classId" name="classId" class="form-select" asp-items="ViewBag.ClassId">
                     <option value="">-- All Classes --</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label for="subjectId" class="form-label fw-bold">Subject</label>
+                <select id="subjectId" name="subjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                    <option value="">-- All Subjects --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-filter me-1"></i> Filter
@@ -43,6 +49,8 @@
             <th>Email</th>
             <th>Phone</th>
             <th>Education Medium</th>
+            <th>Class</th>
+            <th>Subject</th>
             <th></th>
         </tr>
     </thead>
@@ -53,7 +61,9 @@
                 <td>@(i.FirstName + " " + i.LastName)</td>
                 <td>@i.Email</td>
                 <td>@i.PhoneNumber</td>
-                <td>@i.EducationMedium?.Name</td>
+                <td><span class="badge bg-info text-dark">@i.EducationMedium?.Name</span></td>
+                <td>@(i.Class?.Name ?? "-")</td>
+                <td>@(i.Subject?.Name ?? "-")</td>
                 <td>
                     <a asp-action="InstructorDetails" asp-route-id="@i.Id" class="btn btn-sm btn-info">
                         Details
@@ -71,14 +81,33 @@
             $('#educationMediumId').change(function () {
                 var mediumId = $(this).val();
                 var classSelect = $('#classId');
+                var subjectSelect = $('#subjectId');
                 
                 classSelect.empty();
                 classSelect.append('<option value="">-- All Classes --</option>');
+                subjectSelect.empty();
+                subjectSelect.append('<option value="">-- All Subjects --</option>');
 
                 if (mediumId) {
                     $.getJSON('@Url.Action("GetClassesByMedium", "InstructorDashboard")', { mediumId: mediumId }, function (data) {
                         $.each(data, function (index, item) {
                             classSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            $('#classId').change(function () {
+                var classId = $(this).val();
+                var subjectSelect = $('#subjectId');
+                
+                subjectSelect.empty();
+                subjectSelect.append('<option value="">-- All Subjects --</option>');
+
+                if (classId) {
+                    $.getJSON('@Url.Action("GetSubjectsByClass", "InstructorDashboard")', { classId: classId }, function (data) {
+                        $.each(data, function (index, item) {
+                            subjectSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
                         });
                     });
                 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
@@ -15,28 +15,53 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public Task<List<QuestionBank>> GetByQuizAsync(long quizId, string? subject = null)
+        public Task<List<QuestionBank>> GetAllAsync(long? quizId = null, string? subject = null)
         {
             var query = _context.QuestionBank
-                .Where(q => q.QuizId == quizId && q.Status != ModelStatus.Deleted)
+                .Include(q => q.Quiz)
+                    .ThenInclude(qz => qz.EducationMedium)
+                .Include(q => q.Quiz)
+                    .ThenInclude(qz => qz.Class)
+                .Include(q => q.Quiz)
+                    .ThenInclude(qz => qz.Subject)
+                .Where(q => q.Status != ModelStatus.Deleted)
                 .AsQueryable();
+
+            if (quizId.HasValue && quizId.Value > 0)
+                query = query.Where(q => q.QuizId == quizId.Value);
 
             if (!string.IsNullOrWhiteSpace(subject))
                 query = query.Where(q => q.Subject == subject);
 
-            return query.ToListAsync();
+            return query.OrderByDescending(q => q.Id).ToListAsync();
+        }
+
+        public Task<List<QuestionBank>> GetByQuizAsync(long quizId, string? subject = null)
+        {
+            return GetAllAsync(quizId, subject);
         }
 
         public Task<QuestionBank?> GetByIdAsync(long id)
         {
             return _context.QuestionBank
                 .Include(q => q.Quiz)
+                    .ThenInclude(qz => qz.EducationMedium)
+                .Include(q => q.Quiz)
+                    .ThenInclude(qz => qz.Class)
+                .Include(q => q.Quiz)
+                    .ThenInclude(qz => qz.Subject)
                 .FirstOrDefaultAsync(q => q.Id == id);
         }
 
         public async Task AddAsync(QuestionBank question)
         {
             _context.QuestionBank.Add(question);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddRangeAsync(IEnumerable<QuestionBank> questions)
+        {
+            await _context.QuestionBank.AddRangeAsync(questions);
             await _context.SaveChangesAsync();
         }
 

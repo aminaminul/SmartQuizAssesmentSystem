@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -165,7 +165,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             var ok = await _mediumService.ApproveAsync(id, currentUser);
             if (!ok) return NotFound();
 
-            return RedirectToAction(redirect);
+            var target = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(target);
         }
 
         
@@ -180,7 +181,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             var ok = await _mediumService.RejectAsync(id, currentUser);
             if (!ok) return NotFound();
 
-            return RedirectToAction(redirect);
+            var target = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(target);
         }
         private void PopulateMediumEnumDropdown(EducationMediums? selected = null)
         {

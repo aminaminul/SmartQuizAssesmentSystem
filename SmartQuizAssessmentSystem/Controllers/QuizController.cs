@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
@@ -152,7 +152,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             var ok = await _quizService.ApproveAsync(id, currentUser!);
             if (!ok) return NotFound();
-            return RedirectToAction(redirect);
+            var target = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(target);
         }
 
         [HttpPost]
@@ -163,7 +164,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             var ok = await _quizService.RejectAsync(id, currentUser!);
             if (!ok) return NotFound();
-            return RedirectToAction(redirect);
+            var target = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(target);
         }
         [HttpGet]
         public async Task<JsonResult> GetClasses(long? mediumId)
@@ -188,19 +190,18 @@ namespace SmartQuizAssessmentSystem.Controllers
         private async Task PopulateDropdownsAsync(long? mediumId = null, long? classId = null, long? subjectId = null)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            var instructor = await _instructorService.GetByUserIdAsync(currentUser.Id);
+            var instructor = currentUser != null ? await _instructorService.GetByUserIdAsync(currentUser.Id) : null;
 
             if (instructor != null && instructor.ClassId.HasValue)
             {
-                
                 mediumId = instructor.EducationMediumId;
                 classId = instructor.ClassId;
 
-                var medium = await _mediumService.GetByIdAsync(mediumId.Value);
-                ViewBag.EducationMediumId = new SelectList(new[] { medium }, "Id", "Name", mediumId);
+                var medium = mediumId.HasValue ? await _mediumService.GetByIdAsync(mediumId.Value) : null;
+                ViewBag.EducationMediumId = new SelectList(medium != null ? new[] { medium } : Enumerable.Empty<EducationMedium>(), "Id", "Name", mediumId);
 
-                var cls = await _classService.GetByIdAsync(classId.Value);
-                ViewBag.ClassId = new SelectList(new[] { cls }, "Id", "Name", classId);
+                var cls = classId.HasValue ? await _classService.GetByIdAsync(classId.Value) : null;
+                ViewBag.ClassId = new SelectList(cls != null ? new[] { cls } : Enumerable.Empty<Class>(), "Id", "Name", classId);
             }
             else
             {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
@@ -102,38 +102,59 @@ namespace QuizSystemRepository.Repositories
         public async Task<long> GetPendingProfileUpdateCountAsync()
         {
             return await _context.ProfileUpdateRequests
-                .Where(p => p.Status == ProfileUpdateStatus.Pending || p.Status == ProfileUpdateStatus.Rejected)
+                .Where(p => p.Status == ProfileUpdateStatus.Pending)
                 .LongCountAsync();
         }
 
         public async Task<List<Instructor>> SearchInstructorsAsync(string query)
         {
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<Instructor>();
+
+            query = query.Trim();
             return await _context.Instructor
-                .Where(i => i.FirstName!.Contains(query) || i.LastName!.Contains(query) || i.Email!.Contains(query))
+                .Where(i => (i.FirstName != null && i.FirstName.Contains(query)) ||
+                            (i.LastName != null && i.LastName.Contains(query)) ||
+                            (i.Email != null && i.Email.Contains(query)))
                 .Take(20)
                 .ToListAsync();
         }
 
         public async Task<List<Student>> SearchStudentsAsync(string query)
         {
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<Student>();
+
+            query = query.Trim();
             return await _context.Student
-                .Where(s => s.FirstName!.Contains(query) || s.LastName!.Contains(query) || s.Email!.Contains(query))
+                .Where(s => (s.FirstName != null && s.FirstName.Contains(query)) ||
+                            (s.LastName != null && s.LastName.Contains(query)) ||
+                            (s.Email != null && s.Email.Contains(query)))
                 .Take(20)
                 .ToListAsync();
         }
 
         public async Task<List<Quiz>> SearchQuizzesAsync(string query)
         {
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<Quiz>();
+
+            query = query.Trim();
             return await _context.Quiz
-                .Where(q => q.Name.Contains(query) || q.Description.Contains(query))
+                .Where(q => (q.Name != null && q.Name.Contains(query)) ||
+                            (q.Description != null && q.Description.Contains(query)))
                 .Take(20)
                 .ToListAsync();
         }
 
         public async Task<List<Subject>> SearchSubjectsAsync(string query)
         {
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<Subject>();
+
+            query = query.Trim();
             return await _context.Subject
-                .Where(s => s.Name.Contains(query))
+                .Where(s => s.Name != null && s.Name.Contains(query))
                 .Take(20)
                 .ToListAsync();
         }

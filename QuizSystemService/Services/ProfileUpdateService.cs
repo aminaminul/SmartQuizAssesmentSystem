@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
@@ -185,12 +185,17 @@ namespace QuizSystemService.Services
 
             var user = await _userManager.Users.FirstAsync(u => u.Id == vm.UserId);
 
+            if (!string.Equals(user.Email, vm.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var existingUser = await _userManager.FindByEmailAsync(vm.Email);
+                if (existingUser != null && existingUser.Id != user.Id)
+                    throw new InvalidOperationException($"The email '{vm.Email}' is already in use by another user.");
+            }
+
             user.FirstName = vm.FirstName;
             user.LastName = vm.LastName;
             user.Email = vm.Email;
             user.UserName = vm.Email;
-            user.NormalizedEmail = vm.Email.ToUpperInvariant();
-            user.NormalizedUserName = vm.Email.ToUpperInvariant();
             user.PhoneNumber = vm.PhoneNumber;
 
             instructor.FirstName = vm.FirstName;
@@ -215,12 +220,17 @@ namespace QuizSystemService.Services
 
             var user = await _userManager.Users.FirstAsync(u => u.Id == vm.UserId);
 
+            if (!string.Equals(user.Email, vm.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var existingUser = await _userManager.FindByEmailAsync(vm.Email);
+                if (existingUser != null && existingUser.Id != user.Id)
+                    throw new InvalidOperationException($"The email '{vm.Email}' is already in use by another user.");
+            }
+
             user.FirstName = vm.FirstName;
             user.LastName = vm.LastName;
             user.Email = vm.Email;
             user.UserName = vm.Email;
-            user.NormalizedEmail = vm.Email.ToUpperInvariant();
-            user.NormalizedUserName = vm.Email.ToUpperInvariant();
             user.PhoneNumber = vm.PhoneNumber;
 
             student.FirstName = vm.FirstName;

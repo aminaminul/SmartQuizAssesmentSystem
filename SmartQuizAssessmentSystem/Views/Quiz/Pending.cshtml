@@ -1,4 +1,4 @@
-﻿@using QuizSystemModel.Models
+@using QuizSystemModel.Models
 @model IEnumerable<Quiz>
 
 @{
@@ -47,6 +47,7 @@
                         <tr>
                             <th>Quiz Name</th>
                             <th>Subject</th>
+                            <th>Education Medium</th>
                             <th>Created At</th>
                             <th>Total Marks</th>
                             <th>Status</th>
@@ -61,6 +62,7 @@
                                     <div class="fw-bold">@quiz.Name</div>
                                 </td>
                                 <td>@(quiz.Subject != null ? quiz.Subject.Name : "-")</td>
+                                <td><span class="badge bg-info text-dark">@(quiz.EducationMedium != null ? quiz.EducationMedium.Name : "-")</span></td>
                                 <td>@quiz.CreatedAt.ToLocalTime().ToString("g")</td>
                                 <td>@quiz.TotalMarks</td>
                                 <td>
@@ -91,6 +93,9 @@
                                                 <i class="fas fa-times me-1"></i> Reject
                                             </button>
                                         </form>
+                                        <a asp-controller="Quiz" asp-action="Delete" asp-route-id="@quiz.Id" class="btn btn-outline-danger btn-sm">
+                                            <i class="fas fa-trash me-1"></i> Delete
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

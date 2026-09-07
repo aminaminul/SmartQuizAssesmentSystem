@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
@@ -15,11 +15,12 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public Task<List<Instructor>> GetAllAsync(long? educationMediumId = null, long? classId = null)
+        public Task<List<Instructor>> GetAllAsync(long? educationMediumId = null, long? classId = null, long? subjectId = null)
         {
             var query = _context.Instructor
                 .Include(i => i.EducationMedium)
                 .Include(i => i.Class)
+                .Include(i => i.Subject)
                 .Where(i => i.Status != ModelStatus.Deleted);
 
             if (educationMediumId.HasValue)
@@ -27,6 +28,9 @@ namespace QuizSystemRepository.Repositories
 
             if (classId.HasValue)
                 query = query.Where(i => i.ClassId == classId.Value);
+
+            if (subjectId.HasValue)
+                query = query.Where(i => i.SubjectId == subjectId.Value);
 
             return query.ToListAsync();
         }
@@ -36,6 +40,7 @@ namespace QuizSystemRepository.Repositories
             return _context.Instructor
                 .Include(i => i.EducationMedium)
                 .Include(i => i.Class)
+                .Include(i => i.Subject)
                 .Include(i => i.User)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
@@ -88,12 +93,23 @@ namespace QuizSystemRepository.Repositories
         {
             return _context.Class.ToListAsync();
         }
+
+        public Task<List<Subject>> GetSubjectsAsync(long? classId = null)
+        {
+            var query = _context.Subject.Where(s => s.Status != ModelStatus.Deleted);
+            if (classId.HasValue)
+                query = query.Where(s => s.ClassId == classId.Value);
+
+            return query.ToListAsync();
+        }
+
         public Task<Instructor?> GetByUserIdAsync(long userId)
         {
             return _context.Instructor
                 .Include(i => i.User)
                 .Include(i => i.Class)
                 .Include(i => i.EducationMedium)
+                .Include(i => i.Subject)
                 .FirstOrDefaultAsync(i => i.UserId == userId);
         }
         public Task<List<Instructor>> GetPendingAsync()
@@ -101,6 +117,7 @@ namespace QuizSystemRepository.Repositories
             return _context.Instructor
                 .Include(i => i.EducationMedium)
                 .Include(i => i.Class)
+                .Include(i => i.Subject)
                 .Where(i => i.Status == ModelStatus.Pending || i.Status == ModelStatus.InActive)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();

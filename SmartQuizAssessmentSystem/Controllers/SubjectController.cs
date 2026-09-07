@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -237,7 +237,8 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             TempData["SuccessMessage"] = "Subject approved successfully.";
             
-            return RedirectToAction(redirect);
+            var target = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(target);
         }
 
         
@@ -253,7 +254,8 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             TempData["SuccessMessage"] = "Subject rejected.";
             
-            return RedirectToAction(redirect);
+            var target = (redirect == "Pending") ? "Pending" : "Index";
+            return RedirectToAction(target);
         }
 
 

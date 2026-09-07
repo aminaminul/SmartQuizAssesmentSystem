@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
@@ -50,7 +50,6 @@ namespace QuizSystemService.Services
 
         public async Task<bool> CreateAsync(StudentAddViewModel model, QuizSystemUser currentUser)
         {
-            
             if (await _repo.EmailExistsAsync(model.Email))
                 throw new InvalidOperationException("This Email Is Already Used By Another Student.");
 
@@ -58,7 +57,6 @@ namespace QuizSystemService.Services
                 await _repo.PhoneExistsAsync(model.PhoneNumber))
                 throw new InvalidOperationException("This Phone Number Is Already Used By Another Student.");
 
-            
             var user = new QuizSystemUser
             {
                 FirstName = model.FirstName,
@@ -72,29 +70,39 @@ namespace QuizSystemService.Services
             if (!userResult.Succeeded)
                 throw new InvalidOperationException(string.Join(" | ", userResult.Errors.Select(e => e.Description)));
 
-            var roleResult = await _userManager.AddToRoleAsync(user, "Student");
-            if (!roleResult.Succeeded)
-                throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
-
-            
-            var student = new Student
+            try
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                EducationMediumId = model.EducationMediumId,
-                ClassId = model.ClassId,
-                UserId = user.Id,
-                CreatedAt = DateTime.UtcNow,
-                Status = ModelStatus.Active,
-                CreatedBy = currentUser,
-                ModifiedBy = currentUser,
-                ModifiedAt = DateTime.UtcNow
-            };
+                var roleResult = await _userManager.AddToRoleAsync(user, "Student");
+                if (!roleResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    throw new InvalidOperationException(string.Join(" | ", roleResult.Errors.Select(e => e.Description)));
+                }
 
-            await _repo.AddAsync(student);
-            return true;
+                var student = new Student
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    EducationMediumId = model.EducationMediumId,
+                    ClassId = model.ClassId,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    Status = ModelStatus.Active,
+                    CreatedBy = currentUser,
+                    ModifiedBy = currentUser,
+                    ModifiedAt = DateTime.UtcNow
+                };
+
+                await _repo.AddAsync(student);
+                return true;
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(user);
+                throw;
+            }
         }
 
         public async Task<bool> UpdateAsync(long id, Student model, long? educationMediumId, long? classId)
@@ -122,6 +130,24 @@ namespace QuizSystemService.Services
             existing.ClassId = classId;
 
             await _repo.UpdateAsync(existing);
+
+            if (existing.UserId.HasValue)
+            {
+                var identityUser = await _userManager.FindByIdAsync(existing.UserId.Value.ToString());
+                if (identityUser != null)
+                {
+                    identityUser.FirstName = model.FirstName ?? identityUser.FirstName;
+                    identityUser.LastName = model.LastName ?? identityUser.LastName;
+                    if (!string.IsNullOrWhiteSpace(model.Email))
+                    {
+                        identityUser.Email = model.Email;
+                        identityUser.UserName = model.Email;
+                    }
+                    identityUser.PhoneNumber = model.PhoneNumber;
+                    await _userManager.UpdateAsync(identityUser);
+                }
+            }
+
             return true;
         }
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QuizSystemModel.Models.Instructor>
+@model IEnumerable<QuizSystemModel.Models.Instructor>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -16,19 +16,25 @@
 <div class="card mb-4">
     <div class="card-body">
         <form asp-action="Index" method="get" class="row g-3 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="educationMediumId" class="form-label">Education Medium</label>
                 <select name="educationMediumId" id="educationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId">
                     <option value="">All Mediums</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="classId" class="form-label">Class</label>
                 <select name="classId" id="classId" class="form-select" asp-items="ViewBag.ClassId">
                     <option value="">All Classes</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label for="subjectId" class="form-label">Subject</label>
+                <select name="subjectId" id="subjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                    <option value="">All Subjects</option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <button type="submit" class="btn btn-secondary">Filter</button>
                 <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
             </div>
@@ -42,11 +48,14 @@
         $(document).ready(function () {
             var mediumDropdown = $('#educationMediumId');
             var classDropdown = $('#classId');
+            var subjectDropdown = $('#subjectId');
 
             mediumDropdown.change(function () {
                 var mediumId = $(this).val();
                 classDropdown.empty();
                 classDropdown.append('<option value="">All Classes</option>');
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">All Subjects</option>');
 
                 if (mediumId) {
                     $.ajax({
@@ -56,6 +65,28 @@
                         success: function (data) {
                             $.each(data, function (i, item) {
                                 classDropdown.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            classDropdown.change(function () {
+                var classId = $(this).val();
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">All Subjects</option>');
+
+                if (classId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSubjectsByClass", "Instructor")',
+                        type: 'GET',
+                        data: { classId: classId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                subjectDropdown.append($('<option>', {
                                     value: item.id,
                                     text: item.name
                                 }));
@@ -80,6 +111,7 @@
             <th>HSC Grade</th>
             <th>Education Medium</th>
             <th>Class</th>
+            <th>Subject</th>
             <th>Approve Status</th>
             <th></th>
         </tr>
@@ -95,8 +127,9 @@
                 <td>@item.HscPassingInstrutute</td>
                 <td>@item.HscPassingYear</td>
                 <td>@item.HscGrade</td>
-                <td>@item.EducationMedium?.Name</td>
+                <td><span class="badge bg-info text-dark">@item.EducationMedium?.Name</span></td>
                 <td>@item.Class?.Name</td>
+                <td>@(item.Subject?.Name ?? "-")</td>
                 <td>
                     @if (item.Status == QuizSystemModel.BusinessRules.ModelStatus.Active)
                     {

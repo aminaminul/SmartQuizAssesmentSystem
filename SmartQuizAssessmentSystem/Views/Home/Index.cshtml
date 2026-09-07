@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_Layout_Public.cshtml";
     ViewData["Title"] = "Smart Quiz Assessment System";
     var recentQuizzes = ViewBag.RecentQuizzes as List<QuizSystemModel.Models.Quiz>;
@@ -91,23 +91,30 @@
                     <div class="col-md-4">
                         <div class="card h-100 border-0 shadow rounded-4 quiz-card hover-lift @bgColor @textColor">
                             <div class="card-body p-4">
-                                <div class="d-flex justify-content-between mb-3 text-opacity-75">
+                                <div class="d-flex justify-content-between align-items-center mb-3 text-opacity-75">
                                     <span class="badge @(bgColor == "bg-warning" ? "bg-dark " : "bg-white") bg-opacity-10 @(bgColor == "bg-warning" ? "text-dark" : "text-white") px-3 py-2 rounded-pill fw-bold">@quiz.TotalMarks Marks</span>
+                                    <span class="badge @(bgColor == "bg-warning" ? "bg-dark " : "bg-white") bg-opacity-25 @(bgColor == "bg-warning" ? "text-dark" : "text-white") px-2 py-1 rounded-pill small fw-bold">
+                                        <i class="fas fa-book me-1"></i>@(quiz.EducationMedium?.Name ?? "Medium")
+                                    </span>
                                     <span class="small"><i class="far fa-clock me-1"></i> @quiz.Duration Min</span>
                                 </div>
                                 <h5 class="fw-bold mb-3">@quiz.Name</h5>
                                 <p class="small mb-4 line-clamp-2 opacity-75">@(string.IsNullOrEmpty(quiz.Description) ? "Test your knowledge in this comprehensive quiz designed to assess your understanding of the subject." : quiz.Description)</p>
                                 
                                 <div class="d-flex align-items-center mb-4 text-opacity-75">
-                                    <div class="p-2 rounded-3 me-3 @(bgColor == "bg-warning" ? "bg-dark" : "bg-white") bg-opacity-10">
+                                    <div class="p-2 rounded-3 me-3 @(bgColor == "bg-warning" ? "bg-dark" : "bg-white") bg-opacity-10 flex-shrink-0">
                                         <i class="fas fa-layer-group @(bgColor == "bg-warning" ? "text-dark" : "text-white")"></i>
                                     </div>
                                     <div>
-                                        <small class="d-block uppercase tracking-wider font-semibold opacity-75">Subject</small>
+                                        <small class="d-block opacity-75" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:.5px">Subject</small>
                                         <span class="fw-bold">@(quiz.Subject?.Name ?? "General")</span>
                                     </div>
-                                    <div class="ms-auto text-end">
-                                        <small class="d-block uppercase tracking-wider font-semibold opacity-75">Class</small>
+                                    <div class="ms-auto text-center">
+                                        <small class="d-block opacity-75" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:.5px">Medium</small>
+                                        <span class="fw-bold" style="font-size:0.85rem">@(quiz.EducationMedium?.Name ?? "-")</span>
+                                    </div>
+                                    <div class="ms-3 text-end">
+                                        <small class="d-block opacity-75" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:.5px">Class</small>
                                         <span class="fw-bold">@(quiz.Class?.Name ?? "All")</span>
                                     </div>
                                 </div>
@@ -186,7 +193,7 @@
                     </div>
                     <h4 class="fw-bold">Administrators</h4>
                     <p class="text-white-50 mb-4">Complete control over the platform. Manage users, approve content, and monitor global performance analytics.</p>
-                    <a asp-controller="AdminDashboard" asp-action="Dashboard" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Open Portal</a>
+                    <a asp-controller="Account" asp-action="Login" asp-route-role="Admin" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Open Portal</a>
                 </div>
             </div>
             <div class="col-md-4">
@@ -196,7 +203,7 @@
                     </div>
                     <h4 class="fw-bold">Instructors</h4>
                     <p class="text-white-50 mb-4">Craft perfect assessments. Design question banks, assign categories, and track your class progress in real-time.</p>
-                    <a asp-controller="InstructorDashboard" asp-action="Dashboard" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Go to Class</a>
+                    <a asp-controller="Account" asp-action="Login" asp-route-role="Instructor" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Go to Class</a>
                 </div>
             </div>
             <div class="col-md-4">
@@ -206,7 +213,7 @@
                     </div>
                     <h4 class="fw-bold">Students</h4>
                     <p class="text-white-50 mb-4">Learn through action. Access assigned quizzes, get instant feedback, and climb the leaderboard rankings.</p>
-                    <a asp-controller="StudentDashboard" asp-action="Dashboard" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Start Quiz</a>
+                    <a asp-controller="Account" asp-action="Login" asp-route-role="Student" class="btn btn-outline-light rounded-pill px-4 fw-semibold mt-auto">Start Quiz</a>
                 </div>
             </div>
         </div>

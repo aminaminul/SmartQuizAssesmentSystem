@@ -1,4 +1,4 @@
-﻿@model QuizSystemModel.ViewModels.InstructorAddViewModel
+@model QuizSystemModel.ViewModels.InstructorAddViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -70,6 +70,14 @@
         </select>
     </div>
     <div class="form-group">
+        <label>Subject</label>
+        <select asp-for="SubjectId"
+                asp-items="ViewBag.SubjectId"
+                class="form-control">
+            <option value=""> Select Subject</option>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="Password">Password</label>
         <input id="Password" name="Password" type="password" class="form-control" />
         <span asp-validation-for="Password" class="text-danger"></span>
@@ -94,11 +102,14 @@
         $(document).ready(function () {
             var mediumDropdown = $('#EducationMediumId');
             var classDropdown = $('#ClassId');
+            var subjectDropdown = $('#SubjectId');
 
             mediumDropdown.change(function () {
                 var mediumId = $(this).val();
                 classDropdown.empty();
                 classDropdown.append('<option value="">Select Class</option>');
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">Select Subject</option>');
 
                 if (mediumId) {
                     $.ajax({
@@ -108,6 +119,28 @@
                         success: function (data) {
                             $.each(data, function (i, item) {
                                 classDropdown.append($('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            classDropdown.change(function () {
+                var classId = $(this).val();
+                subjectDropdown.empty();
+                subjectDropdown.append('<option value="">Select Subject</option>');
+
+                if (classId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSubjectsByClass", "Instructor")',
+                        type: 'GET',
+                        data: { classId: classId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                subjectDropdown.append($('<option>', {
                                     value: item.id,
                                     text: item.name
                                 }));

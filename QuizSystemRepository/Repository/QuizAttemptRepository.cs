@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
 using QuizSystemRepository.Data;
@@ -20,10 +20,27 @@ namespace QuizSystemRepository.Repositories
             return await _context.QuizAttempt
                 .Include(a => a.Quiz)
                     .ThenInclude(q => q.Questions)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Subject)
                 .Include(a => a.Answers)
                     .ThenInclude(ans => ans.QuestionBank)
                 .Include(a => a.StudentUser)
                 .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<QuizAttempt?> GetByUserAndQuizAsync(long studentUserId, long quizId)
+        {
+            return await _context.QuizAttempt
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Questions)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Subject)
+                .Include(a => a.Answers)
+                    .ThenInclude(ans => ans.QuestionBank)
+                .Include(a => a.StudentUser)
+                .Where(a => a.StudentUserId == studentUserId && a.QuizId == quizId)
+                .OrderByDescending(a => a.StartAt)
+                .FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(QuizAttempt attempt)

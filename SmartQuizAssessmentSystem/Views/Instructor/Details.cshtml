@@ -1,4 +1,4 @@
-﻿@model QuizSystemModel.Models.Instructor
+@model QuizSystemModel.Models.Instructor
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -36,10 +36,13 @@
                         <dd class="col-sm-9">@Model.HscGrade</dd>
 
                         <dt class="col-sm-3 text-muted fw-bold">Education Medium</dt>
-                        <dd class="col-sm-9">@Model.EducationMedium?.Name</dd>
+                        <dd class="col-sm-9"><span class="badge bg-info text-dark">@Model.EducationMedium?.Name</span></dd>
                         
                         <dt class="col-sm-3 text-muted fw-bold">Class</dt>
                         <dd class="col-sm-9">@Model.Class?.Name</dd>
+
+                        <dt class="col-sm-3 text-muted fw-bold">Subject</dt>
+                        <dd class="col-sm-9">@(Model.Subject?.Name ?? "Not Assigned")</dd>
 
                         <dt class="col-sm-3 text-muted fw-bold">Status</dt>
                         <dd class="col-sm-9">
