@@ -6,6 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var questions = Model.Answers
+        .Where(a => a.QuestionBank != null)
         .OrderBy(a => a.QuestionBank.Id)
         .ToList();
 
@@ -30,6 +31,24 @@
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-9">
+            <!-- 20s Countdown Warning Floating Notification -->
+            <div id="countdownWarningModal" class="countdown-warning-banner d-none">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="warning-icon-pulse me-3">
+                            <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                        </span>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-white">Time is Running Out!</h6>
+                            <small class="text-white-50">Quiz will automatically submit in <span id="warningSeconds" class="badge bg-danger fs-6 px-2 py-1">20s</span></small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 ms-3" onclick="submitQuizNow();">
+                        Submit Now <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+
             <!-- Quiz Header Card -->
             <div class="card shadow-sm border-0 mb-4 overflow-hidden rounded-4">
                 <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
@@ -213,6 +232,40 @@
     .question-card:hover {
         transform: translateX(4px);
     }
+
+    /* 20-Second Countdown Warning Floating Banner */
+    .countdown-warning-banner {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1e293b;
+        border: 2px solid #ef4444;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 0.9rem 1.5rem;
+        border-radius: 16px;
+        z-index: 99999;
+        min-width: 360px;
+        max-width: 90%;
+        animation: bannerSlideDown 0.35s ease-out;
+    }
+
+    @@keyframes bannerSlideDown {
+        from { opacity: 0; transform: translate(-50%, -25px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .warning-icon-pulse {
+        display: inline-block;
+        animation: warningPulse 1s infinite;
+    }
+
+    @@keyframes warningPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
 </style>
 
 @section Scripts {
@@ -248,30 +301,76 @@
             });
         })();
 
-        // Timer Logic
+        // Timer and Auto-Submit Logic
         (function () {
             const durationSeconds = @durationSeconds;
             
             // If no duration set (untimed), do nothing
             if (durationSeconds <= 0) return;
 
-            // Initial server-calculated remaining seconds
             let remainingSeconds = @remainingSeconds;
-            
-            console.log('Server remaining seconds:', remainingSeconds);
+            let isAutoSubmitting = false;
+
+            window.submitQuizNow = function() {
+                if (isAutoSubmitting) return;
+                isAutoSubmitting = true;
+                const form = document.getElementById('quizForm');
+                if (form) form.submit();
+            };
+
+            function triggerAutoSubmit() {
+                if (isAutoSubmitting) return;
+                isAutoSubmitting = true;
+
+                const timerDisplay = document.getElementById('timer');
+                if (timerDisplay) {
+                    timerDisplay.innerText = '00:00';
+                    timerDisplay.classList.add('text-danger');
+                }
+
+                const warningBanner = document.getElementById('countdownWarningModal');
+                if (warningBanner) {
+                    warningBanner.classList.remove('d-none');
+                    warningBanner.innerHTML = `
+                        <div class="d-flex align-items-center justify-content-center py-2 text-center w-100">
+                            <i class="fas fa-spinner fa-spin fa-2x text-warning me-3"></i>
+                            <div>
+                                <h6 class="mb-0 fw-bold text-white">Time Expired!</h6>
+                                <small class="text-white-50">Submitting your quiz answers automatically...</small>
+                            </div>
+                        </div>`;
+                }
+
+                // Disable options to prevent edits
+                document.querySelectorAll('.option-input').forEach(input => input.disabled = true);
+
+                setTimeout(() => {
+                    const form = document.getElementById('quizForm');
+                    if (form) form.submit();
+                }, 500);
+            }
 
             function updateTimer() {
                 const timerDisplay = document.getElementById('timer');
                 if (!timerDisplay) return;
 
                 remainingSeconds--;
-                
+
+                // 20-Second Countdown Warning Notification Banner
+                const warningBanner = document.getElementById('countdownWarningModal');
+                const warningSecondsSpan = document.getElementById('warningSeconds');
+
+                if (remainingSeconds <= 20 && remainingSeconds > 0) {
+                    if (warningBanner && warningBanner.classList.contains('d-none')) {
+                        warningBanner.classList.remove('d-none');
+                    }
+                    if (warningSecondsSpan) {
+                        warningSecondsSpan.innerText = remainingSeconds + 's';
+                    }
+                }
+
                 if (remainingSeconds <= 0) {
-                    timerDisplay.innerText = '00:00';
-                    timerDisplay.classList.add('text-danger');
-                    // Alert user then submit
-                    alert('Time is up! Your answers will be submitted automatically.');
-                    document.getElementById('quizForm').submit();
+                    triggerAutoSubmit();
                     return;
                 }
 
@@ -281,17 +380,22 @@
                 timerDisplay.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 
                 // Dynamic Color Logic
-                timerDisplay.className = 'h4 mb-0 fw-bold tabular-nums'; // Reset classes
+                timerDisplay.className = 'h4 mb-0 fw-bold tabular-nums';
                 const timerContainer = timerDisplay.closest('.rounded-3');
                 
                 if (timerContainer) {
-                    if (remainingSeconds < 60) {
+                    if (remainingSeconds <= 20) {
+                        // Critical 20 seconds
+                        timerDisplay.classList.add('text-danger');
+                        timerContainer.classList.remove('bg-white', 'border-white', 'border-warning');
+                        timerContainer.classList.add('bg-danger', 'bg-opacity-25', 'border-danger');
+                    } else if (remainingSeconds < 60) {
                         // Critical: Last minute (Red)
                         timerDisplay.classList.add('text-danger');
                         timerContainer.classList.remove('bg-white', 'border-white', 'border-warning');
                         timerContainer.classList.add('bg-danger', 'bg-opacity-10', 'border-danger');
                     } else if (remainingSeconds < (durationSeconds * 0.5)) {
-                       // Warning: Less than 50% time (Orange)
+                        // Warning: Less than 50% time (Orange)
                         timerDisplay.classList.add('text-warning');
                         timerContainer.classList.remove('bg-white', 'border-white', 'border-danger', 'bg-danger', 'bg-opacity-10');
                         timerContainer.classList.add('bg-white', 'border-warning');
@@ -304,10 +408,16 @@
                 }
             }
 
-            // Run once immediately to show time
+            // Run once immediately
             updateTimer();
             // Then update every second
-            setInterval(updateTimer, 1000);
+            const timerInterval = setInterval(() => {
+                if (isAutoSubmitting) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+                updateTimer();
+            }, 1000);
         })();
     </script>
 }

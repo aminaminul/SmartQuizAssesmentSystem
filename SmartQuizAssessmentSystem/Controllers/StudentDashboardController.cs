@@ -39,8 +39,6 @@ namespace SmartQuizAssessmentSystem.Controllers
             var user = await _userManager.GetUserAsync(User);
             var model = await _dashboardService.GetDashboardAsync(user.Id);
             model.StudentName = $"{user.FirstName} {user.LastName}";
-            
-            ViewBag.SuccessMessage = TempData["SuccessMessage"];
             return View(model);
         }
         public async Task<IActionResult> AvailableQuizzes()
@@ -49,15 +47,32 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (user == null) return Unauthorized();
 
             var model = await _dashboardService.GetDashboardAsync(user.Id);
+            var allAttempts = await _dashboardService.GetAllAttemptsAsync(user.Id);
+
+            ViewBag.CompletedQuizIds = allAttempts.Where(a => a.IsSubmitted).Select(a => a.QuizId).ToHashSet();
+            ViewBag.InProgressAttempts = allAttempts.Where(a => !a.IsSubmitted).GroupBy(a => a.QuizId).ToDictionary(g => g.Key, g => g.First().Id);
+            ViewBag.SubmittedAttempts = allAttempts.Where(a => a.IsSubmitted).GroupBy(a => a.QuizId).ToDictionary(g => g.Key, g => g.First().Id);
+
             return View(model.AvailableQuizzes);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartQuiz(long quizId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var attempt = await _studentQuizService.StartAttemptAsync(quizId, user.Id);
-            return RedirectToAction("Attempt", "StudentQuiz", new { id = attempt.Id });
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+
+                var attempt = await _studentQuizService.StartAttemptAsync(quizId, user.Id);
+                return RedirectToAction("Attempt", "StudentQuiz", new { id = attempt.Id });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction(nameof(AvailableQuizzes));
+            }
         }
         public async Task<IActionResult> RecentAttempts()
         {

@@ -38,8 +38,28 @@
             <h2 class="text-center mb-4">Login</h2>
         }
 
+        @* Success Notification (e.g. after Registration) *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 mb-4 border-0 py-2 small d-flex align-items-center" role="alert">
+                <i class="fas fa-check-circle me-2 fa-lg text-success"></i>
+                <div>@TempData["SuccessMessage"]</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @* Error Notification (e.g. invalid credentials, unapproved, role mismatch) *@
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4 border-0 py-2 small d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-triangle me-2 fa-lg text-danger"></i>
+                <div>@TempData["ErrorMessage"]</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         <form asp-action="Login" method="post">
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small d-none" id="validationBox"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small @(ViewData.ModelState.IsValid ? "d-none" : "")" id="validationBox"></div>
 
             @* Pass role through form *@
             <input type="hidden" asp-for="Role" />

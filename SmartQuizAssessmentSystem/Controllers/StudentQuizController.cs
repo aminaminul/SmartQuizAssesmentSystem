@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QuizSystemModel.Models;
@@ -30,11 +30,19 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Start(long quizId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return Unauthorized();
-            
-            var attempt = await _studentQuizService.StartAttemptAsync(quizId, user.Id);
-            return RedirectToAction("Attempt", new { id = attempt.Id });
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+                
+                var attempt = await _studentQuizService.StartAttemptAsync(quizId, user.Id);
+                return RedirectToAction("Attempt", new { id = attempt.Id });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("AvailableQuizzes", "StudentDashboard");
+            }
         }
 
         [HttpPost]
@@ -74,9 +82,19 @@ namespace SmartQuizAssessmentSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(long attemptId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            await _studentQuizService.SubmitAttemptAsync(attemptId, user.Id);
-            return RedirectToAction("Result", new { id = attemptId });
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Unauthorized();
+
+                await _studentQuizService.SubmitAttemptAsync(attemptId, user.Id);
+                return RedirectToAction("Result", new { id = attemptId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Attempt", new { id = attemptId });
+            }
         }
 
         [HttpGet]

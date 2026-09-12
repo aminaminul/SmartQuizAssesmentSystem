@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj": {}
+    "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj": {}
   },
   "projects": {
-    "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj": {
+    "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj",
+        "projectUniqueName": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj",
         "projectName": "QuizSystemModel",
-        "projectPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj",
-        "packagesPath": "C:\\Users\\amina\\.nuget\\packages\\",
-        "outputPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\obj\\",
+        "projectPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj",
+        "packagesPath": "C:\\Users\\AMIN\\.nuget\\packages\\",
+        "outputPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\amina\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\AMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -79,15 +79,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
+              "version": "[8.0.31, 8.0.31]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
+              "version": "[8.0.31, 8.0.31]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
+              "version": "[8.0.31, 8.0.31]"
             }
           ],
           "frameworkReferences": {
@@ -95,24 +95,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj": {
+    "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj",
+        "projectUniqueName": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj",
         "projectName": "QuizSystemRepository",
-        "projectPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj",
-        "packagesPath": "C:\\Users\\amina\\.nuget\\packages\\",
-        "outputPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\obj\\",
+        "projectPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj",
+        "packagesPath": "C:\\Users\\AMIN\\.nuget\\packages\\",
+        "outputPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\amina\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\AMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -128,8 +128,8 @@
             "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj": {
-                "projectPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj"
+              "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj": {
+                "projectPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj"
               }
             }
           }
@@ -175,43 +175,29 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj": {
+    "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj",
+        "projectUniqueName": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj",
         "projectName": "QuizSystemService",
-        "projectPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj",
-        "packagesPath": "C:\\Users\\amina\\.nuget\\packages\\",
-        "outputPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\obj\\",
+        "projectPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\QuizSystemService.csproj",
+        "packagesPath": "C:\\Users\\AMIN\\.nuget\\packages\\",
+        "outputPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\amina\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\AMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -227,11 +213,11 @@
             "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj": {
-                "projectPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj"
+              "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj": {
+                "projectPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizModel\\QuizSystemModel.csproj"
               },
-              "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj": {
-                "projectPath": "D:\\Importent\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj"
+              "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj": {
+                "projectPath": "E:\\Projects\\SmartQuizAssesmentSystem\\QuizSystemRepository\\QuizSystemRepository.csproj"
               }
             }
           }
@@ -266,15 +252,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
+              "version": "[8.0.31, 8.0.31]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
+              "version": "[8.0.31, 8.0.31]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.30, 8.0.30]"
+              "version": "[8.0.31, 8.0.31]"
             }
           ],
           "frameworkReferences": {
@@ -282,7 +268,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

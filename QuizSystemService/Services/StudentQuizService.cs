@@ -40,16 +40,29 @@ namespace QuizSystemService.Services
             if (!quiz.IsApproved || quiz.Status != ModelStatus.Active)
                 throw new InvalidOperationException("This quiz is not currently active or approved.");
 
-            var now = DateTime.UtcNow;
-            if (quiz.StartAt.HasValue && now < quiz.StartAt.Value)
-                throw new InvalidOperationException("This quiz has not started yet.");
-
-            if (quiz.EndAt.HasValue && now > quiz.EndAt.Value)
-                throw new InvalidOperationException("This quiz has already ended.");
-
             var student = await _accountRepository.GetStudentByUserIdAsync(studentUserId);
-            if (student == null || student.EducationMediumId != quiz.EducationMediumId || student.ClassId != quiz.ClassId)
-                throw new InvalidOperationException("You are not authorized to attempt this quiz.");
+            if (student == null)
+                throw new InvalidOperationException("Student profile not found. Please contact an administrator.");
+
+            if (quiz.ClassId.HasValue && student.ClassId != quiz.ClassId)
+                throw new InvalidOperationException("You cannot participate in this quiz because it is assigned to another class.");
+
+            if (quiz.EducationMediumId.HasValue && student.EducationMediumId != quiz.EducationMediumId)
+                throw new InvalidOperationException("You cannot participate in this quiz because it is assigned to another education medium.");
+
+            if (quiz.StartAt.HasValue)
+            {
+                var compareTime = quiz.StartAt.Value.Kind == DateTimeKind.Utc ? DateTime.UtcNow : DateTime.Now;
+                if (compareTime < quiz.StartAt.Value)
+                    throw new InvalidOperationException($"This quiz is unavailable. It has not started yet (Starts: {quiz.StartAt.Value:MMM dd, yyyy - hh:mm tt}).");
+            }
+
+            if (quiz.EndAt.HasValue)
+            {
+                var compareTime = quiz.EndAt.Value.Kind == DateTimeKind.Utc ? DateTime.UtcNow : DateTime.Now;
+                if (compareTime > quiz.EndAt.Value)
+                    throw new InvalidOperationException($"This quiz is unavailable. It ended at {quiz.EndAt.Value:MMM dd, yyyy - hh:mm tt}. You can no longer participate.");
+            }
 
             // Check if attempt already exists
             var existingAttempt = await _attemptRepository.GetByUserAndQuizAsync(studentUserId, quizId);
@@ -60,6 +73,10 @@ namespace QuizSystemService.Services
 
                 return existingAttempt; // Resume in-progress attempt
             }
+
+            var activeQuestions = quiz.Questions.Where(q => q.Status != ModelStatus.Deleted).ToList();
+            if (!activeQuestions.Any())
+                throw new InvalidOperationException("This quiz does not have any questions available yet. Please contact your instructor.");
 
             var attempt = new QuizAttempt
             {
@@ -73,7 +90,6 @@ namespace QuizSystemService.Services
             await _attemptRepository.AddAsync(attempt);
             await _attemptRepository.SaveChangesAsync();
 
-            var activeQuestions = quiz.Questions.Where(q => q.Status != ModelStatus.Deleted).ToList();
             foreach (var q in activeQuestions)
             {
                 var ans = new AttemptedQuizAnswer

@@ -1,4 +1,4 @@
-﻿@model QuizSystemModel.ViewModels.InstructorAddViewModel
+@model QuizSystemModel.ViewModels.InstructorAddViewModel
 
 @{
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
@@ -8,8 +8,18 @@
 <div class="account-container">
     <div class="account-box">
         <h2 class="text-center mb-4">Instructor Registration</h2>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-3 border-0 py-2 small d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-triangle me-2 fa-lg text-danger"></i>
+                <div>@TempData["ErrorMessage"]</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         <form asp-action="RegisterInstructor" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small @(ViewData.ModelState.IsValid ? "d-none" : "")"></div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">

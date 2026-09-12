@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
@@ -76,12 +76,14 @@ namespace QuizSystemRepository.Repositories
             if (student == null) return new List<Quiz>();
 
             return await _context.Quiz
+                .Include(q => q.Subject)
+                .Include(q => q.Class)
+                .Include(q => q.EducationMedium)
                 .Where(q => q.IsApproved
                             && q.Status == ModelStatus.Active
-                            && q.EducationMediumId == student.EducationMediumId
-                            && q.ClassId == student.ClassId
-                            && (q.StartAt == null || q.StartAt <= now)
-                            && (q.EndAt == null || q.EndAt >= now))
+                            && (student.EducationMediumId == null || q.EducationMediumId == student.EducationMediumId)
+                            && (student.ClassId == null || q.ClassId == student.ClassId))
+                .OrderByDescending(q => q.CreatedAt)
                 .AsNoTracking()
                 .ToListAsync();
         }

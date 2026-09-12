@@ -44,7 +44,10 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Please fill in all required fields.";
                 return View(model);
+            }
 
             var result = await _signInManager.PasswordSignInAsync(
                 userName: model.Email,
@@ -55,6 +58,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                TempData["ErrorMessage"] = "Invalid email or password. Please try again.";
                 return View(model);
             }
 
@@ -62,7 +66,8 @@ namespace SmartQuizAssessmentSystem.Controllers
             if (user == null)
             {
                 await _signInManager.SignOutAsync();
-                ModelState.AddModelError(string.Empty, "User not found.");
+                ModelState.AddModelError(string.Empty, "User account not found.");
+                TempData["ErrorMessage"] = "User account not found.";
                 return View(model);
             }
 
@@ -71,6 +76,7 @@ namespace SmartQuizAssessmentSystem.Controllers
             {
                 await _signInManager.SignOutAsync();
                 ModelState.AddModelError(string.Empty, "Your account is pending approval by an administrator or has been deactivated.");
+                TempData["ErrorMessage"] = "Your account is pending approval by an administrator.";
                 return View(model);
             }
 
@@ -99,19 +105,30 @@ namespace SmartQuizAssessmentSystem.Controllers
                     };
                     ModelState.AddModelError(string.Empty,
                         $"Access denied. This account does not have {model.Role} privileges. Please use the correct portal.");
+                    TempData["ErrorMessage"] = $"Access denied. This account does not have {model.Role} privileges.";
                     return View(model);
                 }
             }
 
             if (roles.Contains("Admin"))
+            {
+                TempData["SuccessMessage"] = "Login successful! Welcome to the Admin Dashboard.";
                 return RedirectToAction("Dashboard", "AdminDashboard");
+            }
 
             if (roles.Contains("Instructor"))
+            {
+                TempData["SuccessMessage"] = $"Login successful! Welcome back, {user.FirstName}.";
                 return RedirectToAction("Dashboard", "InstructorDashboard");
+            }
 
             if (roles.Contains("Student"))
+            {
+                TempData["SuccessMessage"] = $"Login successful! Welcome back, {user.FirstName}.";
                 return RedirectToAction("Dashboard", "StudentDashboard");
+            }
 
+            TempData["SuccessMessage"] = $"Login successful! Welcome back, {user.FirstName}.";
             return RedirectToAction("Index", "Home");
         }
 
@@ -143,6 +160,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
+                TempData["ErrorMessage"] = "Please fill in all required fields correctly.";
                 await PopulateMediumAndClassDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
@@ -154,10 +172,12 @@ namespace SmartQuizAssessmentSystem.Controllers
                 foreach (var err in result.Errors)
                     ModelState.AddModelError(string.Empty, err.Description);
 
+                TempData["ErrorMessage"] = "Student registration failed. Please review the errors below.";
                 await PopulateMediumAndClassDropdownsAsync(model.EducationMediumId, model.ClassId);
                 return View(model);
             }
 
+            TempData["SuccessMessage"] = "Student registration submitted successfully! Your account is pending administrator approval. You can log in once approved.";
             return RedirectToAction(nameof(Login));
         }
 
@@ -180,6 +200,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
+                TempData["ErrorMessage"] = "Please fill in all required fields correctly.";
                 ViewBag.MediumList = await GetMediumSelectListAsync();
                 return View(model);
             }
@@ -191,10 +212,12 @@ namespace SmartQuizAssessmentSystem.Controllers
                 foreach (var err in result.Errors)
                     ModelState.AddModelError(string.Empty, err.Description);
 
+                TempData["ErrorMessage"] = "Instructor registration failed. Please review the errors below.";
                 ViewBag.MediumList = await GetMediumSelectListAsync();
                 return View(model);
             }
 
+            TempData["SuccessMessage"] = "Instructor registration submitted successfully! Your account is pending administrator approval. You can log in once approved.";
             return RedirectToAction(nameof(Login));
         }
 
@@ -205,6 +228,7 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            TempData["SuccessMessage"] = "You have been logged out successfully.";
             return RedirectToAction("Index", "Home");
         }
 
