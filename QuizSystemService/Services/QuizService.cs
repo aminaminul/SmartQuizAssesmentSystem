@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuizSystemModel.BusinessRules;
 using QuizSystemModel.Interfaces;
 using QuizSystemModel.Models;
@@ -18,26 +18,23 @@ namespace QuizSystemService.Services
             _instructorRepo = instructorRepo;
         }
 
-        public async Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null, long? mediumId = null, long? classId = null, long? subjectId = null) 
+        public async Task<List<Quiz>> GetAllAsync(QuizSystemUser currentUser = null, long? mediumId = null, long? classId = null, long? subjectId = null)
         {
             if (currentUser != null)
             {
                 var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
                 if (instructor != null)
                 {
-                    if (instructor.ClassId.HasValue)
-                    {
-                        
-                        mediumId = instructor.EducationMediumId;
-                        classId = instructor.ClassId;
-                    }
-                    else
-                    {
-                        return new List<Quiz>();
-                    }
+                    // Instructor: scope to own quizzes only, locked to their assigned subject
+                    return await _repo.GetAllAsync(
+                        mediumId: null,
+                        classId: null,
+                        subjectId: instructor.SubjectId ?? subjectId,
+                        createdByUserId: currentUser.Id);
                 }
             }
-            return await _repo.GetAllAsync(mediumId, classId, subjectId); 
+            // Admin: sees all, optional filters applied
+            return await _repo.GetAllAsync(mediumId, classId, subjectId);
         }
 
         public Task<Quiz?> GetEntityAsync(long id, bool includeQuestions = false) =>
@@ -73,19 +70,15 @@ namespace QuizSystemService.Services
             var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
             if (instructor != null)
             {
-                if (!instructor.ClassId.HasValue)
-                    throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
+                if (!instructor.SubjectId.HasValue)
+                    throw new InvalidOperationException("You have not been assigned to a subject yet. Please contact Admin.");
 
-                
-                if (model.ClassId != instructor.ClassId)
-                    throw new InvalidOperationException("You can only create quizzes for your assigned class.");
-                
-                
-                if (instructor.EducationMediumId.HasValue && model.EducationMediumId != instructor.EducationMediumId)
-                     throw new InvalidOperationException("You can only create quizzes for your assigned education medium.");
-                
-                 
-                 
+                // Subject must match instructor's assigned subject
+                if (model.SubjectId != instructor.SubjectId)
+                    throw new InvalidOperationException("You can only create quizzes for your assigned subject.");
+
+                // Force subject onto the model so it's always set correctly
+                model.SubjectId = instructor.SubjectId;
             }
 
             var quiz = new Quiz
@@ -124,22 +117,26 @@ namespace QuizSystemService.Services
             var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
             if (instructor != null)
             {
-                 if (!instructor.ClassId.HasValue)
-                    throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
+                if (!instructor.SubjectId.HasValue)
+                    throw new InvalidOperationException("You have not been assigned to a subject yet. Please contact Admin.");
 
-                 if (quiz.ClassId != instructor.ClassId)
-                    throw new InvalidOperationException("You cannot edit quizzes outside your assigned class.");
-                 
-                 if (model.ClassId != instructor.ClassId)
-                     throw new InvalidOperationException("You cannot move a quiz to another class.");
+                // Must be the quiz's original creator
+                if (quiz.CreatedBy?.Id != currentUser.Id)
+                    throw new InvalidOperationException("You cannot edit quizzes you did not create.");
 
-                 if (quiz.IsApproved || quiz.Status == ModelStatus.Active)
-                 {
-                     quiz.IsApproved = false;
-                     quiz.Status = ModelStatus.Pending;
-                     quiz.ApprovedAt = null;
-                     quiz.ApprovedBy = null;
-                 }
+                // Subject must remain their assigned subject
+                if (model.SubjectId != instructor.SubjectId)
+                    throw new InvalidOperationException("You cannot change the subject of your quiz.");
+
+                model.SubjectId = instructor.SubjectId;
+
+                if (quiz.IsApproved || quiz.Status == ModelStatus.Active)
+                {
+                    quiz.IsApproved = false;
+                    quiz.Status = ModelStatus.Pending;
+                    quiz.ApprovedAt = null;
+                    quiz.ApprovedBy = null;
+                }
             }
 
             quiz.Name = model.Name;
@@ -170,11 +167,9 @@ namespace QuizSystemService.Services
             var instructor = await _instructorRepo.GetByUserIdAsync(currentUser.Id);
             if (instructor != null)
             {
-                if (!instructor.ClassId.HasValue)
-                    throw new InvalidOperationException("You have not been assigned to a class yet. Please contact Admin.");
-
-                if (quiz.ClassId != instructor.ClassId)
-                    throw new InvalidOperationException("You cannot delete quizzes outside your assigned class.");
+                // Instructor can only delete their own quizzes
+                if (quiz.CreatedBy?.Id != currentUser.Id)
+                    throw new InvalidOperationException("You cannot delete quizzes you did not create.");
             }
 
             quiz.Status = ModelStatus.Deleted;

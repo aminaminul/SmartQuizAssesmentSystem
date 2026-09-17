@@ -15,13 +15,17 @@ namespace QuizSystemRepository.Repositories
             _context = context;
         }
 
-        public Task<List<Quiz>> GetAllAsync(long? mediumId = null, long? classId = null, long? subjectId = null)
+        public Task<List<Quiz>> GetAllAsync(long? mediumId = null, long? classId = null, long? subjectId = null, long? createdByUserId = null)
         {
             var query = _context.Quiz
                 .Include(q => q.Subject)
                 .Include(q => q.Class)
                 .Include(q => q.EducationMedium)
+                .Include(q => q.CreatedBy)
                 .Where(q => q.Status != ModelStatus.Deleted);
+
+            if (createdByUserId.HasValue)
+                query = query.Where(q => q.CreatedBy != null && q.CreatedBy.Id == createdByUserId.Value);
 
             if (mediumId.HasValue)
                 query = query.Where(q => q.EducationMediumId == mediumId.Value);

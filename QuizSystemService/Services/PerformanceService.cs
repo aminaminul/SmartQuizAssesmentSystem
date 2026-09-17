@@ -27,7 +27,7 @@ namespace QuizSystemService.Services
 
         public async Task<StudentPerformanceViewModel> GetStudentPerformanceAsync(long? studentId = null, long? classId = null, long? mediumId = null)
         {
-            var attempts = await _attemptRepo.GetAllAttemptsAsync();
+            var attempts = await _attemptRepo.GetSubmittedAttemptsAsync(classId, mediumId);
             var students = await _studentRepo.GetAllAsync(classId, mediumId);
 
             if (studentId.HasValue)
@@ -70,7 +70,7 @@ namespace QuizSystemService.Services
 
         public async Task<ClassPerformanceViewModel> GetClassPerformanceAsync(long? classId = null, long? mediumId = null)
         {
-            var attempts = await _attemptRepo.GetAllAttemptsAsync();
+            var attempts = await _attemptRepo.GetSubmittedAttemptsAsync(classId, mediumId);
             var classes = await _classRepo.GetAllAsync(mediumId);
             
             if (classId.HasValue)
@@ -116,7 +116,7 @@ namespace QuizSystemService.Services
 
         public async Task<MediumPerformanceViewModel> GetMediumPerformanceAsync(long? mediumId = null)
         {
-            var attempts = await _attemptRepo.GetAllAttemptsAsync();
+            var attempts = await _attemptRepo.GetSubmittedAttemptsAsync(null, mediumId);
             var mediums = await _mediumRepo.GetAllAsync();
 
             if (mediumId.HasValue)
@@ -159,8 +159,7 @@ namespace QuizSystemService.Services
 
         public async Task<MyPerformanceViewModel> GetMyPerformanceAsync(long studentUserId)
         {
-            var attempts = await _attemptRepo.GetAllAttemptsAsync();
-            var myAttempts = attempts.Where(a => a.StudentUserId == studentUserId).ToList();
+            var myAttempts = await _attemptRepo.GetAttemptsByStudentUserIdAsync(studentUserId);
 
             var student = await _studentRepo.GetByUserIdAsync(studentUserId);
             if (student == null) throw new Exception("Student not found");

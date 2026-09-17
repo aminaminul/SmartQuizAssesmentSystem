@@ -29,23 +29,27 @@ namespace QuizSystemService.Services
 
         public void SeedDatabase()
         {
+            SeedDatabaseAsync().GetAwaiter().GetResult();
+        }
+
+        public async Task SeedDatabaseAsync()
+        {
             try
             {
-                _context.Database.Migrate();
+                await _context.Database.MigrateAsync();
 
                 // 1. Seed Roles
                 string[] roles = { "Admin", "Instructor", "Student" };
                 foreach (var role in roles)
                 {
-                    if (!_roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+                    if (!await _roleManager.RoleExistsAsync(role))
                     {
-                        _roleManager.CreateAsync(new QuizSystemRole { Name = role })
-                                   .GetAwaiter().GetResult();
+                        await _roleManager.CreateAsync(new QuizSystemRole { Name = role });
                     }
                 }
 
                 // 2. Seed Default Education Medium
-                var defaultMedium = _context.EducationMedium.FirstOrDefault(m => m.Name == "Bangla Medium");
+                var defaultMedium = await _context.EducationMedium.FirstOrDefaultAsync(m => m.Name == "Bangla Medium");
                 if (defaultMedium == null)
                 {
                     defaultMedium = new EducationMedium
@@ -55,11 +59,11 @@ namespace QuizSystemService.Services
                         Status = ModelStatus.Active,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.EducationMedium.Add(defaultMedium);
-                    _context.SaveChanges();
+                    await _context.EducationMedium.AddAsync(defaultMedium);
+                    await _context.SaveChangesAsync();
                 }
 
-                var englishMedium = _context.EducationMedium.FirstOrDefault(m => m.Name == "English Medium");
+                var englishMedium = await _context.EducationMedium.FirstOrDefaultAsync(m => m.Name == "English Medium");
                 if (englishMedium == null)
                 {
                     englishMedium = new EducationMedium
@@ -69,12 +73,12 @@ namespace QuizSystemService.Services
                         Status = ModelStatus.Active,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.EducationMedium.Add(englishMedium);
-                    _context.SaveChanges();
+                    await _context.EducationMedium.AddAsync(englishMedium);
+                    await _context.SaveChangesAsync();
                 }
 
                 // 3. Seed Default Class
-                var defaultClass = _context.Class.FirstOrDefault(c => c.Name == "Class 10" && c.EducationMediumId == defaultMedium.Id);
+                var defaultClass = await _context.Class.FirstOrDefaultAsync(c => c.Name == "Class 10" && c.EducationMediumId == defaultMedium.Id);
                 if (defaultClass == null)
                 {
                     defaultClass = new Class
@@ -85,11 +89,11 @@ namespace QuizSystemService.Services
                         EducationMediumId = defaultMedium.Id,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.Class.Add(defaultClass);
-                    _context.SaveChanges();
+                    await _context.Class.AddAsync(defaultClass);
+                    await _context.SaveChangesAsync();
                 }
 
-                var class9 = _context.Class.FirstOrDefault(c => c.Name == "Class 9" && c.EducationMediumId == defaultMedium.Id);
+                var class9 = await _context.Class.FirstOrDefaultAsync(c => c.Name == "Class 9" && c.EducationMediumId == defaultMedium.Id);
                 if (class9 == null)
                 {
                     class9 = new Class
@@ -100,12 +104,12 @@ namespace QuizSystemService.Services
                         EducationMediumId = defaultMedium.Id,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.Class.Add(class9);
-                    _context.SaveChanges();
+                    await _context.Class.AddAsync(class9);
+                    await _context.SaveChangesAsync();
                 }
 
                 // 4. Seed Default Subject
-                var defaultSubject = _context.Subject.FirstOrDefault(s => s.Name == "Math" && s.ClassId == defaultClass.Id);
+                var defaultSubject = await _context.Subject.FirstOrDefaultAsync(s => s.Name == "Math" && s.ClassId == defaultClass.Id);
                 if (defaultSubject == null)
                 {
                     defaultSubject = new Subject
@@ -116,11 +120,11 @@ namespace QuizSystemService.Services
                         ClassId = defaultClass.Id,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.Subject.Add(defaultSubject);
-                    _context.SaveChanges();
+                    await _context.Subject.AddAsync(defaultSubject);
+                    await _context.SaveChangesAsync();
                 }
 
-                var banglaSubject = _context.Subject.FirstOrDefault(s => s.Name == "Bangla" && s.ClassId == defaultClass.Id);
+                var banglaSubject = await _context.Subject.FirstOrDefaultAsync(s => s.Name == "Bangla" && s.ClassId == defaultClass.Id);
                 if (banglaSubject == null)
                 {
                     banglaSubject = new Subject
@@ -131,11 +135,11 @@ namespace QuizSystemService.Services
                         ClassId = defaultClass.Id,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.Subject.Add(banglaSubject);
-                    _context.SaveChanges();
+                    await _context.Subject.AddAsync(banglaSubject);
+                    await _context.SaveChangesAsync();
                 }
 
-                var englishSubject = _context.Subject.FirstOrDefault(s => s.Name == "English" && s.ClassId == defaultClass.Id);
+                var englishSubject = await _context.Subject.FirstOrDefaultAsync(s => s.Name == "English" && s.ClassId == defaultClass.Id);
                 if (englishSubject == null)
                 {
                     englishSubject = new Subject
@@ -146,13 +150,13 @@ namespace QuizSystemService.Services
                         ClassId = defaultClass.Id,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.Subject.Add(englishSubject);
-                    _context.SaveChanges();
+                    await _context.Subject.AddAsync(englishSubject);
+                    await _context.SaveChangesAsync();
                 }
 
                 // 5. Seed / Sync Admin User
                 var adminEmail = "admin@gmail.com";
-                var admin = _userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
+                var admin = await _userManager.FindByEmailAsync(adminEmail);
                 if (admin == null)
                 {
                     admin = new QuizSystemUser
@@ -163,30 +167,30 @@ namespace QuizSystemService.Services
                         Email = adminEmail,
                         EmailConfirmed = true
                     };
-                    var createRes = _userManager.CreateAsync(admin, "Admin@123").GetAwaiter().GetResult();
+                    var createRes = await _userManager.CreateAsync(admin, "Admin@123");
                     if (createRes.Succeeded)
                     {
-                        _userManager.AddToRoleAsync(admin, "Admin").GetAwaiter().GetResult();
+                        await _userManager.AddToRoleAsync(admin, "Admin");
                     }
                 }
                 else
                 {
                     // Ensure role and password match Admin@123
-                    if (!_userManager.IsInRoleAsync(admin, "Admin").GetAwaiter().GetResult())
+                    if (!await _userManager.IsInRoleAsync(admin, "Admin"))
                     {
-                        _userManager.AddToRoleAsync(admin, "Admin").GetAwaiter().GetResult();
+                        await _userManager.AddToRoleAsync(admin, "Admin");
                     }
-                    var checkPass = _userManager.CheckPasswordAsync(admin, "Admin@123").GetAwaiter().GetResult();
+                    var checkPass = await _userManager.CheckPasswordAsync(admin, "Admin@123");
                     if (!checkPass)
                     {
-                        var token = _userManager.GeneratePasswordResetTokenAsync(admin).GetAwaiter().GetResult();
-                        _userManager.ResetPasswordAsync(admin, token, "Admin@123").GetAwaiter().GetResult();
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(admin);
+                        await _userManager.ResetPasswordAsync(admin, token, "Admin@123");
                     }
                 }
 
                 // 6. Seed / Sync Instructor User & Instructor Record
                 var instructorEmail = "instructor@gmail.com";
-                var instructor = _userManager.FindByEmailAsync(instructorEmail).GetAwaiter().GetResult();
+                var instructor = await _userManager.FindByEmailAsync(instructorEmail);
                 if (instructor == null)
                 {
                     instructor = new QuizSystemUser
@@ -197,30 +201,30 @@ namespace QuizSystemService.Services
                         Email = instructorEmail,
                         EmailConfirmed = true
                     };
-                    var createRes = _userManager.CreateAsync(instructor, "Instructor@123").GetAwaiter().GetResult();
+                    var createRes = await _userManager.CreateAsync(instructor, "Instructor@123");
                     if (createRes.Succeeded)
                     {
-                        _userManager.AddToRoleAsync(instructor, "Instructor").GetAwaiter().GetResult();
+                        await _userManager.AddToRoleAsync(instructor, "Instructor");
                     }
                 }
                 else
                 {
-                    if (!_userManager.IsInRoleAsync(instructor, "Instructor").GetAwaiter().GetResult())
+                    if (!await _userManager.IsInRoleAsync(instructor, "Instructor"))
                     {
-                        _userManager.AddToRoleAsync(instructor, "Instructor").GetAwaiter().GetResult();
+                        await _userManager.AddToRoleAsync(instructor, "Instructor");
                     }
-                    var checkPass = _userManager.CheckPasswordAsync(instructor, "Instructor@123").GetAwaiter().GetResult();
+                    var checkPass = await _userManager.CheckPasswordAsync(instructor, "Instructor@123");
                     if (!checkPass)
                     {
-                        var token = _userManager.GeneratePasswordResetTokenAsync(instructor).GetAwaiter().GetResult();
-                        _userManager.ResetPasswordAsync(instructor, token, "Instructor@123").GetAwaiter().GetResult();
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(instructor);
+                        await _userManager.ResetPasswordAsync(instructor, token, "Instructor@123");
                     }
                 }
 
                 // Ensure Instructor Table Entry exists and is Active
                 if (instructor != null)
                 {
-                    var instructorRecord = _context.Instructor.FirstOrDefault(i => i.UserId == instructor.Id || i.Email == instructorEmail);
+                    var instructorRecord = await _context.Instructor.FirstOrDefaultAsync(i => i.UserId == instructor.Id || i.Email == instructorEmail);
                     if (instructorRecord == null)
                     {
                         instructorRecord = new Instructor
@@ -236,8 +240,8 @@ namespace QuizSystemService.Services
                             SubjectId = defaultSubject.Id,
                             CreatedAt = DateTime.UtcNow
                         };
-                        _context.Instructor.Add(instructorRecord);
-                        _context.SaveChanges();
+                        await _context.Instructor.AddAsync(instructorRecord);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
@@ -246,13 +250,13 @@ namespace QuizSystemService.Services
                         if (!instructorRecord.EducationMediumId.HasValue) instructorRecord.EducationMediumId = defaultMedium.Id;
                         if (!instructorRecord.ClassId.HasValue) instructorRecord.ClassId = defaultClass.Id;
                         if (!instructorRecord.SubjectId.HasValue) instructorRecord.SubjectId = defaultSubject.Id;
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync();
                     }
                 }
 
                 // 7. Seed / Sync Student User & Student Record
                 var studentEmail = "student@gmail.com";
-                var student = _userManager.FindByEmailAsync(studentEmail).GetAwaiter().GetResult();
+                var student = await _userManager.FindByEmailAsync(studentEmail);
                 if (student == null)
                 {
                     student = new QuizSystemUser
@@ -263,30 +267,30 @@ namespace QuizSystemService.Services
                         Email = studentEmail,
                         EmailConfirmed = true
                     };
-                    var createRes = _userManager.CreateAsync(student, "Student@123").GetAwaiter().GetResult();
+                    var createRes = await _userManager.CreateAsync(student, "Student@123");
                     if (createRes.Succeeded)
                     {
-                        _userManager.AddToRoleAsync(student, "Student").GetAwaiter().GetResult();
+                        await _userManager.AddToRoleAsync(student, "Student");
                     }
                 }
                 else
                 {
-                    if (!_userManager.IsInRoleAsync(student, "Student").GetAwaiter().GetResult())
+                    if (!await _userManager.IsInRoleAsync(student, "Student"))
                     {
-                        _userManager.AddToRoleAsync(student, "Student").GetAwaiter().GetResult();
+                        await _userManager.AddToRoleAsync(student, "Student");
                     }
-                    var checkPass = _userManager.CheckPasswordAsync(student, "Student@123").GetAwaiter().GetResult();
+                    var checkPass = await _userManager.CheckPasswordAsync(student, "Student@123");
                     if (!checkPass)
                     {
-                        var token = _userManager.GeneratePasswordResetTokenAsync(student).GetAwaiter().GetResult();
-                        _userManager.ResetPasswordAsync(student, token, "Student@123").GetAwaiter().GetResult();
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(student);
+                        await _userManager.ResetPasswordAsync(student, token, "Student@123");
                     }
                 }
 
                 // Ensure Student Table Entry exists and is Active
                 if (student != null)
                 {
-                    var studentRecord = _context.Student.FirstOrDefault(s => s.UserId == student.Id || s.Email == studentEmail);
+                    var studentRecord = await _context.Student.FirstOrDefaultAsync(s => s.UserId == student.Id || s.Email == studentEmail);
                     if (studentRecord == null)
                     {
                         studentRecord = new Student
@@ -301,8 +305,8 @@ namespace QuizSystemService.Services
                             ClassId = defaultClass.Id,
                             CreatedAt = DateTime.UtcNow
                         };
-                        _context.Student.Add(studentRecord);
-                        _context.SaveChanges();
+                        await _context.Student.AddAsync(studentRecord);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
@@ -310,7 +314,7 @@ namespace QuizSystemService.Services
                         studentRecord.UserId = student.Id;
                         if (!studentRecord.EducationMediumId.HasValue) studentRecord.EducationMediumId = defaultMedium.Id;
                         if (!studentRecord.ClassId.HasValue) studentRecord.ClassId = defaultClass.Id;
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync();
                     }
                 }
 

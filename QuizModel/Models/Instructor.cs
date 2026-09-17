@@ -19,7 +19,8 @@ namespace QuizSystemModel.Models
         public ModelStatus Status { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-        public string? HscPassingInstrutute { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.Column("HscPassingInstrutute")]
+        public string? HscPassingInstitute { get; set; }
         public long? HscPassingYear { get; set; }
         public string? HscGrade { get; set; }
         public long? UserId { get; set; }

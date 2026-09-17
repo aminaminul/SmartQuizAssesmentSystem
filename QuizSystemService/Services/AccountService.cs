@@ -6,7 +6,7 @@ using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 using QuizSystemService.Interfaces;
 
-namespace SmartQuizAssessmentSystem.Services
+namespace QuizSystemService.Services
 {
     public class AccountService : IAccountService
     {
@@ -143,7 +143,7 @@ namespace SmartQuizAssessmentSystem.Services
                     LastName = model.LastName,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
-                    HscPassingInstrutute = model.HscPassingInstitute,
+                    HscPassingInstitute = model.HscPassingInstitute,
                     HscPassingYear = model.HscPassingYear,
                     HscGrade = model.HscGrade,
                     UserId = user.Id,

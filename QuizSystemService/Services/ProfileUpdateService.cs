@@ -48,7 +48,7 @@ namespace QuizSystemService.Services
                 LastName = instructor.LastName ?? user.LastName,
                 Email = instructor.Email ?? user.Email!,
                 PhoneNumber = instructor.PhoneNumber ?? user.PhoneNumber!,
-                HscPassingInstitute = instructor.HscPassingInstrutute ?? "",
+                HscPassingInstitute = instructor.HscPassingInstitute ?? "",
                 HscPassingYear = instructor.HscPassingYear,
                 HscGrade = instructor.HscGrade ?? "",
                 EducationMediumId = instructor.EducationMediumId,
@@ -202,7 +202,7 @@ namespace QuizSystemService.Services
             instructor.LastName = vm.LastName;
             instructor.Email = vm.Email;
             instructor.PhoneNumber = vm.PhoneNumber;
-            instructor.HscPassingInstrutute = vm.HscPassingInstitute;
+            instructor.HscPassingInstitute = vm.HscPassingInstitute;
             instructor.HscPassingYear = vm.HscPassingYear;
             instructor.HscGrade = vm.HscGrade;
             instructor.EducationMediumId = vm.EducationMediumId;

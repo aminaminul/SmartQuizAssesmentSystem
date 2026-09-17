@@ -72,5 +72,45 @@ namespace QuizSystemRepository.Repositories
                 .OrderByDescending(a => a.StartAt)
                 .ToListAsync();
         }
+
+        public async Task<List<QuizAttempt>> GetAttemptsByStudentUserIdAsync(long studentUserId)
+        {
+            return await _context.QuizAttempt
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Subject)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Class)
+                        .ThenInclude(c => c.EducationMedium)
+                .Include(a => a.StudentUser)
+                .Where(a => a.IsSubmitted && a.StudentUserId == studentUserId)
+                .OrderByDescending(a => a.StartAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<QuizAttempt>> GetSubmittedAttemptsAsync(long? classId = null, long? mediumId = null)
+        {
+            var query = _context.QuizAttempt
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Subject)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Class)
+                        .ThenInclude(c => c.EducationMedium)
+                .Include(a => a.StudentUser)
+                .Where(a => a.IsSubmitted);
+
+            if (classId.HasValue)
+            {
+                query = query.Where(a => a.Quiz.ClassId == classId.Value);
+            }
+
+            if (mediumId.HasValue)
+            {
+                query = query.Where(a => a.Quiz.EducationMediumId == mediumId.Value);
+            }
+
+            return await query
+                .OrderByDescending(a => a.StartAt)
+                .ToListAsync();
+        }
     }
 }

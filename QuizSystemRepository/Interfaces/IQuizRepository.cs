@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using QuizSystemModel.Models;
@@ -7,7 +7,7 @@ namespace QuizSystemModel.Interfaces
 {
     public interface IQuizRepository
     {
-        Task<List<Quiz>> GetAllAsync(long? mediumId = null, long? classId = null, long? subjectId = null);
+        Task<List<Quiz>> GetAllAsync(long? mediumId = null, long? classId = null, long? subjectId = null, long? createdByUserId = null);
         Task<Quiz?> GetByIdAsync(long id, bool includeQuestions = false);
         Task AddAsync(Quiz quiz);
         Task UpdateAsync(Quiz quiz);

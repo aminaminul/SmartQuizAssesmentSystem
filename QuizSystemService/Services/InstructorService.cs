@@ -95,7 +95,7 @@ namespace QuizSystemService.Services
                     LastName = model.LastName,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
-                    HscPassingInstrutute = model.HscPassingInstitute,
+                    HscPassingInstitute = model.HscPassingInstitute,
                     HscPassingYear = model.HscPassingYear,
                     HscGrade = model.HscGrade,
                     EducationMediumId = model.EducationMediumId,
@@ -163,7 +163,7 @@ namespace QuizSystemService.Services
             existing.LastName = model.LastName;
             existing.Email = model.Email;
             existing.PhoneNumber = model.PhoneNumber;
-            existing.HscPassingInstrutute = model.HscPassingInstrutute;
+            existing.HscPassingInstitute = model.HscPassingInstitute;
             existing.HscPassingYear = model.HscPassingYear;
             existing.HscGrade = model.HscGrade;
             existing.Status = model.Status;

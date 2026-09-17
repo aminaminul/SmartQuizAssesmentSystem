@@ -1,4 +1,4 @@
-﻿using QuizSystemModel.Models;
+using QuizSystemModel.Models;
 using QuizSystemModel.ViewModels;
 
 namespace QuizSystemService.Interfaces
