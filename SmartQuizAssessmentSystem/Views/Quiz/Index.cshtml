@@ -147,32 +147,32 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@q.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Edit" asp-route-id="@q.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@q.Id" class="btn btn-sm btn-danger">Delete</a>
-
-                    @if (User.IsInRole("Admin"))
-                    {
-                        @if (!q.IsApproved)
+                    <div class="d-flex gap-1 flex-wrap">
+                        @if (User.IsInRole("Admin"))
                         {
-                            <form asp-action="Approve" asp-route-id="@q.Id" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                            </form>
+                            @if (q.Status != QuizSystemModel.BusinessRules.ModelStatus.Active)
+                            {
+                                <form asp-action="Approve" asp-route-id="@q.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success fixed-btn">Approve</button>
+                                </form>
+                            }
+                            @if (q.Status != QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                            {
+                                <form asp-action="Reject" asp-route-id="@q.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger fixed-btn">Reject</button>
+                                </form>
+                            }
                         }
-                        else
-                        {
-                            <form asp-action="Reject" asp-route-id="@q.Id" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
-                            </form>
-                        }
-                    }
-
-                    <a asp-controller="Question" asp-action="Index" asp-route-quizId="@q.Id" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-list"></i> Questions
-                    </a>
-                    <a asp-controller="Question" asp-action="Create" asp-route-quizId="@q.Id" class="btn btn-sm btn-success">
-                        <i class="fas fa-plus-circle"></i> Add Questions
-                    </a>
+                        <a asp-action="Details" asp-route-id="@q.Id" class="btn btn-sm btn-info fixed-btn">Details</a>
+                        <a asp-action="Edit" asp-route-id="@q.Id" class="btn btn-sm btn-warning fixed-btn">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@q.Id" class="btn btn-sm btn-danger fixed-btn">Delete</a>
+                        <a asp-controller="Question" asp-action="Index" asp-route-quizId="@q.Id" class="btn btn-sm btn-outline-primary fixed-btn">
+                            <i class="fas fa-list"></i> Questions
+                        </a>
+                        <a asp-controller="Question" asp-action="Create" asp-route-quizId="@q.Id" class="btn btn-sm btn-success fixed-btn">
+                            <i class="fas fa-plus-circle"></i> Add Q
+                        </a>
+                    </div>
                 </td>
             </tr>
         }

@@ -1,4 +1,4 @@
-﻿@using QuizSystemModel.Models
+@using QuizSystemModel.Models
 @using QuizSystemModel.BusinessRules
 @model IEnumerable<QuizSystemModel.Models.Subject>
 
@@ -58,13 +58,13 @@
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@item.Id" />
                                             <input type="hidden" name="redirect" value="Pending" />
-                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                            <button type="submit" class="btn btn-success btn-sm fixed-btn">Approve</button>
                                         </form>
                                         <form asp-action="Reject" method="post" class="d-inline">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@item.Id" />
                                             <input type="hidden" name="redirect" value="Pending" />
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm fixed-btn">Reject</button>
                                         </form>
                                     </div>
                                 </td>

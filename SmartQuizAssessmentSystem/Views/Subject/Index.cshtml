@@ -106,22 +106,28 @@
                     }
                 </td>
                 <td>
-                    <div class="d-flex gap-1 justify-content-end">
+                    <div class="d-flex gap-1 justify-content-end flex-wrap">
+                        @if (item.Status != QuizSystemModel.BusinessRules.ModelStatus.Active)
+                        {
                             <form asp-controller="Subject" asp-action="Approve" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <input type="hidden" name="redirect" value="Index" />
-                                <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                <button type="submit" class="btn btn-sm btn-success fixed-btn">Approve</button>
                             </form>
+                        }
+                        @if (item.Status != QuizSystemModel.BusinessRules.ModelStatus.InActive)
+                        {
                             <form asp-controller="Subject" asp-action="Reject" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <input type="hidden" name="redirect" value="Index" />
-                                <button type="submit" class="btn btn-sm btn-warning">Reject</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger fixed-btn">Reject</button>
                             </form>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info fixed-btn">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary fixed-btn">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger fixed-btn">Delete</a>
                     </div>
                 </td>
             </tr>

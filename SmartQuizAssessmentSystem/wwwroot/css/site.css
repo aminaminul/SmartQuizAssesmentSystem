@@ -20,3 +20,22 @@ html {
 body {
     margin-bottom: 60px;
 }
+
+/* Fixed button size for uniform action buttons */
+.fixed-btn {
+    min-width: 78px;
+    height: 31px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+}
+
+form.d-inline {
+    display: inline-flex !important;
+    margin: 0 !important;
+}

@@ -1,4 +1,4 @@
-﻿@using QuizSystemModel.Models
+@using QuizSystemModel.Models
 @using QuizSystemModel.BusinessRules
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -71,18 +71,24 @@
                     }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@idLong" class="btn btn-sm btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@idLong" class="btn btn-sm btn-danger">Delete</a>
-
-                    <form asp-action="Approve" asp-route-id="@idLong" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                    </form>
-
-                    <form asp-action="Reject" asp-route-id="@idLong" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-warning">Reject</button>
-                    </form>
+                    <div class="d-flex gap-1 flex-wrap">
+                        @if (m.Status != ModelStatus.Active)
+                        {
+                            <form asp-action="Approve" asp-route-id="@idLong" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success fixed-btn">Approve</button>
+                            </form>
+                        }
+                        @if (m.Status != ModelStatus.InActive)
+                        {
+                            <form asp-action="Reject" asp-route-id="@idLong" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger fixed-btn">Reject</button>
+                            </form>
+                        }
+                        <a asp-action="Edit" asp-route-id="@idLong" class="btn btn-sm btn-primary fixed-btn">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@idLong" class="btn btn-sm btn-danger fixed-btn">Delete</a>
+                    </div>
                 </td>
             </tr>
         }

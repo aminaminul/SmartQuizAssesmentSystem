@@ -7,7 +7,6 @@ using QuizSystemRepository.Interfaces;
 using QuizSystemRepository.Repositories;
 using QuizSystemService.Interfaces;
 using QuizSystemService.Services;
-using SmartQuizAssessmentSystem.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,7 +80,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<ISeedService>();
-    seeder.SeedDatabase();
+    await seeder.SeedDatabaseAsync();
 }
 
 if (!app.Environment.IsDevelopment())

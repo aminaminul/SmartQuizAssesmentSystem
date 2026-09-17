@@ -192,20 +192,37 @@ namespace SmartQuizAssessmentSystem.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             var instructor = currentUser != null ? await _instructorService.GetByUserIdAsync(currentUser.Id) : null;
 
-            if (instructor != null && instructor.ClassId.HasValue)
+            if (instructor != null)
             {
-                mediumId = instructor.EducationMediumId;
-                classId = instructor.ClassId;
+                // --- Instructor view: subject is FIXED, class is free within their medium ---
+                ViewBag.IsInstructor = true;
 
-                var medium = mediumId.HasValue ? await _mediumService.GetByIdAsync(mediumId.Value) : null;
-                ViewBag.EducationMediumId = new SelectList(medium != null ? new[] { medium } : Enumerable.Empty<EducationMedium>(), "Id", "Name", mediumId);
+                // Medium: fixed to instructor's medium
+                var mediumIdToUse = instructor.EducationMediumId;
+                var medium = mediumIdToUse.HasValue ? await _mediumService.GetByIdAsync(mediumIdToUse.Value) : null;
+                ViewBag.EducationMediumId = new SelectList(
+                    medium != null ? new[] { medium } : Enumerable.Empty<EducationMedium>(),
+                    "Id", "Name", mediumIdToUse);
 
-                var cls = classId.HasValue ? await _classService.GetByIdAsync(classId.Value) : null;
-                ViewBag.ClassId = new SelectList(cls != null ? new[] { cls } : Enumerable.Empty<Class>(), "Id", "Name", classId);
+                // Class: all classes within the instructor's medium (instructor picks any)
+                var classes = mediumIdToUse.HasValue
+                    ? await _classService.GetAllAsync(mediumIdToUse.Value)
+                    : await _classService.GetAllAsync(null);
+                ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId ?? instructor.ClassId);
+
+                // Subject: FIXED to instructor's assigned subject only
+                var subjectIdToUse = instructor.SubjectId;
+                var subject = subjectIdToUse.HasValue ? await _subjectService.GetByIdAsync(subjectIdToUse.Value) : null;
+                ViewBag.SubjectId = new SelectList(
+                    subject != null ? new[] { subject } : Enumerable.Empty<Subject>(),
+                    "Id", "Name", subjectIdToUse);
+                ViewBag.FixedSubjectId = subjectIdToUse;
             }
             else
             {
-                
+                // --- Admin view: full unrestricted dropdowns ---
+                ViewBag.IsInstructor = false;
+
                 var mediums = await _mediumService.GetAllAsync();
                 ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);
 
@@ -216,19 +233,20 @@ namespace SmartQuizAssessmentSystem.Controllers
                 }
                 else
                 {
-                    ViewBag.ClassId = new SelectList(Enumerable.Empty<Class>(), "Id", "Name");
+                    var allClasses = await _classService.GetAllAsync(null);
+                    ViewBag.ClassId = new SelectList(allClasses, "Id", "Name", classId);
                 }
-            }
 
-            if (classId.HasValue && classId.Value > 0)
-            {
-                var subjects = await _subjectService.GetAllAsync(classId.Value);
-                ViewBag.SubjectId = new SelectList(subjects, "Id", "Name", subjectId);
-            }
-            else
-            {
-                var allSubjects = await _subjectService.GetAllAsync();
-                ViewBag.SubjectId = new SelectList(allSubjects, "Id", "Name", subjectId);
+                if (classId.HasValue && classId.Value > 0)
+                {
+                    var subjects = await _subjectService.GetAllAsync(classId.Value);
+                    ViewBag.SubjectId = new SelectList(subjects, "Id", "Name", subjectId);
+                }
+                else
+                {
+                    var allSubjects = await _subjectService.GetAllAsync();
+                    ViewBag.SubjectId = new SelectList(allSubjects, "Id", "Name", subjectId);
+                }
             }
         }
     }

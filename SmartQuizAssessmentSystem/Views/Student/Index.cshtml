@@ -77,23 +77,21 @@
                     <div class="d-flex gap-1 flex-wrap">
                         @if (student.Status != QuizSystemModel.BusinessRules.ModelStatus.Active)
                         {
-                            <form asp-action="Approve" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" asp-route-educationMediumId="@ViewBag.SelectedMediumId" method="post">
-                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            <form asp-action="Approve" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" asp-route-educationMediumId="@ViewBag.SelectedMediumId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm fixed-btn">Approve</button>
                             </form>
                         }
                         @if (student.Status != QuizSystemModel.BusinessRules.ModelStatus.InActive)
                         {
-                            <form asp-action="Reject" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" asp-route-educationMediumId="@ViewBag.SelectedMediumId" method="post">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                            <form asp-action="Reject" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" asp-route-educationMediumId="@ViewBag.SelectedMediumId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm fixed-btn">Reject</button>
                             </form>
                         }
-
-                        <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">Details</a>
-                        
+                        <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm fixed-btn">Details</a>
                         @if (User.IsInRole("Admin"))
                         {
-                            <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning btn-sm">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" class="btn btn-danger btn-sm">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning btn-sm fixed-btn">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@student.Id" asp-route-classId="@ViewBag.SelectedClassId" class="btn btn-danger btn-sm fixed-btn">Delete</a>
                         }
                     </div>
                 </td>

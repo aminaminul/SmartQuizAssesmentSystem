@@ -81,7 +81,7 @@
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@quiz.Id" />
                                             <input type="hidden" name="redirect" value="Pending" />
-                                            <button type="submit" class="btn btn-success btn-sm">
+                                            <button type="submit" class="btn btn-success btn-sm fixed-btn">
                                                 <i class="fas fa-check me-1"></i> Approve
                                             </button>
                                         </form>
@@ -89,11 +89,11 @@
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@quiz.Id" />
                                             <input type="hidden" name="redirect" value="Pending" />
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm fixed-btn">
                                                 <i class="fas fa-times me-1"></i> Reject
                                             </button>
                                         </form>
-                                        <a asp-controller="Quiz" asp-action="Delete" asp-route-id="@quiz.Id" class="btn btn-outline-danger btn-sm">
+                                        <a asp-controller="Quiz" asp-action="Delete" asp-route-id="@quiz.Id" class="btn btn-outline-danger btn-sm fixed-btn">
                                             <i class="fas fa-trash me-1"></i> Delete
                                         </a>
                                     </div>

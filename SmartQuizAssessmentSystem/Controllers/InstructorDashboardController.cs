@@ -157,62 +157,6 @@ namespace SmartQuizAssessmentSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateStudent()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var instructor = await _instructorService.GetByUserIdAsync(user.Id);
-            if (instructor == null || !instructor.ClassId.HasValue)
-            {
-                TempData["ErrorMessage"] = "You do not have an assigned class to add students to.";
-                return RedirectToAction(nameof(MyClassStudents));
-            }
-
-            var model = new StudentAddViewModel
-            {
-                EducationMediumId = instructor.EducationMediumId,
-                ClassId = instructor.ClassId
-            };
-            
-            ViewBag.MediumName = (await _mediumService.GetByIdAsync(model.EducationMediumId ?? 0))?.Name;
-            ViewBag.ClassName = (await _classService.GetByIdAsync(model.ClassId ?? 0))?.Name;
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateStudent(StudentAddViewModel model)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var instructor = await _instructorService.GetByUserIdAsync(user.Id);
-            
-            // Force the instructor's class and medium
-            model.EducationMediumId = instructor?.EducationMediumId ?? 0;
-            model.ClassId = instructor?.ClassId ?? 0;
-
-            if (!ModelState.IsValid)
-            {
-                ViewBag.MediumName = (await _mediumService.GetByIdAsync(model.EducationMediumId ?? 0))?.Name;
-                ViewBag.ClassName = (await _classService.GetByIdAsync(model.ClassId ?? 0))?.Name;
-                return View(model);
-            }
-
-            try
-            {
-                await _studentService.CreateAsync(model, user!);
-                TempData["SuccessMessage"] = "Student created successfully.";
-                return RedirectToAction(nameof(MyClassStudents));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                ViewBag.MediumName = (await _mediumService.GetByIdAsync(model.EducationMediumId ?? 0))?.Name;
-                ViewBag.ClassName = (await _classService.GetByIdAsync(model.ClassId ?? 0))?.Name;
-                return View(model);
-            }
-        }
-
-        [HttpGet]
         public async Task<IActionResult> EditStudent(long id)
         {
             var student = await _studentService.GetByIdAsync(id);

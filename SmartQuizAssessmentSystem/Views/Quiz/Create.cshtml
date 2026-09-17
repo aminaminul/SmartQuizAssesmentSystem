@@ -1,154 +1,192 @@
-﻿@model QuizSystemModel.ViewModels.QuizViewModel
+@model QuizSystemModel.ViewModels.QuizViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Create Quiz";
+    bool isInstructor = ViewBag.IsInstructor == true;
 }
-<h2>Create Quiz</h2>
 
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Create Quiz</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter quiz name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="EducationMediumId" class="form-label fw-bold">Education Medium</label>
+                        @if (isInstructor)
+                        {
+                            <select asp-for="EducationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId"
+                                    id="mediumSelect" disabled></select>
+                            <input type="hidden" asp-for="EducationMediumId" />
+                        }
+                        else
+                        {
+                            <select asp-for="EducationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId"
+                                    id="mediumSelect">
+                                <option value="">Select Education Medium</option>
+                            </select>
+                        }
+                        <span asp-validation-for="EducationMediumId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="ClassId" class="form-label fw-bold">Class</label>
+                        <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId" id="classSelect">
+                            <option value="">Select Class</option>
+                        </select>
+                        <span asp-validation-for="ClassId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="SubjectId" class="form-label fw-bold">Subject</label>
+                        @if (isInstructor)
+                        {
+                            <select asp-for="SubjectId" class="form-select bg-light" asp-items="ViewBag.SubjectId"
+                                    id="subjectSelect" disabled></select>
+                            <input type="hidden" asp-for="SubjectId" />
+                            <small class="text-muted"><i class="fas fa-lock me-1"></i>Fixed to your assigned subject</small>
+                        }
+                        else
+                        {
+                            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId"
+                                    id="subjectSelect">
+                                <option value="">Select Subject</option>
+                            </select>
+                        }
+                        <span asp-validation-for="SubjectId" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter quiz description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="StartAt" class="form-label fw-bold">Start Time</label>
+                        <input asp-for="StartAt" type="datetime-local" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="EndAt" class="form-label fw-bold">End Time</label>
+                        <input asp-for="EndAt" type="datetime-local" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="DurationMinutes" class="form-label fw-bold">Duration (minutes)</label>
+                        <input asp-for="DurationMinutes" type="number" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="TotalMarks" class="form-label fw-bold"></label>
+                        <input asp-for="TotalMarks" class="form-control" />
+                        <span asp-validation-for="TotalMarks" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="NegativeMarking" class="form-label fw-bold"></label>
+                        <input asp-for="NegativeMarking" class="form-control" />
+                        <span asp-validation-for="NegativeMarking" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="RequiredPassPercentage" class="form-label fw-bold"></label>
+                        <input asp-for="RequiredPassPercentage" class="form-control" />
+                        <span asp-validation-for="RequiredPassPercentage" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                        <i class="fas fa-save me-1"></i> Create Quiz
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 shadow-sm">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label asp-for="EducationMediumId" class="form-label"></label>
-            <select asp-for="EducationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId" id="mediumSelect">
-                <option value="">Select Education Medium</option>
-            </select>
-            <span asp-validation-for="EducationMediumId" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <label asp-for="ClassId" class="form-label"></label>
-            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId" id="classSelect">
-                <option value="">Select Class</option>
-            </select>
-            <span asp-validation-for="ClassId" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <label asp-for="SubjectId" class="form-label"></label>
-            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId" id="subjectSelect">
-                <option value="">Select Subject</option>
-            </select>
-            <span asp-validation-for="SubjectId" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label asp-for="StartAt" class="form-label"></label>
-            <input asp-for="StartAt" type="datetime-local" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label asp-for="EndAt" class="form-label"></label>
-            <input asp-for="EndAt" type="datetime-local" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label asp-for="DurationMinutes" class="form-label">Duration (minutes)</label>
-            <input asp-for="DurationMinutes" type="number" class="form-control" />
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label asp-for="TotalMarks" class="form-label"></label>
-            <input asp-for="TotalMarks" class="form-control" />
-            <span asp-validation-for="TotalMarks" class="text-danger"></span>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="NegativeMarking" class="form-label"></label>
-            <input asp-for="NegativeMarking" class="form-control" />
-            <span asp-validation-for="NegativeMarking" class="text-danger"></span>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="RequiredPassPercentage" class="form-label"></label>
-            <input asp-for="RequiredPassPercentage" class="form-control" />
-            <span asp-validation-for="RequiredPassPercentage" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="mt-4">
-        <button type="submit" class="btn btn-primary">Create Quiz</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            console.log('Quiz Create page loaded');
+            var isInstructor = @(isInstructor ? "true" : "false");
 
+            // Medium change -> reload classes (admin only)
             $('#mediumSelect').change(function () {
                 var mediumId = $(this).val();
-                console.log('Medium selected:', mediumId);
-                
                 $('#classSelect').empty().append('<option value="">Select Class</option>');
-                $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
-                
+                if (!isInstructor) {
+                    $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
+                }
                 if (mediumId) {
                     $.ajax({
                         url: '@Url.Action("GetClasses", "Quiz")',
                         type: 'GET',
                         data: { mediumId: mediumId },
                         success: function (data) {
-                            console.log('Classes received:', data);
                             $.each(data, function (i, item) {
-                                $('#classSelect').append($('<option>', {
-                                    value: item.id,
-                                    text: item.name
-                                }));
+                                $('#classSelect').append($('<option>', { value: item.id, text: item.name }));
                             });
-                        },
-                        error: function (xhr, status, error) {
-                            console.error('Error loading classes:', error);
-                            alert('Failed to load classes. Please try again.');
                         }
                     });
                 }
             });
 
+            // Class change -> reload subjects (admin only; instructor subject is fixed)
             $('#classSelect').change(function () {
+                if (isInstructor) return;
                 var classId = $(this).val();
-                console.log('Class selected:', classId);
-                
                 $('#subjectSelect').empty().append('<option value="">Select Subject</option>');
-                
                 if (classId) {
                     $.ajax({
                         url: '@Url.Action("GetSubjects", "Quiz")',
                         type: 'GET',
                         data: { classId: classId },
                         success: function (data) {
-                            console.log('Subjects received:', data);
                             $.each(data, function (i, item) {
-                                $('#subjectSelect').append($('<option>', {
-                                    value: item.id,
-                                    text: item.name
-                                }));
+                                $('#subjectSelect').append($('<option>', { value: item.id, text: item.name }));
                             });
-                        },
-                        error: function (xhr, status, error) {
-                            console.error('Error loading subjects:', error);
-                            alert('Failed to load subjects. Please try again.');
                         }
                     });
                 }
             });
+
+            // Instructor: auto-populate classes for their locked medium on page load
+            if (isInstructor) {
+                var mediumId = $('#mediumSelect').val();
+                var selectedClassId = @(Model.ClassId.HasValue ? Model.ClassId.Value.ToString() : "null");
+                if (mediumId) {
+                    $.ajax({
+                        url: '@Url.Action("GetClasses", "Quiz")',
+                        type: 'GET',
+                        data: { mediumId: mediumId },
+                        success: function (data) {
+                            $('#classSelect').empty().append('<option value="">Select Class</option>');
+                            $.each(data, function (i, item) {
+                                var opt = $('<option>', { value: item.id, text: item.name });
+                                if (selectedClassId && item.id == selectedClassId) opt.prop('selected', true);
+                                $('#classSelect').append(opt);
+                            });
+                        }
+                    });
+                }
+            }
         });
     </script>
 }
