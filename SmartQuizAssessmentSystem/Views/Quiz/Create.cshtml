@@ -26,9 +26,10 @@
                         <label asp-for="EducationMediumId" class="form-label fw-bold">Education Medium</label>
                         @if (isInstructor)
                         {
-                            <select asp-for="EducationMediumId" class="form-select" asp-items="ViewBag.EducationMediumId"
+                            <select class="form-select bg-light" asp-items="ViewBag.EducationMediumId"
                                     id="mediumSelect" disabled></select>
-                            <input type="hidden" asp-for="EducationMediumId" />
+                            <input type="hidden" name="EducationMediumId" id="EducationMediumId" value="@(Model.EducationMediumId ?? ViewBag.FixedMediumId)" />
+                            <small class="text-muted"><i class="fas fa-lock me-1"></i>Fixed to your assigned medium</small>
                         }
                         else
                         {
@@ -42,9 +43,19 @@
 
                     <div class="col-md-4">
                         <label asp-for="ClassId" class="form-label fw-bold">Class</label>
-                        <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId" id="classSelect">
-                            <option value="">Select Class</option>
-                        </select>
+                        @if (isInstructor && ViewBag.FixedClassId != null)
+                        {
+                            <select class="form-select bg-light" asp-items="ViewBag.ClassId"
+                                    id="classSelect" disabled></select>
+                            <input type="hidden" name="ClassId" id="ClassId" value="@(Model.ClassId ?? ViewBag.FixedClassId)" />
+                            <small class="text-muted"><i class="fas fa-lock me-1"></i>Fixed to your assigned class</small>
+                        }
+                        else
+                        {
+                            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId" id="classSelect">
+                                <option value="">Select Class</option>
+                            </select>
+                        }
                         <span asp-validation-for="ClassId" class="text-danger small"></span>
                     </div>
 
@@ -52,9 +63,9 @@
                         <label asp-for="SubjectId" class="form-label fw-bold">Subject</label>
                         @if (isInstructor)
                         {
-                            <select asp-for="SubjectId" class="form-select bg-light" asp-items="ViewBag.SubjectId"
+                            <select class="form-select bg-light" asp-items="ViewBag.SubjectId"
                                     id="subjectSelect" disabled></select>
-                            <input type="hidden" asp-for="SubjectId" />
+                            <input type="hidden" name="SubjectId" id="SubjectId" value="@(Model.SubjectId ?? ViewBag.FixedSubjectId)" />
                             <small class="text-muted"><i class="fas fa-lock me-1"></i>Fixed to your assigned subject</small>
                         }
                         else
@@ -167,11 +178,11 @@
                 }
             });
 
-            // Instructor: auto-populate classes for their locked medium on page load
-            if (isInstructor) {
-                var mediumId = $('#mediumSelect').val();
+            // Instructor: auto-populate classes for their locked medium on page load only if class is not fixed
+            if (isInstructor && @(ViewBag.FixedClassId == null ? "true" : "false")) {
+                var mediumId = '@(ViewBag.FixedMediumId ?? "")';
                 var selectedClassId = @(Model.ClassId.HasValue ? Model.ClassId.Value.ToString() : "null");
-                if (mediumId) {
+                if (mediumId && $('#classSelect option').length <= 1) {
                     $.ajax({
                         url: '@Url.Action("GetClasses", "Quiz")',
                         type: 'GET',

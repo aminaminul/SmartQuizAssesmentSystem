@@ -52,21 +52,52 @@ namespace SmartQuizAssessmentSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            await PopulateDropdownsAsync();
-            return View(new QuizViewModel());
+            var currentUser = await _userManager.GetUserAsync(User);
+            var instructor = currentUser != null ? await _instructorService.GetByUserIdAsync(currentUser.Id) : null;
+
+            var model = new QuizViewModel();
+            if (instructor != null)
+            {
+                model.EducationMediumId = instructor.EducationMediumId;
+                model.ClassId = instructor.ClassId;
+                model.SubjectId = instructor.SubjectId;
+            }
+
+            await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QuizViewModel model)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var instructor = currentUser != null ? await _instructorService.GetByUserIdAsync(currentUser.Id) : null;
+
+            if (instructor != null)
+            {
+                if (instructor.EducationMediumId.HasValue)
+                {
+                    model.EducationMediumId = instructor.EducationMediumId.Value;
+                    ModelState.Remove(nameof(model.EducationMediumId));
+                }
+                if (instructor.ClassId.HasValue && (!model.ClassId.HasValue || model.ClassId == 0))
+                {
+                    model.ClassId = instructor.ClassId.Value;
+                    ModelState.Remove(nameof(model.ClassId));
+                }
+                if (instructor.SubjectId.HasValue)
+                {
+                    model.SubjectId = instructor.SubjectId.Value;
+                    ModelState.Remove(nameof(model.SubjectId));
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
-
-            var currentUser = await _userManager.GetUserAsync(User);
 
             try
             {
@@ -87,6 +118,15 @@ namespace SmartQuizAssessmentSystem.Controllers
             var vm = await _quizService.GetForEditAsync(id);
             if (vm == null) return NotFound();
 
+            var currentUser = await _userManager.GetUserAsync(User);
+            var instructor = currentUser != null ? await _instructorService.GetByUserIdAsync(currentUser.Id) : null;
+            if (instructor != null)
+            {
+                if (!vm.EducationMediumId.HasValue) vm.EducationMediumId = instructor.EducationMediumId;
+                if (!vm.ClassId.HasValue) vm.ClassId = instructor.ClassId;
+                if (!vm.SubjectId.HasValue) vm.SubjectId = instructor.SubjectId;
+            }
+
             await PopulateDropdownsAsync(vm.EducationMediumId, vm.ClassId, vm.SubjectId);
             return View(vm);
         }
@@ -96,13 +136,34 @@ namespace SmartQuizAssessmentSystem.Controllers
         public async Task<IActionResult> Edit(long id, QuizViewModel model)
         {
             if (id != model.Id) return NotFound();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            var instructor = currentUser != null ? await _instructorService.GetByUserIdAsync(currentUser.Id) : null;
+
+            if (instructor != null)
+            {
+                if (instructor.EducationMediumId.HasValue)
+                {
+                    model.EducationMediumId = instructor.EducationMediumId.Value;
+                    ModelState.Remove(nameof(model.EducationMediumId));
+                }
+                if (instructor.ClassId.HasValue && (!model.ClassId.HasValue || model.ClassId == 0))
+                {
+                    model.ClassId = instructor.ClassId.Value;
+                    ModelState.Remove(nameof(model.ClassId));
+                }
+                if (instructor.SubjectId.HasValue)
+                {
+                    model.SubjectId = instructor.SubjectId.Value;
+                    ModelState.Remove(nameof(model.SubjectId));
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 await PopulateDropdownsAsync(model.EducationMediumId, model.ClassId, model.SubjectId);
                 return View(model);
             }
-
-            var currentUser = await _userManager.GetUserAsync(User);
 
             try
             {
@@ -194,24 +255,38 @@ namespace SmartQuizAssessmentSystem.Controllers
 
             if (instructor != null)
             {
-                // --- Instructor view: subject is FIXED, class is free within their medium ---
+                // --- Instructor view: fixed to instructor's assigned medium, class, and subject ---
                 ViewBag.IsInstructor = true;
 
                 // Medium: fixed to instructor's medium
-                var mediumIdToUse = instructor.EducationMediumId;
+                var mediumIdToUse = instructor.EducationMediumId ?? mediumId;
                 var medium = mediumIdToUse.HasValue ? await _mediumService.GetByIdAsync(mediumIdToUse.Value) : null;
                 ViewBag.EducationMediumId = new SelectList(
                     medium != null ? new[] { medium } : Enumerable.Empty<EducationMedium>(),
                     "Id", "Name", mediumIdToUse);
+                ViewBag.FixedMediumId = mediumIdToUse;
 
-                // Class: all classes within the instructor's medium (instructor picks any)
-                var classes = mediumIdToUse.HasValue
-                    ? await _classService.GetAllAsync(mediumIdToUse.Value)
-                    : await _classService.GetAllAsync(null);
-                ViewBag.ClassId = new SelectList(classes, "Id", "Name", classId ?? instructor.ClassId);
+                // Class: fixed to instructor's assigned class if set, otherwise classes within their medium
+                var classIdToUse = instructor.ClassId ?? classId;
+                if (instructor.ClassId.HasValue)
+                {
+                    var cls = await _classService.GetByIdAsync(instructor.ClassId.Value);
+                    ViewBag.ClassId = new SelectList(
+                        cls != null ? new[] { cls } : Enumerable.Empty<Class>(),
+                        "Id", "Name", instructor.ClassId.Value);
+                    ViewBag.FixedClassId = instructor.ClassId.Value;
+                }
+                else
+                {
+                    var classes = mediumIdToUse.HasValue
+                        ? await _classService.GetAllAsync(mediumIdToUse.Value)
+                        : await _classService.GetAllAsync(null);
+                    ViewBag.ClassId = new SelectList(classes, "Id", "Name", classIdToUse);
+                    ViewBag.FixedClassId = null;
+                }
 
                 // Subject: FIXED to instructor's assigned subject only
-                var subjectIdToUse = instructor.SubjectId;
+                var subjectIdToUse = instructor.SubjectId ?? subjectId;
                 var subject = subjectIdToUse.HasValue ? await _subjectService.GetByIdAsync(subjectIdToUse.Value) : null;
                 ViewBag.SubjectId = new SelectList(
                     subject != null ? new[] { subject } : Enumerable.Empty<Subject>(),
@@ -222,6 +297,9 @@ namespace SmartQuizAssessmentSystem.Controllers
             {
                 // --- Admin view: full unrestricted dropdowns ---
                 ViewBag.IsInstructor = false;
+                ViewBag.FixedMediumId = null;
+                ViewBag.FixedClassId = null;
+                ViewBag.FixedSubjectId = null;
 
                 var mediums = await _mediumService.GetAllAsync();
                 ViewBag.EducationMediumId = new SelectList(mediums, "Id", "Name", mediumId);

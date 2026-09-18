@@ -73,12 +73,22 @@ namespace QuizSystemService.Services
                 if (!instructor.SubjectId.HasValue)
                     throw new InvalidOperationException("You have not been assigned to a subject yet. Please contact Admin.");
 
-                // Subject must match instructor's assigned subject
-                if (model.SubjectId != instructor.SubjectId)
+                // Subject must match instructor's assigned subject if provided
+                if (model.SubjectId.HasValue && model.SubjectId != instructor.SubjectId)
                     throw new InvalidOperationException("You can only create quizzes for your assigned subject.");
 
                 // Force subject onto the model so it's always set correctly
                 model.SubjectId = instructor.SubjectId;
+
+                // Force instructor's medium and class onto the model
+                if (instructor.EducationMediumId.HasValue)
+                {
+                    model.EducationMediumId = instructor.EducationMediumId.Value;
+                }
+                if (instructor.ClassId.HasValue && (!model.ClassId.HasValue || model.ClassId == 0))
+                {
+                    model.ClassId = instructor.ClassId.Value;
+                }
             }
 
             var quiz = new Quiz
@@ -125,10 +135,19 @@ namespace QuizSystemService.Services
                     throw new InvalidOperationException("You cannot edit quizzes you did not create.");
 
                 // Subject must remain their assigned subject
-                if (model.SubjectId != instructor.SubjectId)
+                if (model.SubjectId.HasValue && model.SubjectId != instructor.SubjectId)
                     throw new InvalidOperationException("You cannot change the subject of your quiz.");
 
                 model.SubjectId = instructor.SubjectId;
+
+                if (instructor.EducationMediumId.HasValue)
+                {
+                    model.EducationMediumId = instructor.EducationMediumId.Value;
+                }
+                if (instructor.ClassId.HasValue && (!model.ClassId.HasValue || model.ClassId == 0))
+                {
+                    model.ClassId = instructor.ClassId.Value;
+                }
 
                 if (quiz.IsApproved || quiz.Status == ModelStatus.Active)
                 {
